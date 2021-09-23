@@ -13,14 +13,15 @@ SRC_DIR   := src
 OBJ_DIR   := obj
 SRC_FILES := $(wildcard *.cpp) \
              $(wildcard $(SRC_DIR)/tools/*.cpp) \
+             $(wildcard $(SRC_DIR)/holdem/*.cpp) \
              $(wildcard $(SRC_DIR)/test/*.cpp)
 OBJ = $(SRC_FILES:.cpp=.o)
 
 opt: $(OBJ)
-	$(CC) -o $@.out $(FLAGS) $^
+	$(CC) -o holdem_tools.out $(FLAGS) $^
 
 devel: $(OBJ)
-	$(CC) -o $@.out $(DFLAGS) $^
+	$(CC) -o holdem_tools_dev.out $(DFLAGS) $^
 
 # Setup and/or clean
 dir:
