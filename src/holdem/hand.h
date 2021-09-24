@@ -28,7 +28,8 @@ private:
   // Note a _ postfix means a private variable
   
   // The cards to use in the hand
-  int cards_[2][7];
+  int cards_face_[7];
+  int cards_suit_[7];
 
   // Have the cards been read or not
   bool isCards_;
