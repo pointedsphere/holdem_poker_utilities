@@ -37,8 +37,12 @@ private:
 public:
 
   // Constructor for initial variables
+  // NOTE: Initial values for all face values set to -1 which signifies no hand.
   hand() {
     isCards_ = false; // On initialisation we haven't read the cards in
+    // Also, on initialisation we do not have a hand
+    hasPair = false;
+    pairVal = -1;
   }
   
   // Set the cards private array from a full array
@@ -47,6 +51,11 @@ public:
   // Find the high card from the current hand
   int highCard;
   void getHighCard();
+
+  // Find if there is a pair, and if there is the face value of highest pair
+  bool hasPair;
+  int pairVal;
+  void getPairVal();
   
 };
 

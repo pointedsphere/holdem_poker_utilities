@@ -1,3 +1,6 @@
+#include <iostream>
+#include <algorithm>
+
 #include "hand.h"
 
 
@@ -76,4 +79,24 @@ void hand::getHighCard()
 
 
 
+
+// Check if the hand contains a pair, if so record the pair in hasPair boolean
+// also record the face value of the highest pair.
+// Note : We check each face value as this is slightly more cost effective than
+//        using if statements to avoid checking each card for a pair and possibly 
+//        doubling up the checks as there are only 7 cards.
+void hand::getPairVal()
+{
+  int numFace; // Number of cards of this face value in hand
+  for (int i=0; i<7; i++) {
+    // Count the number of occurences of the face value of the ith card in the had
+    numFace = std::count(cards_face_, cards_face_+7, cards_face_[i]);
+    // If the ith card is part of a pair, and higher than any other pair write to output
+    // NOTE: We consider any pair, including that part of 3 of a kind as a pair
+    if (numFace > 1 && cards_face_[i] > pairVal) {
+      hasPair = true;           // We have a pair!
+      pairVal = cards_face_[i]; // With this face value!
+    }
+  }
+}
 
