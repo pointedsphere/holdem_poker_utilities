@@ -82,10 +82,9 @@ void hand::getHighCard()
 
 // Check if the hand contains a pair, if so record the pair in hasPair boolean
 // also record the face value of the highest pair.
-// Note : We check each face value as this is slightly more cost effective than
-//        using if statements to avoid checking each card for a pair and possibly 
-//        doubling up the checks as there are only 7 cards.
-void hand::getPairVal()
+// Note : We check only for pairs, so though a three of a kind contains a pair
+//        this function will not find it.
+void hand::getPair()
 {
   int numFace; // Number of cards of this face value in hand
   for (int i=0; i<7; i++) {
@@ -93,10 +92,38 @@ void hand::getPairVal()
     numFace = std::count(cards_face_, cards_face_+7, cards_face_[i]);
     // If the ith card is part of a pair, and higher than any other pair write to output
     // NOTE: We consider any pair, including that part of 3 of a kind as a pair
-    if (numFace > 1 && cards_face_[i] > pairVal) {
+    if (numFace == 2 && cards_face_[i] > pairVal) {
       hasPair = true;           // We have a pair!
       pairVal = cards_face_[i]; // With this face value!
     }
   }
 }
 
+
+
+
+
+// Check if the hand has two pair in it, if so record the two pair in hasTwoPair boolean
+// also record the face values of the two pair, highest and lowest
+void hand::getTwoPair()
+{
+  // First check for a single pair, as we need at least one pair to have two pair
+  getPair();
+  // So only check if we have at least a pair
+  if (hasPair==true) {
+    // Now check for a pair that is not the pair found by getPair()
+  
+    int numFace;       // Number of cards of this face value in hand
+
+    for (int i=0; i<7; i++) {
+      // Count the number of occurences of the face value of the ith card in the had
+      numFace = std::count(cards_face_, cards_face_+7, cards_face_[i]);    
+      if (numFace == 2 && cards_face_[i] > twoPairLow && cards_face_[i] != pairVal) {
+	hasTwoPair = true;           // We have another (lower valued) pair!
+        twoPairLow = cards_face_[i]; // With this face value!
+      }
+    }
+    // If we have two pair copy over the higher value from initial pair search
+    twoPairHigh = pairVal;
+  } 
+}

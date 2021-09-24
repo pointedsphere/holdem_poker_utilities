@@ -22,6 +22,11 @@ class hand
 	 12: queen
 	 13: king
 	 14: ace
+
+     The individual hand checking routines can be called independantly. This means they should
+     NOT be used to find all the hands as it is more costly than running the getAllHands routine.
+         - for example checking for two pair also checks for a pair, therefore if we wish to 
+	   check for both a pair and two pair it suffices to only run getTwoPair
   */
   
 private:
@@ -40,9 +45,17 @@ public:
   // NOTE: Initial values for all face values set to -1 which signifies no hand.
   hand() {
     isCards_ = false; // On initialisation we haven't read the cards in
+
     // Also, on initialisation we do not have a hand
+
+    // Single pair
     hasPair = false;
     pairVal = -1;
+
+    // Two pair
+    hasTwoPair = false;
+    twoPairHigh = -1;
+    twoPairLow  = -1;
   }
   
   // Set the cards private array from a full array
@@ -52,10 +65,17 @@ public:
   int highCard;
   void getHighCard();
 
-  // Find if there is a pair, and if there is the face value of highest pair
+  // Find if there is a pair, and if there's at least one record it along with the face value of highest pair
   bool hasPair;
   int pairVal;
-  void getPairVal();
+  void getPair();
+
+  // Find if there is two pair, and if there is record the face value of the two highest pairs
+  bool hasTwoPair;
+  int twoPairHigh;
+  int twoPairLow;
+  void getTwoPair();
+  
   
 };
 
