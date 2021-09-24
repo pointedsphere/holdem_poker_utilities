@@ -33,3 +33,6 @@
 
 # OSX Files
 .DS_Store
+
+# Notes files
+notes
