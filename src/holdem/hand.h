@@ -25,12 +25,11 @@ class hand
   */
   
 private:
-
-
-public:
-
+  
   // The cards to use in the hand
   int cards_[2][7];
+
+public:
   
   // Set the cards private array from a full array
   int setCards(int cards[2][7]);
