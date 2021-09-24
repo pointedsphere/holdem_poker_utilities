@@ -59,3 +59,17 @@ int hand::setCards(int cards[2][7])
 
 
 
+
+
+// Get the high card from the current cards_ in the hand
+int hand::getHighCard()
+{
+  // After only checking the first card, the first must be the highest
+  int highTmp = cards_[0][0];
+  // Now compare this first card baselign highest card value against all others
+  for (int i=1; i<7; i++) {
+    if (highTmp<cards_[0][i]) highTmp=cards_[0][i];
+  }
+  // And we have our high card face value
+  return highTmp;
+}
