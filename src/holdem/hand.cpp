@@ -1,5 +1,9 @@
 #include "hand.h"
 
+
+
+
+
 // Assign the hand, including some minor error checks of the cards formats
 int hand::setCards(int cards[2][7])
 {
@@ -19,20 +23,20 @@ int hand::setCards(int cards[2][7])
     // Using switch as it's a bit more verbose but slightly more efficient
     // than a few if statements
     switch(cards[0][i]) {
-    case 1 : cards[0][i] = 14; cards_[0][i] = cards[0][i]; break;
-    case 2 : cards_[0][i] = cards[0][i]; break;
-    case 3 : cards_[0][i] = cards[0][i]; break;
-    case 4 : cards_[0][i] = cards[0][i]; break;
-    case 5 : cards_[0][i] = cards[0][i]; break;
-    case 6 : cards_[0][i] = cards[0][i]; break;
-    case 7 : cards_[0][i] = cards[0][i]; break;
-    case 8 : cards_[0][i] = cards[0][i]; break;
-    case 9 : cards_[0][i] = cards[0][i]; break;
-    case 10: cards_[0][i] = cards[0][i]; break;
-    case 11: cards_[0][i] = cards[0][i]; break;
-    case 12: cards_[0][i] = cards[0][i]; break;
-    case 13: cards_[0][i] = cards[0][i]; break;
-    case 14: cards_[0][i] = cards[0][i]; break;
+    case 1 : cards_[0][i] = 14; break;
+    case 2 : cards_[0][i] =  2; break;
+    case 3 : cards_[0][i] =  3; break;
+    case 4 : cards_[0][i] =  4; break;
+    case 5 : cards_[0][i] =  5; break;
+    case 6 : cards_[0][i] =  6; break;
+    case 7 : cards_[0][i] =  7; break;
+    case 8 : cards_[0][i] =  8; break;
+    case 9 : cards_[0][i] =  9; break;
+    case 10: cards_[0][i] = 10; break;
+    case 11: cards_[0][i] = 11; break;
+    case 12: cards_[0][i] = 12; break;
+    case 13: cards_[0][i] = 13; break;
+    case 14: cards_[0][i] = 14; break;
     default: return -1; // Error code -1
     }
 
@@ -44,9 +48,14 @@ int hand::setCards(int cards[2][7])
     }
     
   }
+
+  // We have now read the cards in
+  isCards_ = true;
   
   // Completed, return success
   return 0;
   
 }
+
+
 
