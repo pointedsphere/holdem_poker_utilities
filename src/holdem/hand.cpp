@@ -213,3 +213,32 @@ void hand::getTwoPair()
     
   } 
 }
+
+
+
+
+
+
+
+// Sort the cards_face_ array such that it is in ascending order
+// Also sort cards_suit_ into the same order as cards_face_ such that each
+// ith element of cards_suit_ is the suit of the ith card in cards_face_
+void hand::sortCards()
+{
+
+  std::pair<int, int> cards_face_suit[7];
+  for (int i = 0; i < 7; i++) {
+    cards_face_suit[i].first  = cards_face_[i];
+    cards_face_suit[i].second = cards_suit_[i];
+  }
+  sort(cards_face_suit, cards_face_suit + 7);
+  for (int i = 0; i < 7; i++) {
+    cards_face_[i] = cards_face_suit[i].first;
+    cards_suit_[i] = cards_face_suit[i].second;
+  }
+  
+}
+
+
+
+

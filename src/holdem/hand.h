@@ -79,6 +79,9 @@ public:
   int twoPairLow;
   int twoPairHighCard;
   void getTwoPair();
+
+  // Sort the cards_face_ and cards_suit_ arrays such cards_face_ is in ascending order
+  void sortCards();
   
   
 };
