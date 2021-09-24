@@ -25,19 +25,20 @@ class hand
   */
   
 private:
+  // Note a _ postfix means a private variable
   
   // The cards to use in the hand
   int cards_[2][7];
 
   // Have the cards been read or not
   bool isCards_;
+  
+public:
 
   // Constructor for initial variables
   hand() {
     isCards_ = false; // On initialisation we haven't read the cards in
   }
-  
-public:
   
   // Set the cards private array from a full array
   int setCards(int cards[2][7]);
