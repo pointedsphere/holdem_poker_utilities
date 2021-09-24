@@ -8,15 +8,16 @@
 
 
 // Assign the hand, including some minor error checks of the cards formats
+// Do this from the full hand as single array
 int hand::setCards(int cards[2][7])
 {
 
   /*
     Error Codes
     ===========
-    - -1 ::: Invalid card face value outside range of [1,14] given as input.
+        -1 ::: Invalid card face value outside range of [1,14] given as an input.
+        -2 ::: Invalid card suit value outside range of [1,4] given as an input.
   */
-  
   
   // Check each card for errors in face or suit value
   for ( int i=0 ; i<7 ; i++ ) {
@@ -59,6 +60,75 @@ int hand::setCards(int cards[2][7])
   return 0;
   
 }
+
+// Assign the hand, including some minor error checks of the cards formats
+// Do this from the full hand as single array
+int hand::setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1])
+{
+
+  /*
+    Error Codes
+    ===========
+        -1 ::: Invalid card face value outside range of [1,14] given as an input.
+        -2 ::: Invalid card suit value outside range of [1,4] given as an input.
+  */
+
+  int tmp_face;
+  int tmp_suit;
+    
+  // Check each card for errors in face or suit value
+  for ( int i=0 ; i<7 ; i++ ) {
+
+    // Set temp values by iterating through the hole, flop, turn and river
+    switch(i) {
+    case 1: tmp_face= hole[0][0]; tmp_suit= hole[1][0]; break;
+    case 2: tmp_face= hole[0][1]; tmp_suit= hole[1][1]; break;
+    case 3: tmp_face= flop[0][0]; tmp_suit= flop[1][0]; break;
+    case 4: tmp_face= flop[0][1]; tmp_suit= flop[1][1]; break;
+    case 5: tmp_face= flop[0][2]; tmp_suit= flop[1][2]; break;
+    case 6: tmp_face= turn[0][0]; tmp_suit= turn[1][0]; break;
+    case 7: tmp_face=river[0][0]; tmp_suit=river[1][0]; break;
+    }
+    
+    // If card value is 1, i.e. ace, then switch this to a 14
+    // Also check for invalid card face value
+    // Using switch as it's a bit more verbose but slightly more efficient
+    // than a few if statements
+    switch(tmp_face) {
+    case 1 : cards_face_[i] = 14; break;
+    case 2 : cards_face_[i] =  2; break;
+    case 3 : cards_face_[i] =  3; break;
+    case 4 : cards_face_[i] =  4; break;
+    case 5 : cards_face_[i] =  5; break;
+    case 6 : cards_face_[i] =  6; break;
+    case 7 : cards_face_[i] =  7; break;
+    case 8 : cards_face_[i] =  8; break;
+    case 9 : cards_face_[i] =  9; break;
+    case 10: cards_face_[i] = 10; break;
+    case 11: cards_face_[i] = 11; break;
+    case 12: cards_face_[i] = 12; break;
+    case 13: cards_face_[i] = 13; break;
+    case 14: cards_face_[i] = 14; break;
+    default: return -1; // Error code -1
+    }
+
+    // Check the suit values are valid, i.e. in [1,4]
+    if (tmp_suit!=1 && tmp_suit!=2 && tmp_suit!=3 && tmp_suit!=4) {
+      return -2; // Error code -2
+    } else {
+      cards_suit_[i] = tmp_suit;
+    }
+    
+  }
+
+  // We have now read the cards in
+  isCards_ = true;
+  
+  // Completed, return success
+  return 0;
+  
+}
+
 
 
 

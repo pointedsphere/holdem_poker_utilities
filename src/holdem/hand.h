@@ -6,7 +6,7 @@ class hand
 {
 
   /* 
-     A Class to hold a hand of cards, this contains the hole, flop turn and river
+     A Class to hold a hand of cards, this contains the hole, flop, turn and river
      meaning it works on 7 cards. 
 
      This class and its contained variables works only with full knowledge of a
@@ -61,6 +61,8 @@ public:
   
   // Set the cards private array from a full array
   int setCards(int cards[2][7]);
+  // Or for the arrays split into hole, flop, turn and river
+  int setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
   
   // Find the high card from the current hand
   int highCard;
