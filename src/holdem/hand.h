@@ -56,6 +56,7 @@ public:
     hasTwoPair = false;
     twoPairHigh = -1;
     twoPairLow  = -1;
+    twoPairHighCard = -1;
   }
   
   // Set the cards private array from a full array
@@ -74,6 +75,7 @@ public:
   bool hasTwoPair;
   int twoPairHigh;
   int twoPairLow;
+  int twoPairHighCard;
   void getTwoPair();
   
   

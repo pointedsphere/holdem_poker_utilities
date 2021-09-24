@@ -67,6 +67,7 @@ int hand::setCards(int cards[2][7])
 // Get the high card from the current cards_ in the hand
 void hand::getHighCard()
 {
+  
   // After only checking the first card, the first must be the highest
   highCard = cards_face_[0];
   // Now compare this first card baselign highest card value against all others
@@ -74,6 +75,7 @@ void hand::getHighCard()
     if (highCard<cards_face_[i]) highCard=cards_face_[i];
   }
   // And we have our high card face value
+  
 }
 
 
@@ -86,6 +88,7 @@ void hand::getHighCard()
 //        this function will not find it.
 void hand::getPair()
 {
+  
   int numFace; // Number of cards of this face value in hand
   for (int i=0; i<7; i++) {
     // Count the number of occurences of the face value of the ith card in the had
@@ -97,6 +100,7 @@ void hand::getPair()
       pairVal = cards_face_[i]; // With this face value!
     }
   }
+  
 }
 
 
@@ -107,6 +111,7 @@ void hand::getPair()
 // also record the face values of the two pair, highest and lowest
 void hand::getTwoPair()
 {
+  
   // First check for a single pair, as we need at least one pair to have two pair
   getPair();
   // So only check if we have at least a pair
@@ -123,7 +128,18 @@ void hand::getTwoPair()
         twoPairLow = cards_face_[i]; // With this face value!
       }
     }
-    // If we have two pair copy over the higher value from initial pair search
-    twoPairHigh = pairVal;
+    
+    // If we have two pair copy over the higher value from initial pair search and find
+    // remaining high card value
+    if(hasTwoPair==true) {
+      twoPairHigh = pairVal;
+      for (int i=0; i<7; i++) {
+	if (twoPairHighCard<cards_face_[i] && cards_face_[i]!=twoPairHigh && cards_face_[i]!=twoPairLow) {
+	  // Save the highest card not in a pair
+	  twoPairHighCard=cards_face_[i];
+	}
+      }
+    }
+    
   } 
 }
