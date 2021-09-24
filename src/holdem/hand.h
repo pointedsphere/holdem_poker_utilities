@@ -44,7 +44,8 @@ public:
   int setCards(int cards[2][7]);
   
   // Find the high card from the current hand
-  int getHighCard();
+  int highCard;
+  void getHighCard();
   
 };
 
