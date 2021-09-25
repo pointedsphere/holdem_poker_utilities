@@ -243,6 +243,51 @@ void hand::sortCards()
 
 
 
+int hand::getStraight(int S_cards[], int hand_size)
+{
+
+  int straight_tmp=0;
+  int straight_dif;
+  bool gotStraight=false;
+  int straightHighCard;
+  // If the hand contains an ace and lowest face is a 2 we must also consider a straight 
+  // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
+  if ( S_cards[0]==2 && S_cards[hand_size-1]==14 ) straight_tmp=1;
+  
+  // Iterate through the hand checking for a straight of any suit, only check difference between
+  // subsiquent cards, >=4 subsiquent pairs means a straight
+  for (int i=0; i<hand_size-1; i++) {
+    
+    // Check difference between adjacent cards sorted by face value
+    straight_dif = S_cards[i+1] - S_cards[i];
+    // If straight_diff==0 then face values are the same, so ignore
+    // If straight_diff==1 then we have two subsiquent face values so iterate
+    // If straight_diff>1 then non subsiquent face values so reset
+    if (straight_dif==1) {
+      straight_tmp++;
+    } else if (straight_dif>1) {
+      straight_tmp=0;
+    }
+
+    // If straight_tmp>=4 we have a stright!
+    if (straight_tmp>3) {
+      gotStraight = true;
+      straightHighCard = S_cards[i+1];
+    }
+    
+  }
+
+  if (gotStraight==false) {
+    return -1;
+  } else {
+    return straightHighCard;
+  }
+  
+}
+
+
+
+
 
 
 int hand::getBestHand()
@@ -258,48 +303,27 @@ int hand::getBestHand()
   int  straightHighCard=-1; // What's the highest card in the straight
 
   // Flush info
-  bool gotFlush   =false; // Do we have a flush
+  bool gotFlush =false; // Do we have a flush
+  int  flushSize=-1; // Number of cards in the flush
+  int  flushSuit=-1; // The suit of the flush
+  // All the cards in the flush, will only contain flushSize non -1 values in the
+  // first flushsize elements
   int  flushCards[7]={-1,-1,-1,-1,-1,-1,-1};
-  int  flushSize=-1;
-  int  flushSuit=-1;
+
+
+  
+  // Stright flush info
   
   // The first step is to sort the cards in the hand into ascending order
   sortCards();
 
-  
+
 
   /*
     Check for a straight
   */
-  
-  int straight_tmp=0;
-  int straight_dif;
-  // If the hand contains an ace and lowest face is a 2 we must also consider a straight 
-  // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
-  if ( cards_face_[0]==2 && cards_face_[6]==14 ) straight_tmp=1;
-  
-  // Iterate through the hand checking for a straight of any suit, only check difference between
-  // subsiquent cards, 4 subsiquent pairs
-  for (int i=0; i<6; i++) {
-    
-    // Check difference between adjacent cards sorted by face value
-    straight_dif = cards_face_[i+1] - cards_face_[i];
-    // If straight_diff==0 then face values are the same, so ignore
-    // If straight_diff==1 then we have two subsiquent face values so iterate
-    // If straight_diff>1 then non subsiquent face values so reset
-    if (straight_dif==1) {
-      straight_tmp++;
-    } else if (straight_dif>1) {
-      straight_tmp=0;
-    }
-
-    // If straight_tmp>=4 we have a stright!
-    if (straight_tmp>3) {
-      gotStraight = true;
-      straightHighCard = cards_face_[i+1];
-    }
-    
-  }
+  straightHighCard = getStraight(cards_face_,7);
+  if (straightHighCard>0) gotStraight = true;
 
 
 
@@ -314,6 +338,7 @@ int hand::getBestHand()
     flush_tmp = std::count(cards_suit_, cards_suit_+7, i);
     if (flush_tmp>4) {
       // If there are at least 5 of a given suit in a hand we have a flush
+      gotFlush  = true;
       flushSuit = i;
       flushSize = flush_tmp;
       // Record all cards of the suit with the flush

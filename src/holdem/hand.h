@@ -36,7 +36,6 @@ private:
   int cards_face_[7];
   int cards_suit_[7];
   
-
   // Have the cards been read or not
   bool isCards_;
   
@@ -86,6 +85,9 @@ public:
 
   // Sort the cards_face_ and cards_suit_ arrays such cards_face_ is in ascending order
   void sortCards();
+
+  // Check for a straight and return the high card of the straight or -1 for no straight
+  int getStraight(int S_cards[], int hand_size);
   
 };
 
