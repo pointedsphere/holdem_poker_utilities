@@ -308,7 +308,6 @@ int hand::getBestHand()
   bool gotFlush =false; // Do we have a flush
   int  flushSize=-1; // Number of cards in the flush
   int  flushSuit=-1; // The suit of the flush
-
   // All the cards in the flush, will only contain flushSize non -1 values in the
   // first flushsize elements
   int  flushCards[7]={-1,-1,-1,-1,-1,-1,-1};
@@ -524,10 +523,36 @@ int hand::getBestHand()
     }
     
     hand_code = 7;
-    return 0; // Full house, so we can exit now as we;ve checked for all better hands
+    return 0; // Full house, so we can exit now as we've checked for all better hands
     
   }
   
+
+
+
+
+  /*
+    Flush check
+  */
+
+
+  // We have previously checked for a flush, but we've now checked all the better hands
+  // so if we have a flush exit with this as the best hand
+  if (gotFlush==true) {
+    
+    int flush_tmp=4;
+    for (int i=flushSize-1; i>0; i--) {
+      best_face[flush_tmp] = flushCards[i];
+      best_suit[flush_tmp] = flushSuit;
+      flush_tmp--;
+    }
+
+    hand_code = 6;
+    return 0;
+    
+  }
+
+
   return 0;
   
 }
