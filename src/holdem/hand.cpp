@@ -317,8 +317,21 @@ int hand::getBestHand()
   int straightFlushHighCard;
 
   // Four of a kind values
-  int fourOfAKind4;     // The value of the four of a kind in four of a kind
-  int fourOfAKindSpare; // The face value of the highest card in hand not in four of a kind
+  int fourOfAKind4; // The value of the four of a kind in four of a kind
+
+  // Three of a kind values
+  int threeOfAKindFace;
+  int threeOfAKindSuit[3];
+
+  // Two Pair Values
+  int twoPairLowFace;
+  int twoPairLowSuit;
+  int twoPairHighFace;
+  int twoPairHighSuit;
+
+  // Pair values
+  int pairFace;
+  int pairSuit;
   
   // Number of cards of each face value
   int  faceValCount[7];
@@ -424,6 +437,7 @@ int hand::getBestHand()
     pair and two pair.
   */
 
+  int suit3_i=0;
   for (int i=0; i<7; i++) {
     // Count number of times face value of current card appears in the current hand
     faceValCount[i] = std::count(cards_face_, cards_face_+7, cards_face_[i]);
@@ -432,24 +446,31 @@ int hand::getBestHand()
       fourOfAKind4    = cards_face_[i]; // The face value of the four of a kind
     }
     if (faceValCount[i]==3) {
-      gotThreeOfAKind = true;            // Got three of a kind
-      threeOfAKind3 = cards_face_[i]; // Save the face val of highest 3 of a kind
+      if (cards_face_[i]!=threeOfAKindFace) suit3_i=0;
+      gotThreeOfAKind           = true;           // Got three of a kind
+      threeOfAKindFace          = cards_face_[i]; // Save the face val  of highest 3 of a kind
+      threeOfAKindSuit[suit3_i] = cards_suit_[i]; // Save the suit vals of highest 3 of a kind
+      suit3_i++;
     }
     if (faceValCount[i]==2) {
       // If we haven't seen a pair before we only have one pair (so far)
       // if we have we have two pair
       if (gotPair==false) {
 	gotPair = true;
-	pairVal = cards_face_[i];
+	pairFace = cards_face_[i];
+	pairSuit = cards_face_[i];
       } else {
 	gotTwoPair = true;
-	twoPairLow = pairVal;
-	pairVal = cards_face_[i];
-	twoPairHigh = pairVal;
+	twoPairLowFace = pairFace;
+	twoPairLowSuit = pairSuit;
+	pairFace = cards_face_[i];
+	pairSuit = cards_suit_[i];
+	twoPairHighFace = pairFace;
+	twoPairHighSuit = pairSuit;
       }
     }
   }
-
+  
 
 
   /*
@@ -482,12 +503,29 @@ int hand::getBestHand()
     Full house check
   */
 
-  // We can check this from only the three of a kinf and two pair
+  int fullHouse_i=0;
+  // We can check this from only the three of a kind and two pair
   if (gotThreeOfAKind==true && gotPair==true) {
-    fullHouse3 = threeOfAKind3;
-    fullHouse2 = pairVal;
+
+    // First copy over the three of a kind to best hand
+    for (int i=0; i<3; i++) {
+      best_face[i+2] = threeOfAKindFace;
+      best_suit[i+2] = threeOfAKindSuit[i];
+    }
+
+    // Now copy over the highest pair, note we must search for the suits
+    for (int i=0; i<7; i++) {
+      if (cards_face_[i]==pairFace) {
+	best_face[fullHouse_i] = cards_face_[i];
+	best_suit[fullHouse_i] = cards_suit_[i];
+	fullHouse_i++;
+	if (fullHouse_i==2) break;
+      }
+    }
+    
     hand_code = 7;
     return 0; // Full house, so we can exit now as we;ve checked for all better hands
+    
   }
   
   return 0;

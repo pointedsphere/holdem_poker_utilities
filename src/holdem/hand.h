@@ -49,10 +49,10 @@ n     3  ::: Two pair
 n     4  ::: Three of a kind
 n     5  ::: Straight
 n     6  ::: Flush
-n     7  ::: Full house
-n     8  ::: 4 of a kind
-n     9  ::: Straight flush
-n     10 ::: Royal Flush
+y     7  ::: Full house
+y     8  ::: 4 of a kind
+y     9  ::: Straight flush
+y     10 ::: Royal Flush
   */
   int hand_code;
 
@@ -71,28 +71,7 @@ n     10 ::: Royal Flush
      
   */
   int best_face[5];
-  int best_suit[5];
-  
-  // Straight flush values
-
-
-  // Full house values
-  int fullHouse3; // The value of the 3 of a kind in the full house
-  int fullHouse2; // The value of the pair in the full house
-  
-  // Three of a kind values
-  int threeOfAKind3;     // The value of the 3 cards in 3 of a kind
-  int threeOfAKindSpare[2]; // The highest cards, in ascending order, in hand that arent 3 of a kind
-
-  // Two Pair Values
-  int twoPairHigh;  // Highest face value pair in 2 pair
-  int twoPairLow;   // Second highest pair in hand (if we have 2 pair)
-  int twoPairSpare; // Non-paired card when have 2 pair
-
-  // Pair values
-  int pairVal;      // Value of pair if we only have a pair
-  int pairSpare[3]; // In ascending face order, the non paired cards in the pair hand
-
+  int best_suit[5];  
   
   // Constructor for initial variables
   // NOTE: Initial values for all face values set to -1 which signifies no hand.
@@ -106,32 +85,6 @@ n     10 ::: Royal Flush
       best_face[i] = -1;
       best_suit[i] = -1;
     }
-
-    fullHouse3 = -1;
-    fullHouse2 = -1;
-    
-    threeOfAKind3         = -1;
-    threeOfAKindSpare[0]     = -1;
-    threeOfAKindSpare[1]     = -1;
-
-    twoPairHigh = -1;
-    twoPairLow = -1;
-    twoPairSpare = -1;
-
-    pairVal = -1;
-    pairSpare[0] = -1;
-    pairSpare[0] = -1;
-    pairSpare[0] = -1;
-
-    // // Single pair
-    // hasPair = false;
-    // pairVal = -1;
-
-    // // Two pair
-    // hasTwoPair = false;
-    // twoPairHigh = -1;
-    // twoPairLow  = -1;
-    // twoPairHighCard = -1;
     
   }
   
