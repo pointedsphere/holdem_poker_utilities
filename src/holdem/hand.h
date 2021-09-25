@@ -35,6 +35,7 @@ private:
   // The cards to use in the hand
   int cards_face_[7];
   int cards_suit_[7];
+  
 
   // Have the cards been read or not
   bool isCards_;
@@ -80,9 +81,11 @@ public:
   int twoPairHighCard;
   void getTwoPair();
 
+  // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
+  int getBestHand();
+
   // Sort the cards_face_ and cards_suit_ arrays such cards_face_ is in ascending order
   void sortCards();
-  
   
 };
 

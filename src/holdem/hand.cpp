@@ -242,3 +242,65 @@ void hand::sortCards()
 
 
 
+
+
+
+int hand::getBestHand()
+{
+
+  // Routine variables
+  bool gotStraight=false;
+  int  straightHighCard=-1;
+  bool gotFlush   =false;
+  int  flushCards[5];
+  int  flushSuit;
+
+  // Number of cards in each suit
+  int num_suit_1;
+  int num_suit_2;
+  int num_suit_3;
+  int num_suit_4;
+  
+  // The first step is to sort the cards in the hand into ascending order
+  sortCards();
+
+
+  /*
+    Check for a straight
+  */
+  
+  int straight_tmp=0;
+  int straight_dif;
+  // If the hand contains an ace and lowest face is a 2 we must also consider a straight 
+  // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
+  if ( cards_face_[0]==2 && cards_face_[6]==14 ) straight_tmp=1;
+  
+  // Iterate through the hand checking for a straight of any suit, only check difference between
+  // subsiquent cards, 4 subsiquent pairs
+  for (int i=0; i<6; i++) {
+    
+    // Check difference between adjacent cards sorted by face value
+    straight_dif = cards_face_[i+1] - cards_face_[i];
+    // If straight_diff==0 then face values are the same, so ignore
+    // If straight_diff==1 then we have two subsiquent face values so iterate
+    // If straight_diff>1 then non subsiquent face values so reset
+    if (straight_dif==1) {
+      straight_tmp++;
+    } else if (straight_dif>1) {
+      straight_tmp=0;
+    }
+
+    // If straight_tmp>=4 we have a stright!
+    if (straight_tmp>3) {
+      gotStraight = true;
+      straightHighCard = cards_face_[i+1];
+    }
+    
+  }
+  
+  return 0;
+  
+}
+
+
+
