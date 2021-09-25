@@ -49,19 +49,32 @@ n     3  ::: Two pair
 n     4  ::: Three of a kind
 n     5  ::: Straight
 n     6  ::: Flush
-y     7  ::: Full house
-y     8  ::: 4 of a kind
-y     9  ::: Straight flush
-y     10 ::: Royal Flush
+n     7  ::: Full house
+n     8  ::: 4 of a kind
+n     9  ::: Straight flush
+n     10 ::: Royal Flush
   */
   int hand_code;
 
-  // Straight flush values
-  int straightFlushHighCard;
+  /* 
+     The best hand, which is ordered in a special way for each hand one has
 
-  // Four of a kind values
-  int fourOfAKind4;  // The value of the four of a kind in four of a kind
-  int fourOfAKindSpare; // The face value of the highest card in hand not in four of a kind
+     Royal Flush:
+         { 10, J, Q, K, A }
+
+     Straight Flush:
+         In ascending order, e.g. { 3, 4, 5, 6, 7 }
+
+     Four of a Kind:
+         Last 4 elements of array are the 4 of a kind cards and first is the odd one
+	 e.g. { 3, 6, 6, 6, 6 }
+     
+  */
+  int best_face[5];
+  int best_suit[5];
+  
+  // Straight flush values
+
 
   // Full house values
   int fullHouse3; // The value of the 3 of a kind in the full house
@@ -89,10 +102,10 @@ y     10 ::: Royal Flush
     // Also, on initialisation we do not have a hand
     hand_code = -1;
 
-    straightFlushHighCard = -1;
-    
-    fourOfAKind4          = -1;
-    fourOfAKindSpare      = -1;
+    for (int i=0; i<5; i++) {
+      best_face[i] = -1;
+      best_suit[i] = -1;
+    }
 
     fullHouse3 = -1;
     fullHouse2 = -1;

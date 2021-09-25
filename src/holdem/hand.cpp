@@ -302,14 +302,23 @@ int hand::getBestHand()
   // Straight info
   bool gotStraight=false;   // Do we have a straight
   int  straightHighCard=-1; // What's the highest card in the straight
-
+  bool aceInStraight = false;
+  
   // Flush info
   bool gotFlush =false; // Do we have a flush
   int  flushSize=-1; // Number of cards in the flush
   int  flushSuit=-1; // The suit of the flush
+
   // All the cards in the flush, will only contain flushSize non -1 values in the
   // first flushsize elements
   int  flushCards[7]={-1,-1,-1,-1,-1,-1,-1};
+
+  // Straight flush info
+  int straightFlushHighCard;
+
+  // Four of a kind values
+  int fourOfAKind4;     // The value of the four of a kind in four of a kind
+  int fourOfAKindSpare; // The face value of the highest card in hand not in four of a kind
   
   // Number of cards of each face value
   int  faceValCount[7];
@@ -328,7 +337,13 @@ int hand::getBestHand()
     Check for a straight, we retrun to more calcualtions when we have checked more hands
   */
   straightHighCard = getStraight(cards_face_,7);
-  if (straightHighCard>0) gotStraight = true;
+  if (straightHighCard>0) {
+    gotStraight = true;
+    if (straightHighCard==5) {
+      // If the high card in a straight is a 5 then the low card is an ace
+      aceInStraight = true;
+    }
+  }
 
 
 
@@ -358,12 +373,13 @@ int hand::getBestHand()
   }
 
 
-
+  
   /*
     Check for Straight/Royal flush
     NOTE: If we have a straight or royal flush we exit after this if statement
   */
 
+  int straightFlush_i=4;
   // Only bother checking for this if we have both a straight and a flush
   if (gotStraight==true && gotFlush==true) {
 
@@ -376,12 +392,25 @@ int hand::getBestHand()
       if (straightFlushHighCard==14) {
 	// If the high card of the flush straight is an ace we have a royal flush !!!
 	hand_code = 10;
-	return 0; // Dont need to check any more, we have the best hand
+
       } else {
 	// Otherwise we just have a stright flush, still pretty good
 	hand_code = 9;
-	return 0; // No point in checking for any lower hands, only Royal flush can beat us
       }
+
+      // Copy over the cards from the stright to the best face/suit
+      for (int i=flushSize-1; i>-1; i--) {
+	// Note only copy over elements of the flush that are also in the straight
+	// This accounts for 6 or 7 cards of same suit in hand
+	if (flushCards[i] <= straightFlushHighCard && flushCards[i]>0) {
+	  best_face[straightFlush_i] = flushCards[i];
+	  best_suit[straightFlush_i] = flushSuit;
+	  straightFlush_i--;
+	  if (straightFlush_i==-1) break;
+	}
+      }
+
+      return 0; // No point in checking for any lower hands, we have one of the two best hands
       
     }
         
@@ -399,8 +428,8 @@ int hand::getBestHand()
     // Count number of times face value of current card appears in the current hand
     faceValCount[i] = std::count(cards_face_, cards_face_+7, cards_face_[i]);
     if (faceValCount[i]==4) {
-      gotFourOfAKind = true;            // We have 4 of a kind, pretty good!
-      fourOfAKind4 = cards_face_[i]; // The face value of the four of a kind
+      gotFourOfAKind  = true;           // We have 4 of a kind, pretty good!
+      fourOfAKind4    = cards_face_[i]; // The face value of the four of a kind
     }
     if (faceValCount[i]==3) {
       gotThreeOfAKind = true;            // Got three of a kind
@@ -429,11 +458,17 @@ int hand::getBestHand()
 
   // Find the value of the spare card if we have 4 of a kind
   if (gotFourOfAKind==true) {
+    // Copy out the four of a kind face values, we must have one of each suit so don't bother checking
+    for (int i=1; i<5; i++) {
+      best_face[i] = fourOfAKind4;
+      best_suit[i] = i;
+    }
     // Go backwards down the array, until we find the highest card that isn't the one
     // that is part of four of a kind
     for (int i=0; i<7; i++) {
       if (cards_face_[6-i]!=fourOfAKind4) {
-	fourOfAKindSpare = cards_face_[6-i];
+        best_face[0] = cards_face_[6-i];
+	best_suit[0] = cards_suit_[6-i];
 	break;
       }
     }
