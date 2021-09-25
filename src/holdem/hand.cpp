@@ -248,22 +248,25 @@ void hand::sortCards()
 int hand::getBestHand()
 {
 
-  // Routine variables
-  bool gotStraight=false;
-  int  straightHighCard=-1;
-  bool gotFlush   =false;
-  int  flushCards[5];
-  int  flushSuit;
+  // NOTE: A -1 as an integer variable means the hand in question has not been found
 
-  // Number of cards in each suit
-  int num_suit_1;
-  int num_suit_2;
-  int num_suit_3;
-  int num_suit_4;
+  
+  // Routine variables
+
+  // Straight info
+  bool gotStraight=false;   // Do we have a straight
+  int  straightHighCard=-1; // What's the highest card in the straight
+
+  // Flush info
+  bool gotFlush   =false; // Do we have a flush
+  int  flushCards[7]={-1,-1,-1,-1,-1,-1,-1};
+  int  flushSize=-1;
+  int  flushSuit=-1;
   
   // The first step is to sort the cards in the hand into ascending order
   sortCards();
 
+  
 
   /*
     Check for a straight
@@ -296,6 +299,32 @@ int hand::getBestHand()
       straightHighCard = cards_face_[i+1];
     }
     
+  }
+
+
+
+  /*
+    Check for a flush
+  */
+
+  int flush_tmp;
+  int flush_i=0;
+  for (int i=1; i<5; i++) {
+    // Count number of cards of the ith suit
+    flush_tmp = std::count(cards_suit_, cards_suit_+7, i);
+    if (flush_tmp>4) {
+      // If there are at least 5 of a given suit in a hand we have a flush
+      flushSuit = i;
+      flushSize = flush_tmp;
+      // Record all cards of the suit with the flush
+      for (int j=0; j<7; j++) {
+	if (cards_suit_[j]==flushSuit) {
+	  flushCards[flush_i] = cards_face_[j];
+	  flush_i++;
+	}
+      }
+      break; // Can only have one flush, so may as well stop here
+    }
   }
   
   return 0;
