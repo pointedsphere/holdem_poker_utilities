@@ -41,22 +41,42 @@ private:
   
 public:
 
+  /* Hand descriptor where
+     0  ::: No hand, i.e. not yet checked
+     1  ::: High card
+     2  ::: Pair
+     3  ::: Two pair
+     4  ::: Three of a kind
+     5  ::: Straight
+     6  ::: Flush
+     7  ::: Full house
+     8  ::: 4 of a kind
+     9  ::: Straight flush
+     10 ::: Royal Flush
+  */
+  int hand_code;
+
+  // Straight flush values
+  int straightFlushHighCard;
+  
   // Constructor for initial variables
   // NOTE: Initial values for all face values set to -1 which signifies no hand.
   hand() {
     isCards_ = false; // On initialisation we haven't read the cards in
 
     // Also, on initialisation we do not have a hand
+    hand_code = -1;
+    
+    // // Single pair
+    // hasPair = false;
+    // pairVal = -1;
 
-    // Single pair
-    hasPair = false;
-    pairVal = -1;
-
-    // Two pair
-    hasTwoPair = false;
-    twoPairHigh = -1;
-    twoPairLow  = -1;
-    twoPairHighCard = -1;
+    // // Two pair
+    // hasTwoPair = false;
+    // twoPairHigh = -1;
+    // twoPairLow  = -1;
+    // twoPairHighCard = -1;
+    
   }
   
   // Set the cards private array from a full array
@@ -64,21 +84,21 @@ public:
   // Or for the arrays split into hole, flop, turn and river
   int setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
   
-  // Find the high card from the current hand
-  int highCard;
-  void getHighCard();
+  // // Find the high card from the current hand
+  // int highCard;
+  // void getHighCard();
 
-  // Find if there is a pair, and if there's at least one record it along with the face value of highest pair
-  bool hasPair;
-  int pairVal;
-  void getPair();
+  // // Find if there is a pair, and if there's at least one record it along with the face value of highest pair
+  // bool hasPair;
+  // int pairVal;
+  // void getPair();
 
-  // Find if there is two pair, and if there is record the face value of the two highest pairs
-  bool hasTwoPair;
-  int twoPairHigh;
-  int twoPairLow;
-  int twoPairHighCard;
-  void getTwoPair();
+  // // Find if there is two pair, and if there is record the face value of the two highest pairs
+  // bool hasTwoPair;
+  // int twoPairHigh;
+  // int twoPairLow;
+  // int twoPairHighCard;
+  // void getTwoPair();
 
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
   int getBestHand();
