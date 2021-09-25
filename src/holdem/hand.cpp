@@ -391,10 +391,10 @@ int hand::getBestHand()
     NOTE: If we have a straight or royal flush we exit after this if statement
   */
 
-  int straightFlush_i=4;
   // Only bother checking for this if we have both a straight and a flush
   if (gotStraight==true && gotFlush==true) {
-
+    int straightFlush_i=4;
+    
     // Check the face values of the cards that are the suit of the flush for a straight
     straightFlushHighCard = getStraight(flushCards,flushSize);
 
@@ -502,10 +502,9 @@ int hand::getBestHand()
     Full house check
   */
 
-  int fullHouse_i=0;
   // We can check this from only the three of a kind and two pair
   if (gotThreeOfAKind==true && gotPair==true) {
-
+    int fullHouse_i=0;
     // First copy over the three of a kind to best hand
     for (int i=0; i<3; i++) {
       best_face[i+2] = threeOfAKindFace;
