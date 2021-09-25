@@ -311,6 +311,12 @@ int hand::getBestHand()
   // first flushsize elements
   int  flushCards[7]={-1,-1,-1,-1,-1,-1,-1};
   
+  // Number of cards of each face value
+  int  faceValCount[7];
+  bool gotFourOfAKind  = false;
+  bool gotThreeOfAKind = false;
+  bool gotTwoPair      = false;
+  bool gotPair         = false;
 
   
   // The first step is to sort the cards in the hand into ascending order
@@ -319,7 +325,7 @@ int hand::getBestHand()
 
 
   /*
-    Check for a straight
+    Check for a straight, we retrun to more calcualtions when we have checked more hands
   */
   straightHighCard = getStraight(cards_face_,7);
   if (straightHighCard>0) gotStraight = true;
@@ -327,7 +333,7 @@ int hand::getBestHand()
 
 
   /*
-    Check for a flush
+    Check for a flush briefly, we return to more calcualtions when we have checked higher hands
   */
 
   int flush_tmp;
@@ -380,6 +386,76 @@ int hand::getBestHand()
     }
         
   }
+
+
+
+  /*
+    Count the number of occurences of each face value in hand
+    This gives info for Four of a kind, full house, three of a kind
+    pair and two pair.
+  */
+
+  for (int i=0; i<7; i++) {
+    // Count number of times face value of current card appears in the current hand
+    faceValCount[i] = std::count(cards_face_, cards_face_+7, cards_face_[i]);
+    if (faceValCount[i]==4) {
+      gotFourOfAKind = true;            // We have 4 of a kind, pretty good!
+      fourOfAKind4 = cards_face_[i]; // The face value of the four of a kind
+    }
+    if (faceValCount[i]==3) {
+      gotThreeOfAKind = true;            // Got three of a kind
+      threeOfAKind3 = cards_face_[i]; // Save the face val of highest 3 of a kind
+    }
+    if (faceValCount[i]==2) {
+      // If we haven't seen a pair before we only have one pair (so far)
+      // if we have we have two pair
+      if (gotPair==false) {
+	gotPair = true;
+	pairVal = cards_face_[i];
+      } else {
+	gotTwoPair = true;
+	twoPairLow = pairVal;
+	pairVal = cards_face_[i];
+	twoPairHigh = pairVal;
+      }
+    }
+  }
+
+
+
+  /*
+    Four of a kind check
+  */
+
+  // Find the value of the spare card if we have 4 of a kind
+  if (gotFourOfAKind==true) {
+    // Go backwards down the array, until we find the highest card that isn't the one
+    // that is part of four of a kind
+    for (int i=0; i<7; i++) {
+      if (cards_face_[6-i]!=fourOfAKind4) {
+	fourOfAKindSpare = cards_face_[6-i];
+	break;
+      }
+    }
+    hand_code = 8;
+    return 0; // We have 4 of a kind, no need to keep checking
+  }
+  
+
+
+  /*
+    Full house check
+  */
+
+  // We can check this from only the three of a kinf and two pair
+  if (gotThreeOfAKind==true && gotPair==true) {
+    fullHouse3 = threeOfAKind3;
+    fullHouse2 = pairVal;
+    hand_code = 7;
+    return 0; // Full house, so we can exit now as we;ve checked for all better hands
+  }
+  
+  return 0;
   
 }
 
