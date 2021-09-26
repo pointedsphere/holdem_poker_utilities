@@ -83,6 +83,11 @@ y     10 ::: Royal Flush
 	 Note: If an Ace is part of the straight then we have cards in order
 	 { 14, 2, 3, 4, 5 }
      
+     Three of a kind:
+         Three of a kind as the final elements in best_hands, with two highest cards not
+	 in the three of a kind in ascending order in index 0 and 1, i.e.
+	 { 2, 13, 4, 4, 4 }
+
   */
   int best_face[5];
   int best_suit[5];  

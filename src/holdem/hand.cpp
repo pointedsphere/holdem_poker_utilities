@@ -593,6 +593,35 @@ int hand::getBestHand()
     return 0;
     
   }
+
+
+
+  /*
+    Three of a kind check
+  */
+
+  if (gotThreeOfAKind==true) {
+
+    // First copy over the three of a kind as these are known
+    for (int i=2; i<5; i++) {
+      best_face[i] = threeOfAKindFace;
+      best_suit[i] = threeOfAKindSuit[i-2];
+    }
+    
+    // Now find the remaining two cards, in ascending order
+    int three_i=1;
+    for (int i=6; i>-1; i--) {
+      if (cards_face_[i]!=threeOfAKindFace) {
+	best_face[three_i] = cards_face_[i];
+	best_suit[three_i] = cards_suit_[i];
+	three_i--;
+      }
+      if (three_i==-1) break;
+    }
+    
+  }
+  
+  
   
   return 0;
   
