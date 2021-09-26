@@ -528,12 +528,9 @@ int hand::getBestHand()
   
 
 
-
-
   /*
     Flush check
   */
-
 
   // We have previously checked for a flush, but we've now checked all the better hands
   // so if we have a flush exit with this as the best hand
@@ -550,7 +547,6 @@ int hand::getBestHand()
     return 0;
     
   }
-
 
   return 0;
   
