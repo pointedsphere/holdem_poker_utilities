@@ -133,93 +133,6 @@ int hand::setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][
 
 
 
-
-// // Get the high card from the current cards_ in the hand
-// void hand::getHighCard()
-// {
-  
-//   // After only checking the first card, the first must be the highest
-//   highCard = cards_face_[0];
-//   // Now compare this first card baselign highest card value against all others
-//   for (int i=1; i<7; i++) {
-//     if (highCard<cards_face_[i]) highCard=cards_face_[i];
-//   }
-//   // And we have our high card face value
-  
-// }
-
-
-
-
-
-// // Check if the hand contains a pair, if so record the pair in hasPair boolean
-// // also record the face value of the highest pair.
-// // Note : We check only for pairs, so though a three of a kind contains a pair
-// //        this function will not find it.
-// void hand::getPair()
-// {
-  
-//   int numFace; // Number of cards of this face value in hand
-//   for (int i=0; i<7; i++) {
-//     // Count the number of occurences of the face value of the ith card in the had
-//     numFace = std::count(cards_face_, cards_face_+7, cards_face_[i]);
-//     // If the ith card is part of a pair, and higher than any other pair write to output
-//     // NOTE: We consider any pair, including that part of 3 of a kind as a pair
-//     if (numFace == 2 && cards_face_[i] > pairVal) {
-//       hasPair = true;           // We have a pair!
-//       pairVal = cards_face_[i]; // With this face value!
-//     }
-//   }
-  
-// }
-
-
-
-
-
-// // Check if the hand has two pair in it, if so record the two pair in hasTwoPair boolean
-// // also record the face values of the two pair, highest and lowest
-// void hand::getTwoPair()
-// {
-  
-//   // First check for a single pair, as we need at least one pair to have two pair
-//   getPair();
-//   // So only check if we have at least a pair
-//   if (hasPair==true) {
-//     // Now check for a pair that is not the pair found by getPair()
-  
-//     int numFace;       // Number of cards of this face value in hand
-
-//     for (int i=0; i<7; i++) {
-//       // Count the number of occurences of the face value of the ith card in the had
-//       numFace = std::count(cards_face_, cards_face_+7, cards_face_[i]);    
-//       if (numFace == 2 && cards_face_[i] > twoPairLow && cards_face_[i] != pairVal) {
-// 	hasTwoPair = true;           // We have another (lower valued) pair!
-//         twoPairLow = cards_face_[i]; // With this face value!
-//       }
-//     }
-    
-//     // If we have two pair copy over the higher value from initial pair search and find
-//     // remaining high card value
-//     if(hasTwoPair==true) {
-//       twoPairHigh = pairVal;
-//       for (int i=0; i<7; i++) {
-// 	if (twoPairHighCard<cards_face_[i] && cards_face_[i]!=twoPairHigh && cards_face_[i]!=twoPairLow) {
-// 	  // Save the highest card not in a pair
-// 	  twoPairHighCard=cards_face_[i];
-// 	}
-//       }
-//     }
-    
-//   } 
-// }
-
-
-
-
-
-
-
 // Sort the cards_face_ array such that it is in ascending order
 // Also sort cards_suit_ into the same order as cards_face_ such that each
 // ith element of cards_suit_ is the suit of the ith card in cards_face_
@@ -293,6 +206,14 @@ int hand::getStraight(int S_cards[], int hand_size)
 int hand::getBestHand()
 {
 
+  /* 
+
+     Get the best hand, use this to set the class variable hand_code based on the hand we have.
+     Also set the best_face and best_suit class variables with the face and suit values of the 
+     cards that create the best hand (where each ith element is the face and corredsponding suit).
+
+   */ 
+  
   // NOTE: A -1 as an integer variable means the hand in question has not been found
 
   
@@ -339,11 +260,7 @@ int hand::getBestHand()
   // Number of cards of each face value
   int  faceValCount[7];
 
-
-
-
-
-
+  
   
   // The first step is to sort the cards in the hand into ascending order
   sortCards();

@@ -54,10 +54,14 @@ y     8  ::: 4 of a kind
 y     9  ::: Straight flush
 y     10 ::: Royal Flush
   */
+  
   int hand_code;
 
   /* 
-     The best hand, which is ordered in a special way for each hand one has
+     The best hand, which is ordered in a special way for each hand one has.
+     Note: best_face is the face values of the best hand from the given cards
+           and best_suit are the corresponding suit values for each ith card in 
+	   best_face
 
      Royal Flush:
          { 10, J, Q, K, A }
@@ -117,29 +121,12 @@ y     10 ::: Royal Flush
       best_face[i] = -1;
       best_suit[i] = -1;
     }
-    
   }
   
   // Set the cards private array from a full array
   int setCards(int cards[2][7]);
   // Or for the arrays split into hole, flop, turn and river
   int setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
-  
-  // // Find the high card from the current hand
-  // int highCard;
-  // void getHighCard();
-
-  // // Find if there is a pair, and if there's at least one record it along with the face value of highest pair
-  // bool hasPair;
-  // int pairVal;
-  // void getPair();
-
-  // // Find if there is two pair, and if there is record the face value of the two highest pairs
-  // bool hasTwoPair;
-  // int twoPairHigh;
-  // int twoPairLow;
-  // int twoPairHighCard;
-  // void getTwoPair();
 
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
   int getBestHand();
