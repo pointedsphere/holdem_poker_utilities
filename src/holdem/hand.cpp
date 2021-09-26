@@ -15,6 +15,7 @@ int hand::setCards(int cards[2][7])
   /*
     Error Codes
     ===========
+      Error codes returned from function, 0 means everything ran smoothly.
         -1 ::: Invalid card face value outside range of [1,14] given as an input.
         -2 ::: Invalid card suit value outside range of [1,4] given as an input.
   */
@@ -69,6 +70,7 @@ int hand::setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][
   /*
     Error Codes
     ===========
+      Error codes returned from function, 0 means everything ran smoothly.
         -1 ::: Invalid card face value outside range of [1,14] given as an input.
         -2 ::: Invalid card suit value outside range of [1,4] given as an input.
   */
