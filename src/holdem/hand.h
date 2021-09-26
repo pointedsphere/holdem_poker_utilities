@@ -46,7 +46,7 @@ n    -1  ::: No hand, i.e. not yet checked
 n     1  ::: High card
 n     2  ::: Pair
 n     3  ::: Two pair
-n     4  ::: Three of a kind
+y     4  ::: Three of a kind
 y     5  ::: Straight
 y     6  ::: Flush
 y     7  ::: Full house
@@ -86,7 +86,12 @@ y     10 ::: Royal Flush
      Three of a kind:
          Three of a kind as the final elements in best_hands, with two highest cards not
 	 in the three of a kind in ascending order in index 0 and 1, i.e.
-	 { 2, 13, 4, 4, 4 }
+	 e.g. { 2, 13, 4, 4, 4 }
+
+     Two Pair:
+         The two pairs in ascending order as the last 4 elements of the array with element
+	 0 being the highest card not in a pair
+	 e.g. { 7, 2, 2, 10, 10 }
 
   */
   int best_face[5];

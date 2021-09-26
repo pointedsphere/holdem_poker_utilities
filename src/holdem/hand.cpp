@@ -316,28 +316,33 @@ int hand::getBestHand()
   int straightFlushHighCard;
 
   // Four of a kind values
-  int fourOfAKind4; // The value of the four of a kind in four of a kind
+  bool gotFourOfAKind  = false;
+  int fourOfAKind4; // The face value of the four of a kind in four of a kind
 
   // Three of a kind values
+  bool gotThreeOfAKind = false;
   int threeOfAKindFace;
   int threeOfAKindSuit[3];
 
   // Two Pair Values
+  bool gotTwoPair = false;
   int twoPairLowFace;
-  int twoPairLowSuit;
+  int twoPairLowSuit[2]={-1,-1};
   int twoPairHighFace;
-  int twoPairHighSuit;
+  int twoPairHighSuit[2]={-1,-1};
 
   // Pair values
+  bool gotPair = false;
   int pairFace;
-  int pairSuit;
+  int pairSuit[2]={-1,-1};
   
   // Number of cards of each face value
   int  faceValCount[7];
-  bool gotFourOfAKind  = false;
-  bool gotThreeOfAKind = false;
-  bool gotTwoPair      = false;
-  bool gotPair         = false;
+
+
+
+
+
 
   
   // The first step is to sort the cards in the hand into ascending order
@@ -454,18 +459,28 @@ int hand::getBestHand()
     if (faceValCount[i]==2) {
       // If we haven't seen a pair before we only have one pair (so far)
       // if we have we have two pair
+
+      // Note: we use the pair face value check to avoid writing the pair twice, where we
+      //       recall cards are inascending order so pair is ith and i+1th card in hand
+      
       if (gotPair==false) {
-	gotPair = true;
-	pairFace = cards_face_[i];
-	pairSuit = cards_face_[i];
-      } else {
-	gotTwoPair = true;
-	twoPairLowFace = pairFace;
-	twoPairLowSuit = pairSuit;
-	pairFace = cards_face_[i];
-	pairSuit = cards_suit_[i];
-	twoPairHighFace = pairFace;
-	twoPairHighSuit = pairSuit;
+	// The first time we encounter a pair, just save the one pair
+	gotPair     = true;      
+	pairFace    = cards_face_[i];
+	pairSuit[0] = cards_suit_[i];
+	pairSuit[1] = cards_suit_[i+1];
+      } else if (cards_face_[i]!=pairFace) {
+	// When we encounter a second pair 
+	gotTwoPair         = true;
+	twoPairLowFace     = pairFace;
+	twoPairLowSuit[0]  = pairSuit[0];
+	twoPairLowSuit[1]  = pairSuit[1];
+	pairFace           = cards_face_[i];
+	pairSuit[0]        = cards_suit_[i];
+	pairSuit[1]        = cards_suit_[i+1];
+	twoPairHighFace    = pairFace;
+	twoPairHighSuit[0] = pairSuit[0];
+	twoPairHighSuit[1] = pairSuit[1];
       }
     }
   }
@@ -618,9 +633,42 @@ int hand::getBestHand()
       }
       if (three_i==-1) break;
     }
+
+    hand_code = 4;
+    return 0;
     
   }
   
+
+  
+  /*
+    Two pair
+  */
+
+  if (gotTwoPair==true) {
+
+    // Copy over the known pair values
+    best_face[4] = twoPairHighFace;
+    best_face[3] = twoPairHighFace;
+    best_face[2] = twoPairLowFace;
+    best_face[1] = twoPairLowFace;
+    best_suit[4] = twoPairHighSuit[0];
+    best_suit[3] = twoPairHighSuit[1];
+    best_suit[2] = twoPairLowSuit[0];
+    best_suit[1] = twoPairLowSuit[1];
+
+    // Now look for highest card not in one of the two pairs
+    for (int i=6; i>-1; i--) {
+      if (cards_face_[i]!=twoPairHighFace && cards_face_[i]!=twoPairLowFace) {
+	best_face[0] = cards_face_[i];
+	best_suit[0] = cards_suit_[i];
+	break;
+      }
+    }
+    hand_code = 3;
+    return 0;
+  }
+
   
   
   return 0;
