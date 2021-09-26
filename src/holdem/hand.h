@@ -44,8 +44,8 @@ public:
   /* Hand descriptor where
 n    -1  ::: No hand, i.e. not yet checked
 n     1  ::: High card
-n     2  ::: Pair
-n     3  ::: Two pair
+y     2  ::: Pair
+y     3  ::: Two pair
 y     4  ::: Three of a kind
 y     5  ::: Straight
 y     6  ::: Flush
@@ -92,6 +92,11 @@ y     10 ::: Royal Flush
          The two pairs in ascending order as the last 4 elements of the array with element
 	 0 being the highest card not in a pair
 	 e.g. { 7, 2, 2, 10, 10 }
+
+     Pair:
+         Store the single pair in the final two elements of the array and ascending high
+	 cards in all lower elements
+	 e.g. { 2, 4, 6, 5, 5 }
 
   */
   int best_face[5];

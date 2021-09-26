@@ -648,15 +648,15 @@ int hand::getBestHand()
   if (gotTwoPair==true) {
 
     // Copy over the known pair values
-    best_face[4] = twoPairHighFace;
-    best_face[3] = twoPairHighFace;
-    best_face[2] = twoPairLowFace;
     best_face[1] = twoPairLowFace;
-    best_suit[4] = twoPairHighSuit[0];
-    best_suit[3] = twoPairHighSuit[1];
-    best_suit[2] = twoPairLowSuit[0];
+    best_face[2] = twoPairLowFace;
+    best_face[3] = twoPairHighFace;
+    best_face[4] = twoPairHighFace;
     best_suit[1] = twoPairLowSuit[1];
-
+    best_suit[2] = twoPairLowSuit[0];
+    best_suit[3] = twoPairHighSuit[1];
+    best_suit[4] = twoPairHighSuit[0];
+    
     // Now look for highest card not in one of the two pairs
     for (int i=6; i>-1; i--) {
       if (cards_face_[i]!=twoPairHighFace && cards_face_[i]!=twoPairLowFace) {
@@ -669,7 +669,33 @@ int hand::getBestHand()
     return 0;
   }
 
-  
+
+
+  /*
+    Pair
+  */
+
+  if (gotPair==true) {
+
+    // First copy over the pair values
+    best_face[4] = pairFace;
+    best_face[3] = pairFace;
+    best_suit[4] = pairSuit[0];
+    best_suit[3] = pairSuit[1];
+
+    // Now loop through to find the 3 highest cards not in a pair
+    int pair_i=2;
+    for (int i=6; i>-1; i--) {
+      if (cards_face_[i]!=pairFace) {
+	best_face[pair_i] = cards_face_[i];
+	best_suit[pair_i] = cards_suit_[i];
+	pair_i--;
+	if (pair_i==-1) break;
+      }
+    }
+    hand_code = 2;
+    return 0;
+  }
   
   return 0;
   
