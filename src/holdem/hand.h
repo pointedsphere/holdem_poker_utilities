@@ -98,6 +98,9 @@ y     10 ::: Royal Flush
 	 cards in all lower elements
 	 e.g. { 2, 4, 6, 5, 5 }
 
+     High Card:
+         Return the highest face value cards in ascending order
+
   */
   int best_face[5];
   int best_suit[5];  

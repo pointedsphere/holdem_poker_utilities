@@ -696,7 +696,21 @@ int hand::getBestHand()
     hand_code = 2;
     return 0;
   }
-  
+
+
+
+  /*
+    High Card
+  */
+
+  // Finally just copy over all the highest cards in ascending order, as this is the best we have
+  int high_i=4;
+  for (int i=6; i>1; i--) {
+    best_face[high_i] = cards_face_[i];
+    best_suit[high_i] = cards_suit_[i];
+    high_i--;
+  }
+  hand_code = 1;
   return 0;
   
 }
