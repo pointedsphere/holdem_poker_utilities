@@ -42,13 +42,13 @@ private:
 public:
 
   /* Hand descriptor where
-n     0  ::: No hand, i.e. not yet checked
+n    -1  ::: No hand, i.e. not yet checked
 n     1  ::: High card
 n     2  ::: Pair
 n     3  ::: Two pair
 n     4  ::: Three of a kind
-n     5  ::: Straight
-n     6  ::: Flush
+y     5  ::: Straight
+y     6  ::: Flush
 y     7  ::: Full house
 y     8  ::: 4 of a kind
 y     9  ::: Straight flush
@@ -67,7 +67,21 @@ y     10 ::: Royal Flush
 
      Four of a Kind:
          Last 4 elements of array are the 4 of a kind cards and first is the odd one
-	 e.g. { 3, 6, 6, 6, 6 }
+	 e.g. face values in order { 3, 6, 6, 6, 6 }
+
+     Full House:
+         The three of a kind elemnts are the last in the array
+	 e.g. face values in order { 3, 3, 6, 6, 6 }
+
+     Flush:
+         Flush values of highest face cards of flush suit in ascending order
+	 e.g. face values in order { 2, 4, 7, 8, 9 }
+
+     Straight:
+         Straight cards in ascending order
+	 e.g. face values in order { 4, 5, 6, 7, 8 }
+	 Note: If an Ace is part of the straight then we have cards in order
+	 { 14, 2, 3, 4, 5 }
      
   */
   int best_face[5];

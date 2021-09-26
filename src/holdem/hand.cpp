@@ -360,7 +360,8 @@ int hand::getBestHand()
 
 
   /*
-    Check for a flush briefly, we return to more calcualtions when we have checked higher hands
+    Check for a flush, we return to more calcualtions when we have checked higher hands
+    but we need this to check for straight/royal flush
   */
 
   int flush_tmp;
@@ -388,7 +389,6 @@ int hand::getBestHand()
   
   /*
     Check for Straight/Royal flush
-    NOTE: If we have a straight or royal flush we exit after this if statement
   */
 
   // Only bother checking for this if we have both a straight and a flush
@@ -548,6 +548,52 @@ int hand::getBestHand()
     
   }
 
+
+
+  /*
+    Straight check
+  */
+
+  // We have previously checked for a flush, and we know we do not have a straight flush
+  // So just copy out the stright cards along with their suits
+  if (gotStraight==true) {
+
+    int straight_i;
+    int str_prev_card=-1;
+    // For brevity seperate out the case of an ace in the stright and no ace in the staight
+    if (aceInStraight==true) {
+      // We know the ace is last in ascending hand (with face value 14) so set that
+      best_face[0] = 14;
+      best_suit[0] = cards_suit_[6];
+      // Now loop backwards adding subsiquent cards based on high card
+      straight_i=4;
+      for (int i=5; i>-1; i--) {
+	if (cards_face_[i]<straightHighCard+1 && cards_face_[i]!=str_prev_card) {
+	  best_face[straight_i] = cards_face_[i];
+	  best_suit[straight_i] = cards_suit_[i];
+	  str_prev_card = cards_face_[i];
+	  straight_i--;
+	}
+	if (straight_i==0) break;
+      }
+    } else {
+      straight_i=4;
+      for (int i=6; i>-1; i--) {
+	if (cards_face_[i]<straightHighCard+1 && cards_face_[i]!=str_prev_card) {
+	  best_face[straight_i] = cards_face_[i];
+	  best_suit[straight_i] = cards_suit_[i];
+	  str_prev_card = cards_face_[i];
+	  straight_i--;
+	}
+	if (straight_i==-1) break;
+      }
+    }
+
+    hand_code = 5;
+    return 0;
+    
+  }
+  
   return 0;
   
 }
