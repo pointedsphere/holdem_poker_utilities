@@ -2,6 +2,9 @@
 #ifndef HOLDEMHAND_H_
 #define HOLDEMHAND_H_
 
+#include <iostream>
+#include <vector>
+
 class hand
 {
 
@@ -128,6 +131,9 @@ y     10 ::: Royal Flush
   // Or for the arrays split into hole, flop, turn and river
   int setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
 
+  // Set the cards using a vector, used for python wrapping
+  int pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in);
+  
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
   int getBestHand();
 
@@ -136,6 +142,8 @@ y     10 ::: Royal Flush
 
   // Check for a straight and return the high card of the straight or -1 for no straight
   int getStraight(int S_cards[], int hand_size);
+
+  // Return the outputs etc
   
 };
 

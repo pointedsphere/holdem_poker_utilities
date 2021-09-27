@@ -64,6 +64,66 @@ int hand::setCardsFull(int face_in[7], int suit_in[7])
 
 // Assign the hand, including some minor error checks of the cards formats
 // Do this from the full hand as single array
+// This is done for setting using vectors, i.e. for calling when wrapped with python
+int hand::pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
+{
+
+  /*
+    Error Codes
+    ===========
+      Error codes returned from function, 0 means everything ran smoothly.
+        -1 ::: Invalid card face value outside range of [1,14] given as an input.
+        -2 ::: Invalid card suit value outside range of [1,4] given as an input.
+  */
+  
+  // Check each card for errors in face or suit value
+  for ( int i=0 ; i<7 ; i++ ) {
+    
+    // If card value is 1, i.e. ace, then switch this to a 14
+    // Also check for invalid card face value
+    // Using switch as it's a bit more verbose but slightly more efficient
+    // than a few if statements
+    switch(face_in[i]) {
+    case 1 : cards_face_[i] = 14; break;
+    case 2 : cards_face_[i] =  2; break;
+    case 3 : cards_face_[i] =  3; break;
+    case 4 : cards_face_[i] =  4; break;
+    case 5 : cards_face_[i] =  5; break;
+    case 6 : cards_face_[i] =  6; break;
+    case 7 : cards_face_[i] =  7; break;
+    case 8 : cards_face_[i] =  8; break;
+    case 9 : cards_face_[i] =  9; break;
+    case 10: cards_face_[i] = 10; break;
+    case 11: cards_face_[i] = 11; break;
+    case 12: cards_face_[i] = 12; break;
+    case 13: cards_face_[i] = 13; break;
+    case 14: cards_face_[i] = 14; break;
+    default: return -1; // Error code -1
+    }
+
+    // Check the suit values are valid, i.e. in [1,4]
+    if (suit_in[i]!=1 && suit_in[i]!=2 && suit_in[i]!=3 && suit_in[i]!=4) {
+      return -2; // Error code -2
+    } else {
+      cards_suit_[i] = suit_in[i];
+    }
+    
+  }
+
+  // We have now read the cards in
+  isCards_ = true;
+  
+  // Completed, return success
+  return 0;
+  
+}
+
+
+
+
+
+// Assign the hand, including some minor error checks of the cards formats
+// Do this from the full hand as single array
 int hand::setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1])
 {
 

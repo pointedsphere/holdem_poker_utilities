@@ -16,7 +16,12 @@ SRC_FILES := mainfile.cpp \
              $(wildcard $(SRC_DIR)/tools/*.cpp) \
              $(wildcard $(SRC_DIR)/holdem/*.cpp) \
              $(wildcard $(SRC_DIR)/test/*.cpp)
+SRC_FILES_PY := wrapper.cpp \
+             $(wildcard $(SRC_DIR)/tools/*.cpp) \
+             $(wildcard $(SRC_DIR)/holdem/*.cpp) \
+             $(wildcard $(SRC_DIR)/test/*.cpp)
 OBJ = $(SRC_FILES:.cpp=.o)
+# OBJ_PY = $(SRC_FILES_PY:.cpp=.o)
 
 opt: $(OBJ)
 	$(CC) -o holdem_tools.out $(FLAGS) $^
@@ -24,8 +29,9 @@ opt: $(OBJ)
 devel: $(OBJ)
 	$(CC) -o holdem_tools_dev.out $(DFLAGS) $^
 
+# Note for the bash variables we use the double $$ to escape the makefile std $
 python:
-	g++ -O3 -Wall -shared -std=c++11 -undefined dynamic_lookup $$(python3 -m pybind11 --includes) -fPIC $(python3 -m pybind11 --includes) python_wrapper.cpp -o holdEm$$(python3-config --extension-suffix)
+	g++ -O3 -Wall -shared -std=c++11 -undefined dynamic_lookup $$(python3 -m pybind11 --includes) -fPIC $(python3 -m pybind11 --includes) $(SRC_FILES_PY) -o holdEm$$(python3-config --extension-suffix)
 
 # Setup and/or clean
 dir:
