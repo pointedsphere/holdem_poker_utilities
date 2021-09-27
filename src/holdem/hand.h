@@ -36,8 +36,8 @@ private:
   // Note a _ postfix means a private variable
   
   // The cards to use in the hand
-  int cards_face_[7];
-  int cards_suit_[7];
+  int cardsFace_[7];
+  int cardsSuit_[7];
   
   // Have the cards been read or not
   bool isCards_;
@@ -109,8 +109,8 @@ y     10 ::: Royal Flush
          Return the highest face value cards in ascending order
 
   */
-  int best_face[5];
-  int best_suit[5];  
+  int bestFace[5];
+  int bestSuit[5];  
   
   // Constructor for initial variables
   // NOTE: Initial values for all face values set to -1 which signifies no hand.
@@ -121,8 +121,8 @@ y     10 ::: Royal Flush
     hand_code = -1;
 
     for (int i=0; i<5; i++) {
-      best_face[i] = -1;
-      best_suit[i] = -1;
+      bestFace[i] = -1;
+      bestSuit[i] = -1;
     }
   }
   
@@ -135,7 +135,7 @@ y     10 ::: Royal Flush
   int pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in);
   
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
-  int getBestHand();
+  int findBestHand();
 
   // Sort the cards_face_ and cards_suit_ arrays such cards_face_ is in ascending order
   void sortCards();
@@ -143,7 +143,11 @@ y     10 ::: Royal Flush
   // Check for a straight and return the high card of the straight or -1 for no straight
   int getStraight(int S_cards[], int hand_size);
 
-  // Return the outputs etc
+  // Get variables from the class
+  std::vector<int> getCardsFace();
+  std::vector<int> getCardsSuit();
+  std::vector<int> getBestFace();
+  std::vector<int> getBestSuit();
   
 };
 

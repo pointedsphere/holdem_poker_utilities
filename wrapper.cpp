@@ -30,17 +30,11 @@ PYBIND11_MODULE(holdEm, m) {
     py::class_<hand>(m, "hand")
       .def(py::init<>())
       .def("pSetCardsFull", &hand::pSetCardsFull)
-      .def("getBestHand",  &hand::getBestHand);
-
-
-    
-      // .def("setCardsFull",
-      // 	   [](std::array<int, 7> face_in, std::array<int, 7> suit_in)
-      // 	   { return &hand::getBestHand(face_in.data(),suit_in.data()); })
-
-  // static int best_face[5];
-  // static int best_suit[5];  
-  
+      .def("getCardsFace",  &hand::getCardsFace)
+      .def("getCardsSuit",  &hand::getCardsSuit)
+      .def("getBestFace",   &hand::getBestFace)
+      .def("getBestSuit",   &hand::getBestSuit)
+      .def("findBestHand",  &hand::findBestHand);
     
 }  
 
