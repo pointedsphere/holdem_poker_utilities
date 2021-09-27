@@ -29,12 +29,14 @@ PYBIND11_MODULE(holdEm, m) {
 
     py::class_<hand>(m, "hand")
       .def(py::init<>())
+      .def("pSetCards", &hand::pSetCards)
       .def("pSetCardsFull", &hand::pSetCardsFull)
+      .def("findBestHand",  &hand::findBestHand)
       .def("getCardsFace",  &hand::getCardsFace)
       .def("getCardsSuit",  &hand::getCardsSuit)
       .def("getBestFace",   &hand::getBestFace)
       .def("getBestSuit",   &hand::getBestSuit)
-      .def("findBestHand",  &hand::findBestHand);
+      .def("getHandCode",   &hand::getHandCode);
     
 }  
 

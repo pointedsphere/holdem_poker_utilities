@@ -58,7 +58,7 @@ y     9  ::: Straight flush
 y     10 ::: Royal Flush
   */
   
-  int hand_code;
+  int handCode;
 
   /* 
      The best hand, which is ordered in a special way for each hand one has.
@@ -118,21 +118,28 @@ y     10 ::: Royal Flush
     isCards_ = false; // On initialisation we haven't read the cards in
 
     // Also, on initialisation we do not have a hand
-    hand_code = -1;
+    handCode = -1;
 
     for (int i=0; i<5; i++) {
       bestFace[i] = -1;
       bestSuit[i] = -1;
     }
   }
+
+  /*
+    Set the cards in the hand, first using routines faster in pure C++ and secondly
+    with routines that are faster when wrapped with Python
+  */
   
   // Set the cards private array from a full array
-  int setCardsFull(int face_in[7], int suit_in[7]);
+  int setCardsFull(int cards_in[2][7]);
   // Or for the arrays split into hole, flop, turn and river
   int setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
 
-  // Set the cards using a vector, used for python wrapping
+  // Set the cards using vectors, used for python wrapping
   int pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in);
+  int pSetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
+		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
   
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
   int findBestHand();
@@ -148,6 +155,7 @@ y     10 ::: Royal Flush
   std::vector<int> getCardsSuit();
   std::vector<int> getBestFace();
   std::vector<int> getBestSuit();
+  int getHandCode();
   
 };
 

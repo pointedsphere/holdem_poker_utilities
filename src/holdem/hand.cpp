@@ -16,7 +16,7 @@
 
 // Assign the hand, including some minor error checks of the cards formats
 // Do this from the full hand as single array
-int hand::setCardsFull(int face_in[7], int suit_in[7])
+int hand::setCardsFull(int cards_in[2][7])
 {
 
   /*
@@ -34,7 +34,7 @@ int hand::setCardsFull(int face_in[7], int suit_in[7])
     // Also check for invalid card face value
     // Using switch as it's a bit more verbose but slightly more efficient
     // than a few if statements
-    switch(face_in[i]) {
+    switch(cards_in[0][i]) {
     case 1 : cardsFace_[i] = 14; break;
     case 2 : cardsFace_[i] =  2; break;
     case 3 : cardsFace_[i] =  3; break;
@@ -53,10 +53,10 @@ int hand::setCardsFull(int face_in[7], int suit_in[7])
     }
 
     // Check the suit values are valid, i.e. in [1,4]
-    if (suit_in[i]!=1 && suit_in[i]!=2 && suit_in[i]!=3 && suit_in[i]!=4) {
+    if (cards_in[1][i]!=1 && cards_in[1][i]!=2 && cards_in[1][i]!=3 && cards_in[1][i]!=4) {
       return -2; // Error code -2
     } else {
-      cardsSuit_[i] = suit_in[i];
+      cardsSuit_[i] = cards_in[1][i];
     }
     
   }
@@ -130,7 +130,7 @@ int hand::pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
 
 
 // Assign the hand, including some minor error checks of the cards formats
-// Do this from the full hand as single array
+// Do this from the full hand seperated into hole, flop, turn and river arrays
 int hand::setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1])
 {
 
@@ -198,6 +198,79 @@ int hand::setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][
   
 }
 
+// Assign the hand, including some minor error checks of the cards formats
+// Do this from the full hand seperated into hole, flop, turn and river arrays
+// Do this with vectors for ease of Python wrapping
+int hand::pSetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
+		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S)
+{
+
+  /*
+    Error Codes
+    ===========
+      Error codes returned from function, 0 means everything ran smoothly.
+        -1 ::: Invalid card face value outside range of [1,14] given as an input.
+        -2 ::: Invalid card suit value outside range of [1,4] given as an input.
+  */
+
+  int tmp_face;
+  int tmp_suit;
+    
+  // Check each card for errors in face or suit value
+  for ( int i=0 ; i<7 ; i++ ) {
+
+    // Set temp values by iterating through the hole, flop, turn and river
+    switch(i) {
+    case 1: tmp_face= hole_F[0]; tmp_suit= hole_S[0]; break;
+    case 2: tmp_face= hole_F[1]; tmp_suit= hole_S[1]; break;
+    case 3: tmp_face= flop_F[0]; tmp_suit= flop_S[0]; break;
+    case 4: tmp_face= flop_F[1]; tmp_suit= flop_S[1]; break;
+    case 5: tmp_face= flop_F[2]; tmp_suit= flop_S[2]; break;
+    case 6: tmp_face= turn_F;    tmp_suit= turn_S;    break;
+    case 7: tmp_face=river_F;    tmp_suit=river_S;    break;
+    }
+    
+    // If card value is 1, i.e. ace, then switch this to a 14
+    // Also check for invalid card face value
+    // Using switch as it's a bit more verbose but slightly more efficient
+    // than a few if statements
+    switch(tmp_face) {
+    case 1 : cardsFace_[i] = 14; break;
+    case 2 : cardsFace_[i] =  2; break;
+    case 3 : cardsFace_[i] =  3; break;
+    case 4 : cardsFace_[i] =  4; break;
+    case 5 : cardsFace_[i] =  5; break;
+    case 6 : cardsFace_[i] =  6; break;
+    case 7 : cardsFace_[i] =  7; break;
+    case 8 : cardsFace_[i] =  8; break;
+    case 9 : cardsFace_[i] =  9; break;
+    case 10: cardsFace_[i] = 10; break;
+    case 11: cardsFace_[i] = 11; break;
+    case 12: cardsFace_[i] = 12; break;
+    case 13: cardsFace_[i] = 13; break;
+    case 14: cardsFace_[i] = 14; break;
+    default: return -1; // Error code -1
+    }
+
+    // Check the suit values are valid, i.e. in [1,4]
+    if (tmp_suit!=1 && tmp_suit!=2 && tmp_suit!=3 && tmp_suit!=4) {
+      return -2; // Error code -2
+    } else {
+      cardsSuit_[i] = tmp_suit;
+    }
+    
+  }
+
+  // We have now read the cards in
+  isCards_ = true;
+  
+  // Completed, return success
+  return 0;
+  
+}
+
+
+
 
 
 
@@ -238,7 +311,10 @@ std::vector<int> hand::getBestSuit()
   }
   return getBS; 
 }
-
+int hand::getHandCode()
+{
+  return handCode;
+}
 
 
 
@@ -324,7 +400,7 @@ int hand::findBestHand()
 
   /* 
 
-     Get the best hand, use this to set the class variable hand_code based on the hand we have.
+     Get the best hand, use this to set the class variable handCode based on the hand we have.
      Also set the bestFace and bestSuit class variables with the face and suit values of the 
      cards that create the best hand (where each ith element is the face and corredsponding suit).
 
@@ -441,11 +517,11 @@ int hand::findBestHand()
 
       if (straightFlushHighCard==14) {
 	// If the high card of the flush straight is an ace we have a royal flush !!!
-	hand_code = 10;
+	handCode = 10;
 
       } else {
 	// Otherwise we just have a stright flush, still pretty good
-	hand_code = 9;
+	handCode = 9;
       }
 
       // Copy over the cards from the stright to the best face/suit
@@ -540,7 +616,7 @@ int hand::findBestHand()
 	break;
       }
     }
-    hand_code = 8;
+    handCode = 8;
     return 0; // We have 4 of a kind, no need to keep checking
   }
   
@@ -569,7 +645,7 @@ int hand::findBestHand()
       }
     }
     
-    hand_code = 7;
+    handCode = 7;
     return 0; // Full house, so we can exit now as we've checked for all better hands
     
   }
@@ -591,7 +667,7 @@ int hand::findBestHand()
       flush_tmp--;
     }
 
-    hand_code = 6;
+    handCode = 6;
     return 0;
     
   }
@@ -637,7 +713,7 @@ int hand::findBestHand()
       }
     }
 
-    hand_code = 5;
+    handCode = 5;
     return 0;
     
   }
@@ -667,7 +743,7 @@ int hand::findBestHand()
       if (three_i==-1) break;
     }
 
-    hand_code = 4;
+    handCode = 4;
     return 0;
     
   }
@@ -698,7 +774,7 @@ int hand::findBestHand()
 	break;
       }
     }
-    hand_code = 3;
+    handCode = 3;
     return 0;
   }
 
@@ -726,7 +802,7 @@ int hand::findBestHand()
 	if (pair_i==-1) break;
       }
     }
-    hand_code = 2;
+    handCode = 2;
     return 0;
   }
 
@@ -743,7 +819,7 @@ int hand::findBestHand()
     bestSuit[high_i] = cardsSuit_[i];
     high_i--;
   }
-  hand_code = 1;
+  handCode = 1;
   return 0;
   
 }
