@@ -1,11 +1,8 @@
 #include<iostream>
 #include <fstream>
 
-#include "src/tools/constants.h"
-#include "src/tools/inout.h"
+#include "src/holdem/hand.h"
 
 int main() {
-    
   return 0;
-    
 }

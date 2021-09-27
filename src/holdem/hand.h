@@ -124,7 +124,7 @@ y     10 ::: Royal Flush
   }
   
   // Set the cards private array from a full array
-  int setCards(int cards[2][7]);
+  int setCardsFull(int face_in[7], int suit_in[7]);
   // Or for the arrays split into hole, flop, turn and river
   int setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
 

@@ -9,7 +9,7 @@
 
 // Assign the hand, including some minor error checks of the cards formats
 // Do this from the full hand as single array
-int hand::setCards(int cards[2][7])
+int hand::setCardsFull(int face_in[7], int suit_in[7])
 {
 
   /*
@@ -27,7 +27,7 @@ int hand::setCards(int cards[2][7])
     // Also check for invalid card face value
     // Using switch as it's a bit more verbose but slightly more efficient
     // than a few if statements
-    switch(cards[0][i]) {
+    switch(face_in[i]) {
     case 1 : cards_face_[i] = 14; break;
     case 2 : cards_face_[i] =  2; break;
     case 3 : cards_face_[i] =  3; break;
@@ -46,10 +46,10 @@ int hand::setCards(int cards[2][7])
     }
 
     // Check the suit values are valid, i.e. in [1,4]
-    if (cards[1][i]!=1 && cards[1][i]!=2 && cards[1][i]!=3 && cards[1][i]!=4) {
+    if (suit_in[i]!=1 && suit_in[i]!=2 && suit_in[i]!=3 && suit_in[i]!=4) {
       return -2; // Error code -2
     } else {
-      cards_suit_[i] = cards[1][i];
+      cards_suit_[i] = suit_in[i];
     }
     
   }

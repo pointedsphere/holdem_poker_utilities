@@ -11,7 +11,8 @@ FLAGS  = -O3
 # Directories things are stored in
 SRC_DIR   := src
 OBJ_DIR   := obj
-SRC_FILES := $(wildcard *.cpp) \
+# $(wildcard *.cpp) 
+SRC_FILES := mainfile.cpp \
              $(wildcard $(SRC_DIR)/tools/*.cpp) \
              $(wildcard $(SRC_DIR)/holdem/*.cpp) \
              $(wildcard $(SRC_DIR)/test/*.cpp)
@@ -23,6 +24,9 @@ opt: $(OBJ)
 devel: $(OBJ)
 	$(CC) -o holdem_tools_dev.out $(DFLAGS) $^
 
+python:
+	g++ -O3 -Wall -shared -std=c++11 -undefined dynamic_lookup $$(python3 -m pybind11 --includes) -fPIC $(python3 -m pybind11 --includes) python_wrapper.cpp -o holdEm$$(python3-config --extension-suffix)
+
 # Setup and/or clean
 dir:
 	mkdir -p $(BUILDDIR)
@@ -30,5 +34,6 @@ dir:
 clean:
 	rm *.o 2> /dev/null || true
 	rm $(SRC_DIR)/tools/*.o 2> /dev/null || true
+	rm $(SRC_DIR)/holdem/*.o 2> /dev/null || true
 	rm $(SRC_DIR)/test/*.o 2> /dev/null || true
 
