@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <random>
+#include <chrono>
 
 #include "deck.h"
-
 
 
 
@@ -24,6 +26,14 @@ void deck::setDeckFull()
   }
 };
 
+// Set the deck index values
+void deck::setDeckIndex(int maxIndex)
+{
+  // Do for the 4 suits
+  for (int i=0; i<maxIndex; i++) {
+    deckIndex.push_back(i);
+  }
+};
 
 
 // Remove input cards from the deck
@@ -47,6 +57,7 @@ int deck::remCardsFromDeck(std::vector<int> remFace, std::vector<int> remSuit)
 	// then delete and break to the next card to remove
 	deckFace.erase(deckFace.begin()+j);
 	deckSuit.erase(deckSuit.begin()+j);
+	numCards=numCards-1;
 	break;
       }
     }
@@ -71,3 +82,27 @@ std::vector<int> deck::getDeckSuit()
 {
   return deckSuit;
 };
+std::vector<int> deck::getDeckIndex()
+{
+  return deckIndex;
+};
+int deck::getNumCards()
+{
+  return numCards;
+};
+
+
+
+/*
+  Randomising/shuffling and dealing the deck
+*/
+
+void deck::shuffleIndex()
+{
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  shuffle(deckIndex.begin(), deckIndex.begin()+numCards, std::default_random_engine(seed));
+};
+
+
+
+
