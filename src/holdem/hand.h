@@ -1,6 +1,6 @@
 
-#ifndef HOLDEMHAND_H_
-#define HOLDEMHAND_H_
+#ifndef HAND_H_
+#define HAND_H_
 
 #include <iostream>
 #include <vector>
