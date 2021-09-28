@@ -12,6 +12,7 @@ class deck
 
 private:
 
+  bool deckSet;
   std::vector<int> deckFace;
   std::vector<int> deckSuit;
   std::vector<int> deckIndex;
@@ -33,6 +34,7 @@ public:
     
     // We start with 52 cards
     numCards = 52;
+    deckSet = false;
     
     // Set the array of indexes of the deck, for use with shuffling
     setDeckIndex(52);
@@ -49,6 +51,9 @@ public:
   // Populate fullDeckFace and fullDeckSuit with all 52 cards
   void setDeckFull();
 
+  // Populate the deck, but without the cards given as input
+  int setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit);
+  
   // Set the deck indexes
   void setDeckIndex(int maxIndex);
   
@@ -63,6 +68,7 @@ public:
   int dealCards(int numToDeal);
   
   // C++ get functions
+  bool getDeckSet();
   std::vector<int> getDeckFace();
   std::vector<int> getDeckSuit();
   std::vector<int> getDeckIndex();

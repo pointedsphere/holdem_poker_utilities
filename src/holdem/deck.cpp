@@ -14,16 +14,77 @@
   Building the initial deck (or the part we don't know about
 */
 
-// Set the full decks class variables with all 52 cards in order
 void deck::setDeckFull()
 {
+
+  /*
+    Populate the class arrays deckFace and deckSuit with the face and suit values of all 52
+    cards in a deck.
+   */
+  
   // Do for the 4 suits
   for (int s=1; s<5; s++) {
+    // Do for each card in the current suit
     for (int f=2; f<15; f++) {
+      // Add all the cards
       deckFace.push_back(f);
       deckSuit.push_back(s);
     }
   }
+  deckSet = true;
+};
+
+int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
+{
+
+  /*
+    Populate the class arrays deckFace and deckSuit with the face and suit values of all 52
+    cards in a deck, ignoring any cards given in the igFace and igSuit inputs.
+
+    NOTE: This routine does have error checks and converts face value 1=>14 as it is assumed 
+          it will not be called often.
+    
+    Inputs:
+        igFace :: Vector continaing face values of the cards not to add to deck.
+        igSuit :: Vector continaing suit values of the cards not to add to deck.
+
+    Returns:
+         0 :: Success!
+        -1 :: The face and suit input arrays are of different sizes
+   */
+
+  // Check that the input arrays are the same size
+  if (igFace.size()!=igSuit.size()) {
+    return -1; // Return error
+  }
+
+  // Change igFace values from 1 => 14, just incase input is given with ace value as 1
+  for (int i=0; i<igFace.size(); i++) {
+    if (igFace[i]==1) igFace[i]=14;
+  }
+  
+  // Do for the 4 suits
+  for (int s=1; s<5; s++) {
+    // Do for each card in the current suit
+    for (int f=2; f<15; f++) {
+      // Check each of the ignore vector elements to see if the current card to be added should
+      // be ignored or not
+      for (int i=0; i<igFace.size(); i++) {
+	if (igFace[i]==f && igSuit[i]==s) {
+	  numCards--;
+	  break;
+	} else if (i==igFace.size()-1) {
+	  deckFace.push_back(f);
+	  deckSuit.push_back(s);
+	  break;
+	}
+      }
+    }
+  }
+
+  deckSet = true;
+  return 0; // Success
+  
 };
 
 // Set the deck index values
@@ -77,6 +138,10 @@ int deck::remCardsFromDeck(std::vector<int> remFace, std::vector<int> remSuit)
   Getting things from the deck
 */
 
+bool deck::getDeckSet()
+{
+  return deckSet;
+};
 std::vector<int> deck::getDeckFace()
 {
   return deckFace;
