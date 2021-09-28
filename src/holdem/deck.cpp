@@ -70,6 +70,11 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
     return -1; // Return error
   }
 
+  // Check that some cards will be left in the deck
+  if (igFace.size()>52) {
+    return -1; // Return error
+  }
+  
   // Change igFace values from 1 => 14, just incase input is given with ace value as 1
   for (int i=0; i<igFace.size(); i++) {
     if (igFace[i]==1) igFace[i]=14;
