@@ -22,10 +22,12 @@ public:
   // Populate fullDeckFace and fullDeckSuit with all 52 cards
   void setDeckFull();
 
+  // Remove some input cards from the deck
+  int remCardsFromDeck(std::vector<int> remFace, std::vector<int> remSuit);
+  
   // C++ get functions
   std::vector<int> getDeckFace();
   std::vector<int> getDeckSuit();
-  
   
 };
 

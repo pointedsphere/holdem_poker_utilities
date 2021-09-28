@@ -26,6 +26,36 @@ void deck::setDeckFull()
 
 
 
+// Remove input cards from the deck
+// Not remFace and remSuit must be of the same length. For cost reasons we do not
+// check, though ideally we would
+int deck::remCardsFromDeck(std::vector<int> remFace, std::vector<int> remSuit)
+{
+
+  /* 
+     Returns:
+          0 : Success!
+         -1 : Card to remove from deck not in deck.
+  */
+  
+  for (int i=0; i<remFace.size(); i++) {
+    for (int j=0; j<53; j++) {
+      if (j==53) return -1; // overflow error
+      if (remFace[i]==1) remFace[i]=14; // Check for aces
+      // Now check each card in the deck against the current one to remove
+      if (remFace[i]==deckFace[j] && remSuit[i]==deckSuit[j]) {
+	// then delete and break to the next card to remove
+	deckFace.erase(deckFace.begin()+j);
+	deckSuit.erase(deckSuit.begin()+j);
+	break;
+      }
+    }
+  }
+
+  return 0; // Success!
+  
+};
+
 
 
 
