@@ -145,26 +145,49 @@ Use the cards stored in ``cardsFace_`` and ``cardsSuit_`` to find the best 5 car
 After compiling with ``make`` we set the cards as in ``setCards`` definition, then find the best cards and print them out with out main.cpp file
 ```
 #include<iostream>
+
 #include "src/holdem/hand.h"
+#include "src/holdem/deck.h"
 
 int main() {
-  int stat;
-  hand H;
-  int hole[2][2] = {{3,4},{1,3}};
-  int flop[2][3] = {{14,9,13},{1,4,3}};
-  int turn[2][1] = {{8},{3}};
-  int river[2][1]= {{1},{2}};
-  
-  stat = H.setCards(hole,flop,turn,river);
+
+  int stat; // status variable
+  hand H;   // Initialise a hand class
+
+  // Declare the input arrays to set the cards in the hand
+  int ArrHoleF[2] = {3,4};
+  int ArrHoleS[2] = {1,3};
+  int ArrFlopF[3] = {14,9,3};
+  int ArrFlopS[3] = {1,4,3};
+  int turnF = 8;
+  int turnS = 3;
+  int riverF = 1;
+  int riverS = 2;
+
+  // Convert arrays to vectors
+  std::vector<int> holeF(ArrHoleF, ArrHoleF + sizeof(ArrHoleF) / sizeof(ArrHoleF[0]) );
+  std::vector<int> holeS(ArrHoleS, ArrHoleS + sizeof(ArrHoleS) / sizeof(ArrHoleS[0]) );
+  std::vector<int> flopF(ArrFlopF, ArrFlopF + sizeof(ArrFlopF) / sizeof(ArrFlopF[0]) );
+  std::vector<int> flopS(ArrFlopS, ArrFlopS + sizeof(ArrFlopS) / sizeof(ArrFlopS[0]) );
+
+  // Set the cards within the class
+  stat = H.SetCards(holeF,holeS,flopF,flopS,turnF,turnS,riverF,riverS);
   std::cout << "status a: " << stat << std::endl;
+
+  // Find the best hand in the given 7 cards
   stat = H.findBestHand();
   std::cout << "status b: " << stat << std::endl;
+
+  // Print out the best hand
   std::cout << "hand code: " << H.handCode << std::endl;
-  std::vector<int> T = H.getCardsFace();
+  std::vector<int> F = H.getBestFace();
+  std::vector<int> S = H.getBestSuit();
   for(int i=0; i<5; i++) {
-    std::cout << H.bestFace[i] << "   " << T[i] << std::endl;
+    std::cout << "Card " << i+1 << " ::: face: " << F[i] << " , suit: " << S[i] << std::endl;
   }
+  
   return 0;
+  
 }
 ```
 
