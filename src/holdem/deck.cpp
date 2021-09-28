@@ -194,7 +194,7 @@ std::vector<int> deck::getDealSuit()
 
 // Suffle the index array, where there is one index for each of the cards left in the deck
 // so we use this to draw random cards from the deck (or what is left of it)
-void deck::shuffleIndex()
+void deck::shuffleI()
 {
 
   /*
@@ -231,6 +231,11 @@ int deck::dealCards(int numToDeal)
 	  and dealSuit, which are private and in their raw state must be accessed with the
 	  get functions getDealFace and getDealSuit
 
+    RETURNS:
+    --------
+        0  :: Success
+	-1 :: Number of cards requested from deal greater than number of cards left in deck
+
    */
   
   // If we have previously dealt then destroy the deal vectors
@@ -239,6 +244,9 @@ int deck::dealCards(int numToDeal)
     dealSuit.clear();
   }
 
+  // If the number of cards asked to deal is more than that left in deck return with an error
+  if (numCards<numToDeal) return -1;
+  
   // Now deal the cards, starting from the end of the shuffled index array
   for (int i=numCards-1; i>=numCards-numToDeal; i--) {
     dealFace.push_back(deckFace[deckIndex[i]]);

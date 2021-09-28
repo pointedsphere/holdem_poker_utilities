@@ -45,7 +45,7 @@ PYBIND11_MODULE(holdEm, m) {
       .def("setDeckPartial", &deck::setDeckPartial)
       .def("setDeckIndex",   &deck::setDeckIndex)
       .def("remCards",       &deck::remCards)
-      .def("shuffleIndex",   &deck::shuffleIndex)
+      .def("shuffleI",       &deck::shuffleI)
       .def("dealCards",      &deck::dealCards)
       .def("getDeckSet",     &deck::getDeckSet)
       .def("getDeckFace",    &deck::getDeckFace)
