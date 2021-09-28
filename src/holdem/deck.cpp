@@ -18,24 +18,24 @@ void deck::setDeckFull()
 {
 
   /*
-    Populate the class arrays deckFace and deckSuit with the face and suit values of all 52
+    Populate the class arrays deckFace_ and deckSuit_ with the face and suit values of all 52
     cards in a deck.
    */
 
   // Check if the deck has been set, if it has discard the old deck before populating
-  if (deckSet==true) deckIndex.clear();
+  if (deckSet_==true) deckIndex_.clear();
   
   // Do for the 4 suits
   for (int s=1; s<5; s++) {
     // Do for each card in the current suit
     for (int f=2; f<15; f++) {
       // Add all the cards
-      deckFace.push_back(f);
-      deckSuit.push_back(s);
+      deckFace_.push_back(f);
+      deckSuit_.push_back(s);
     }
   }
   
-  deckSet = true;
+  deckSet_ = true;
   
 };
 
@@ -43,7 +43,7 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
 {
 
   /*
-    Populate the class arrays deckFace and deckSuit with the face and suit values of all 52
+    Populate the class arrays deckFace_ and deckSuit_ with the face and suit values of all 52
     cards in a deck, ignoring any cards given in the igFace and igSuit inputs.
 
     NOTE: This routine does have error checks and converts face value 1=>14 as it is assumed 
@@ -59,7 +59,7 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
    */
 
   // Check if the deck has been set, if it has discard the old deck before populating
-  if (deckSet==true) deckIndex.clear();
+  if (deckSet_==true) deckIndex_.clear();
   
   // Check that the input arrays are the same size
   if (igFace.size()!=igSuit.size()) {
@@ -79,18 +79,18 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
       // be ignored or not
       for (int i=0; i<igFace.size(); i++) {
 	if (igFace[i]==f && igSuit[i]==s) {
-	  numCards--;
+	  numCards_--;
 	  break;
 	} else if (i==igFace.size()-1) {
-	  deckFace.push_back(f);
-	  deckSuit.push_back(s);
+	  deckFace_.push_back(f);
+	  deckSuit_.push_back(s);
 	  break;
 	}
       }
     }
   }
 
-  deckSet = true;
+  deckSet_ = true;
   return 0; // Success
   
 };
@@ -104,19 +104,19 @@ void deck::setDeckIndex(int maxIndex)
     If it is already set then destroy the data in it and start again.
 
     Inputs:
-        maxIndex :: The number of elements that will be created in deckIndex from 0
+        maxIndex :: The number of elements that will be created in deckIndex_ from 0
 	            to maxIndex-1.
   */
   
   // If the index array is already set, discard all data in it
-  if (indexSet==true) deckIndex.clear();
+  if (indexSet_==true) deckIndex_.clear();
   
   // Now populate all the index values in ascending order
   for (int i=0; i<maxIndex; i++) {
-    deckIndex.push_back(i);
+    deckIndex_.push_back(i);
   }
   
-  indexSet = true;
+  indexSet_ = true;
   
 };
 
@@ -129,7 +129,7 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
      Remove the cards given in remFace and remSuit from the current deck.
 
      NOTE: No error checks are carried out as this routine may need to be called multiple times,
-           so remFace and remSuit MUST be of the same size. Also deckFace and deckSuit MUST have
+           so remFace and remSuit MUST be of the same size. Also deckFace_ and deckSuit_ MUST have
 	   been set prior to calling this function.
 
      Returns:
@@ -142,11 +142,11 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
       if (j==53) return -1; // overflow error
       if (remFace[i]==1) remFace[i]=14; // Check for aces
       // Now check each card in the deck against the current one to remove
-      if (remFace[i]==deckFace[j] && remSuit[i]==deckSuit[j]) {
+      if (remFace[i]==deckFace_[j] && remSuit[i]==deckSuit_[j]) {
 	// then delete and break to the next card to remove
-	deckFace.erase(deckFace.begin()+j);
-	deckSuit.erase(deckSuit.begin()+j);
-	numCards=numCards-1;
+	deckFace_.erase(deckFace_.begin()+j);
+	deckSuit_.erase(deckSuit_.begin()+j);
+	numCards_=numCards_-1;
 	break;
       }
     }
@@ -154,7 +154,7 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 
   // If we have shiffled the cards we need new index values as we could have an index
   // outside the range of where the cards now exist
-  if (deckShuffled==true) setDeckIndex(numCards);
+  if (deckShuffled_==true) setDeckIndex(numCards_);
   
   return 0; // Success!
   
@@ -168,31 +168,31 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 
 bool deck::getDeckSet()
 {
-  return deckSet;
+  return deckSet_;
 };
 std::vector<int> deck::getDeckFace()
 {
-  return deckFace;
+  return deckFace_;
 };
 std::vector<int> deck::getDeckSuit()
 {
-  return deckSuit;
+  return deckSuit_;
 };
 std::vector<int> deck::getDeckIndex()
 {
-  return deckIndex;
+  return deckIndex_;
 };
 int deck::getNumCards()
 {
-  return numCards;
+  return numCards_;
 };
 std::vector<int> deck::getDealFace()
 {
-  return dealFace;
+  return dealFace_;
 };
 std::vector<int> deck::getDealSuit()
 {
-  return dealSuit;
+  return dealSuit_;
 };
 
 
@@ -214,8 +214,8 @@ void deck::shuffleI()
   */
   
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  shuffle(deckIndex.begin(), deckIndex.begin()+numCards, std::default_random_engine(seed));
-  deckShuffled = true;
+  shuffle(deckIndex_.begin(), deckIndex_.begin()+numCards_, std::default_random_engine(seed));
+  deckShuffled_ = true;
   
 };
 
@@ -226,17 +226,17 @@ int deck::dealCards(int numToDeal)
   /*
 
     Deal N cards from the deck, this is done by just pulling the last N cards from the deck
-    based on the indexes in deckIndex. So if deckIndex has not been shuffled the cards will
+    based on the indexes in deckIndex_. So if deckIndex_ has not been shuffled the cards will
     not be randomised.
 
-    NOTE: If numCards is incorrectly set, or the shuffle was done when numCards is larger 
+    NOTE: If numCards_ is incorrectly set, or the shuffle was done when numCards_ is larger 
           than it currently is this routine may deal cards that are no longer in the deck.
 	  This could be avoided with an error check, however this would increace the cost
 	  of this routine.
 
     NOTE: As we wish to return two sets of values (as vectors) a vector of face values and
-          a vector of relevant suit values we actually set the class based variables dealFace
-	  and dealSuit, which are private and in their raw state must be accessed with the
+          a vector of relevant suit values we actually set the class based variables dealFace_
+	  and dealSuit_, which are private and in their raw state must be accessed with the
 	  get functions getDealFace and getDealSuit
 
     RETURNS:
@@ -247,24 +247,24 @@ int deck::dealCards(int numToDeal)
    */
   
   // If we have previously dealt then destroy the deal vectors
-  if (dealDone==true) {
-    dealFace.clear();
-    dealSuit.clear();
+  if (dealDone_==true) {
+    dealFace_.clear();
+    dealSuit_.clear();
   }
 
   // If the number of cards asked to deal is more than that left in deck return with an error
-  if (numCards<numToDeal) return -1;
+  if (numCards_<numToDeal) return -1;
   
   // Now deal the cards, starting from the end of the shuffled index array
-  for (int i=numCards-1; i>=numCards-numToDeal; i--) {
-    dealFace.push_back(deckFace[deckIndex[i]]);
-    dealSuit.push_back(deckSuit[deckIndex[i]]);
+  for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {
+    dealFace_.push_back(deckFace_[deckIndex_[i]]);
+    dealSuit_.push_back(deckSuit_[deckIndex_[i]]);
   }
 
   // Update general and return success
-  numDealt = numToDeal;
-  numCards = numCards - numToDeal;
-  dealDone = true;
+  numDealt_ = numToDeal;
+  numCards_ = numCards_ - numToDeal;
+  dealDone_ = true;
   return 0; // Success!!
   
 }

@@ -12,21 +12,24 @@ class deck
 
 private:
 
-  bool deckSet;
-  std::vector<int> deckFace;
-  std::vector<int> deckSuit;
-  bool indexSet;
-  std::vector<int> deckIndex;
+  // Master deck variables
+  bool deckSet_;
+  std::vector<int> deckFace_;
+  std::vector<int> deckSuit_;
 
-  int numCards;
+  // The index array, used for dealing/shuffling cards
+  bool indexSet_;
+  std::vector<int> deckIndex_;
 
-  bool deckShuffled;
+  // To keep track of the deck
+  int numCards_;
+  bool deckShuffled_;
 
-
-  bool dealDone;
-  int  numDealt;
-  std::vector<int> dealFace;
-  std::vector<int> dealSuit;
+  // Class values for dealing the cards
+  bool dealDone_;
+  int  numDealt_;
+  std::vector<int> dealFace_;
+  std::vector<int> dealSuit_;
   
 public:
 
@@ -34,19 +37,19 @@ public:
   deck() {
     
     // We start with 52 cards
-    numCards = 52;
-    deckSet = false;
+    numCards_ = 52;
+    deckSet_ = false;
     
     // Set the array of indexes of the deck, for use with shuffling
-    indexSet = false;
+    indexSet_ = false;
     setDeckIndex(52);
 
     // Not yet shuffled
-    deckShuffled = false;
+    deckShuffled_ = false;
 
     // Not yeat dealt
-    dealDone = false;
-    numDealt = 0;
+    dealDone_ = false;
+    numDealt_ = 0;
     
   }
   
@@ -65,7 +68,7 @@ public:
   // Shuffle the indexes of the known cards
   void shuffleI();
 
-  // Deal cards to dealFace and dealSuit. Note: This destroys the vectors if they
+  // Deal cards to dealFace_ and dealSuit_. Note: This destroys the vectors if they
   // have previously been set
   int dealCards(int numToDeal);
   
