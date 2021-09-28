@@ -14,10 +14,17 @@ private:
 
   std::vector<int> deckFace;
   std::vector<int> deckSuit;
-
   std::vector<int> deckIndex;
 
   int numCards;
+
+  bool deckShuffled;
+
+
+  bool dealDone;
+  int  numDealt;
+  std::vector<int> dealFace;
+  std::vector<int> dealSuit;
   
 public:
 
@@ -30,6 +37,13 @@ public:
     // Set the array of indexes of the deck, for use with shuffling
     setDeckIndex(52);
 
+    // Not yet shuffled
+    deckShuffled = false;
+
+    // Not yeat dealt
+    dealDone = false;
+    numDealt = 0;
+    
   }
   
   // Populate fullDeckFace and fullDeckSuit with all 52 cards
@@ -43,12 +57,18 @@ public:
 
   // Shuffle the indexes of the known cards
   void shuffleIndex();
+
+  // Deal cards to dealFace and dealSuit. Note: This destroys the vectors if they
+  // have previously been set
+  int dealCards(int numToDeal);
   
   // C++ get functions
   std::vector<int> getDeckFace();
   std::vector<int> getDeckSuit();
   std::vector<int> getDeckIndex();
   int getNumCards();
+  std::vector<int> getDealFace();
+  std::vector<int> getDealSuit();
   
 };
 
