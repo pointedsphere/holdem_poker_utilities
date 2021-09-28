@@ -14,6 +14,8 @@
   Building the initial deck (or the part we don't know about
 */
 
+
+
 void deck::setDeckFull()
 {
 
@@ -38,6 +40,8 @@ void deck::setDeckFull()
   deckSet_ = true;
   
 };
+
+
 
 int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
 {
@@ -95,7 +99,8 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
   
 };
 
-// Set the deck index values
+
+
 void deck::setDeckIndex(int maxIndex)
 {
 
@@ -196,12 +201,13 @@ std::vector<int> deck::getDealSuit()
 };
 
 
+
 /*
   Randomising/shuffling and dealing the deck
 */
 
-// Suffle the index array, where there is one index for each of the cards left in the deck
-// so we use this to draw random cards from the deck (or what is left of it)
+
+
 void deck::shuffleI()
 {
 
@@ -218,6 +224,7 @@ void deck::shuffleI()
   deckShuffled_ = true;
   
 };
+
 
 
 int deck::dealCards(int numToDeal)
