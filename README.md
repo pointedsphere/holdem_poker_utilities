@@ -2,17 +2,19 @@
 
 A C++ library of utilities for calculations involving Texas HoldEm poker.
 
-**NOTE:** This library is under very active development.
+**NOTE: This library is under very active development.**
 
 
 
-## General use
+## General use and compilation
 
 This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis that can also be compiled for use as a Python module.
 
-In order to compile one may run ``make`` and to compile as a python library run ``make python``.
+In order to compile for C++ one may run ``make`` and to compile as the python library ``holdEm`` one should run ``make python``.
 
-### Notes
+**Note:** as this library is under very active development compilation has not been checking in many different environments yet.
+
+### General Notes
 
 - As the exact suit doesn't matter in HoldEm suits are referred to by integers [1,4], which suit is which is of no consequence as long as each suit is consistently referred to by the same integer throughout.
 - Each face value card is referred to by an integer, with [2,10] being self explanatory. 11, 12 and 13 refer to Jack, Queen and King respectively. An Ace is given the value 14.
@@ -22,23 +24,29 @@ In order to compile one may run ``make`` and to compile as a python library run 
 
 
 
+
+
+
+
+
+
 ## C++ Use
 
 
 
-### Hand Class
+### ``hand`` Class
 
 The hand class is the basic class that takes in the 2 hole cards of a given player along with the 5 cards from the flop, turn and river. It can then calculate the best HoldEm hand that exists within those 7 cards.
 
-###### Class var : ``int[7]`` : ``cardsFace_``
+#### Class var : ``int[7]`` : ``cardsFace_``
 
 The face value of the 7 cards from the hole, flop turn and river. Note the suit for each ith card is represented by the ith value of the cardsSuit_ array.
 
-###### Class var : ``int[7]`` : ``cardsSuit_``
+#### Class var : ``int[7]`` : ``cardsSuit_``
 
 The suit value of the 7 cards from the hole, flop turn and river. Note the face value for each ith card is represented by the ith value of the cardsSuit_ array.
 
-###### Class var : ``int`` : ``handCode``
+#### Class var : ``int`` : ``handCode``
 
 An integer that (once set) gives the code for the best hand available from the cards in ``cardsFace_`` and ``cardsSuit`` where:
 - -1  :: No hand, i.e. not yet checked
@@ -55,7 +63,7 @@ An integer that (once set) gives the code for the best hand available from the c
 
 Note: ``if handCode==-1`` then the best hand from the cards in ``cardsFace_`` and ``cardsSuit`` has not yet been calculated.
 
-###### Class var : ``int[5]`` : ``bestFace_``
+#### Class var : ``int[5]`` : ``bestFace_``
 
 The 5 cards (once set) that give the hand given in ``handCode``, only available. Note for each hand they will be ordered such that
 - Royal Flush: { 10, J, Q, K, A }
@@ -69,11 +77,11 @@ The 5 cards (once set) that give the hand given in ``handCode``, only available.
 -  Pair: Store the single pair in the final two elements of the array and ascending high cards in all lower elements e.g. { 2, 4, 6, 5, 5 }
 -  High Card: Return the highest face value cards in ascending order e.g. { 2, 4, 6, 7, 9, 10 }
 
-###### Class var : ``int[5]`` : ``bestSuit_``
+#### Class var : ``int[5]`` : ``bestSuit_``
 
 The suit integers where each ith element of ``bestSuit_`` gives the suit of the ith card in  ``bestFace_``.
 
-###### Class fn : ``int[2][7]->int`` : ``setCardsFull``
+#### Class fn : ``int[2][7]->int`` : ``setCardsFull``
 
 Set the values of ``cardsFace_`` and ``cardsSuit_`` based on the input array where ``cards_in[0][:]`` are the 7 face values of the cards and ``cards_in[1][:]`` are the 7 suit values of the cards.
 
@@ -100,7 +108,7 @@ One would set this by calling
   stat = H.setCardsFull(cards);
 ```
 
-###### Class fn : ``int[2][2],int[2][3],int[2][1],int[2][1]->int`` : ``setCards``
+#### Class fn : ``int[2][2],int[2][3],int[2][1],int[2][1]->int`` : ``setCards``
 
 Set the values of ``cardsFace_`` and ``cardsSuit_`` based on the input arrays where the four input arrays are (in order):
 - ``hole[2][2]`` :: The 2 hole cards.
@@ -124,11 +132,11 @@ As in the case of ``setCardsFull`` the first row refers to the face value of the
   stat = H.setCards(hole,flop,turn,river);
 ```
 
-###### Class fn : ``void`` : ``sortCards``
+#### Class fn : ``void`` : ``sortCards``
 
 Sort the cards (if set) in the ``cardsFace_`` and ``cardsSuit_`` values such that the face values are in ascending order, with ace=14 as the highest card.
 
-###### Class fn : ``none->int`` : ``findBestHand``
+#### Class fn : ``none->int`` : ``findBestHand``
 
 Use the cards stored in ``cardsFace_`` and ``cardsSuit_`` to find the best 5 card Texas HoldEm hand possible. Populate the ``bestFace_`` and ``bestSuit_`` class arrays and the ``handCode`` class variable. Returns 0 on success.
 
@@ -167,17 +175,248 @@ int main() {
 
 
 
+### ``deck`` Class
+
+This is the class where we store the cards in the deck (or those left in the deck at least), and where we deal those cards from.
+
+#### Class var : private : ``bool`` : ``deckSet_``
+
+Has the deck been initialised.
+
+#### Class var : private : ``vector<int>`` : ``deckFace_``
+
+The face values of the cards in the deck, each ith element has a corresponding suit value in ``deckSuit_``.
+
+#### Class var : private : ``vector<int>`` : ``deckSuit_``
+
+The face values of the cards in the deck, each ith element has a corresponding face value in ``deckFace_``.
+
+#### Class var : private : ``bool`` : ``indexSet_``
+
+Has the array ``deckIndex_`` been initialised.
+
+#### Class var : private : ``vector<int>`` : ``deckIndex_``
+
+An indexing array, containing all the integers in ``[0,numCards-1]``. This is the array that is shuffled in order to pull random cards from the ``deckFace_`` and ``deckSuit_`` arrays.
+
+#### Class var : private : ``int`` : ``numCards_``
+
+The number of cards left in the deck (i.e. 52 minus the number of cards removed).
+
+#### Class var : private : ``bool`` : ``deckShuffled_``
+
+Has the index array been shuffled.
+
+#### Class var : private : ``bool`` : ``dealDone_``
+
+Has a deal been done at some point, i.e. do the vectors ``dealFace_`` and ``dealSuit_`` contain data.
+
+#### Class var : private : ``int`` : ``numDealt_``
+
+The number of cards that have been dealt into the vectors ``dealFace_`` and ``dealSuit_``.
+
+#### Class var : private : ``vector<int>`` : ``dealFace_``
+
+Then face values of the cards pulled from the array ``deckFace_``. Note: each card has a corresponding face value in ``dealSuit_``. 
+
+#### Class var : private : ``vector<int>`` : ``dealSuit_``
+
+Then face values of the cards pulled from the array ``deckSuit_``. Note: each card has a corresponding face value in ``dealFace``. 
+
+#### Class fn : ``void`` : ``setDeckFull``
+
+Destroy any data in the ``deckFace_`` and ``deckSuit_`` vectors, then populate them with 52 cards sequentially.
+
+#### Class fn : ``vector<int>, vector<int> -> int`` : ``setDeckPartial``
+
+Destroy any data in the ``deckFace_`` and ``deckSuit_`` vectors, then populate the deck with 52 cards minus those given in input vectors, the inputs are (in order)
+- ``igFace`` :: ``vector<int>`` :: The face values of the cards not to add to deck.
+- ``igSuit`` :: ``vector<int>`` :: The suit values of the cards not to add to deck.
+
+Returns:
+- 0 :: Function completed successfully.
+- -1 :: The arrays ``igFace`` and ``igSuit`` are of different lengths
+- -2 :: The arrays ``igFace`` and ``igSuit`` have a size of 52 or greater, we need to leave at least 1 card in the deck.
+
+Note: We require ``igFace.size()==igSuit.size()``.
+
+Note: On completion of this routine ``deckFace_.size()=(52-igFace.size())``.
+
+Note: There are no input error checks performed in this routine. This is a cost measure as it will likely be called many times, so we must be careful with this routine.
+
+#### Class fn : ``int -> void`` : ``setDeckIndex``
+
+Destroy any data in ``deckIndex_`` then repopulate based on input integer ``maxIndex`` such that ``deckIndex_`` is an array of length ``maxIndex`` containing all the integers in ``[0,maxIndex-1]``.
+
+#### Class fn : ``vector<int>, vector<int> -> int`` : ``remCards``
+
+Remove cards from the deck, i.e. strip the cards given in input vectors from the vectors ``deckFace_`` and ``deckSuit_``. Inputs are
+- ``remFace`` :: ``vector<int>`` :: The face values of the cards to remove from the deck.
+- ``remSuit`` :: ``vector<int>`` :: The suit values of the cards to remove from the deck. Note each ith element of ``remSuit`` is the suit of the ith element of ``remFace``.
+
+Note: No error checks are done on inputs as this routine will be called many times, so be careful with calling this routine.
+
+#### Class fn : ``void`` : ``shuffleI``
+
+Shuffle the array ``deckIndex_``.
+
+#### Class fn : ``int -> int`` : ``dealCards``
+
+Deal cards from the ``deckFace_`` and ``deckSuit_`` vectors into the ``dealFace_`` and ``dealSuit_`` vectors.
+
+Note: if ``deckIndex_`` has not been shuffled (i.e. ``deckShuffled_==false``) this function will just pull cards from the end of the deck vectors sequentially.
+
+Note: if ``deckIndex_`` has been shuffled and then some cards have been removed from ``deckFace_`` and ``deckSuit_`` with ``remCards`` and ``shuffleI`` has not been called again then this array may return cards no longer in the deck. To avoid this once ``remCards`` has been called then call ``setDeckIndex(numCards_)`` followed by ``shuffleI()``.
+
+#### Class fn : ``void -> bool`` : ``getDeckSet``
+
+Return ``deckSet_``.
+
+#### Class fn : ``void -> vector<int>`` : ``getDeckFace``
+
+Return ``deckFace_``.
+
+#### Class fn : ``void -> vector<int>`` : ``getDeckSuit`
+
+Return ``deckSuit_``.
+
+#### Class fn : ``void -> vector<int>`` : ``getDeckIndex`
+
+Return ``deckIndex_``.
+
+#### Class fn : ``void -> int`` : ``getNumCards`
+
+Return ``numCards_``.
+
+#### Class fn : ``void -> vector<int>`` : ``getDealFace`
+
+Return ``dealFace_``.
+
+#### Class fn : ``void -> vector<int>`` : ``getDealSuit`
+
+Return ``dealSuit_``.
+
+#### Example
+
+An example of the use of the ``deck`` array is given below. Here we initialise the deck without AS, 3D, 4H. We then remove AC, 2C, 6C, 7H from the deck, printing the deck as it is along with the shuffled index array.
+
+Then we deal a hand of 2 cards and print, then deal a hand of 5 cards and print.
+
+Note this can be found at ``examples/deck_example.cpp``.
+
+```
+#include<iostream>
+
+#include "src/holdem/hand.h"
+#include "src/holdem/deck.h"
+
+int main() {
+
+  // Initialise the deck class
+  deck D;
+
+  // Iniailtise the deck, but without AS, 3D, 4H
+  static const int igFarr[] = {1,3,4};
+  static const int igSarr[] = {1,4,3};  
+  std::vector<int> igF(igFarr, igFarr + sizeof(igFarr) / sizeof(igFarr[0]) );
+  std::vector<int> igS(igSarr, igSarr + sizeof(igSarr) / sizeof(igSarr[0]) );
+  D.setDeckPartial(igF,igS);
+
+  // Remove AC, 2C, 6C, 7H from the deck
+  static const int Farr[] = {1,2,6,7};
+  static const int Sarr[] = {2,2,2,3};  
+  std::vector<int> RF(Farr, Farr + sizeof(Farr) / sizeof(Farr[0]) );
+  std::vector<int> RS(Sarr, Sarr + sizeof(Sarr) / sizeof(Sarr[0]) );
+  D.remCards(RF,RS);
+
+  // Get face and deck values as well as the index array shuffled
+  std::vector<int> F;
+  F = D.getDeckFace();
+  std::vector<int> S;
+  S = D.getDeckSuit();
+  
+  D.shuffleI();
+  std::vector<int> Index;
+  Index = D.getDeckIndex();
+
+  // Print the cards
+  for (int i=0; i<D.getNumCards(); i++) {
+    std::cout << "card i " << F[i] << "   " << S[i] << "  " << Index[i] << std::endl;
+  }
+  std::cout << std::endl << std::endl << std::endl << std::endl << std::endl;
+
+  // Deal a hand of cards
+  std::vector<int> DF;
+  std::vector<int> DS;
+  D.dealCards(2);
+  DF = D.getDealFace();
+  DS = D.getDealSuit();
+
+  // Print the dealt hand
+  std::cout << "First hand of 2 cards:" << std::endl;
+  for (int i=0; i<2; i++) {
+    std::cout << "card i, Face val: " << DF[i] << ", Suit val: " << DS[i] << std::endl;
+  }
+  std::cout <<  "Num cards left in deck: " << D.getNumCards() << std::endl;
+  
+  std::cout << std::endl << std::endl << std::endl << std::endl << std::endl;
+
+  // Deal a second hand of 5 cards
+  D.dealCards(5);
+  DF = D.getDealFace();
+  DS = D.getDealSuit();
+
+  // Print the dealt hand
+  std::cout << "Second hand of 5 cards:" <<std::endl;
+  for (int i=0; i<5; i++) {
+    std::cout << "card i, Face val: " << DF[i] << ", Suit val: " << DS[i] << std::endl;
+  }
+  std::cout <<  "Num cards left in deck: " << D.getNumCards() << std::endl;
+  
+  return 0;
+  
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Python Use
 
 To compile for Python run ``make python`` and import the module ``holdEm``. In this section we approach just the python usage, ignoring the exact structure of the C++ routines.
 
 
-### Hand Class
+
+
+
+
+
+
+
+
+
+### ``hand`` Class
 
 This works as the Python version of the hand class from C++ docs, where we set the 7 cards from the hold, flop, turn and river and then find the best 5 card HoldEm hand from these cards.
 
-###### Class fn : ``int[7],int[7]->int`` : ``pSetCardsFull``
+#### Class fn : ``int[7],int[7]->int`` : ``pSetCardsFull``
 
 Set the cards in the hand and on the table, where the first input array refers to the face values of the cards and the second to the suit values. Return 0 on success. For example we set the hand AS, 2C, 4H, 6D, 8C, AD, 6H with
 ```
@@ -185,7 +424,7 @@ H = holdEm.hand()
 stat = H.pSetCardsFull((1,2,4,6,8,14,6),(1,2,3,4,2,4,3))
 ```
 
-###### Class fn : ``int[2],int[2],int[3],int[3],int,int,int,int->int`` : ``pSetCards``
+#### Class fn : ``int[2],int[2],int[3],int[3],int,int,int,int->int`` : ``pSetCards``
 
 Set the cards in the hand based on the hole, flop, turn and river arrays separately where the input arrays in order are
 - ``holeF`` : ``int[2]`` : The face values of the 2 hole cards.
@@ -203,19 +442,19 @@ H = holdEm.hand()
 stat = H.pSetCards((1,2),(1,2),(4,6,8),(3,4,2),14,4,6,3)
 ```
 
-###### Class fn : ``None->int[7]`` : ``getCardsFace``
+#### Class fn : ``None->int[7]`` : ``getCardsFace``
 
 Return the face values of the 7 cards from the hole, flop, turn and river.
 
-###### Class fn : ``None->int[7]`` : ``getCardsSuit``
+#### Class fn : ``None->int[7]`` : ``getCardsSuit``
 
 Return the suit values of the 7 cards from the hole, flop, turn and river.
 
-###### Class fn : ``none->int`` : ``findBestHand``
+#### Class fn : ``none->int`` : ``findBestHand``
 
 Use the cards set with ``pSetCards`` or ``pSetCardsFull`` after either of these routines has been ran to find the best 5 card Texas HoldEm hand possible. Returns 0 on success. The calculated hands can then be returned with the following routines.
 
-###### Class fn : ``None->int`` : ``getHandCode``
+#### Class fn : ``None->int`` : ``getHandCode``
 
 Get the hand code of the best 5 card hand found with ``findBestHand``, where
 - -1  :: No hand, i.e. not yet checked
@@ -230,23 +469,15 @@ Get the hand code of the best 5 card hand found with ``findBestHand``, where
 -  9  :: Straight flush
 -  10 :: Royal Flush
 
-###### Class fn : ``None->int[5]`` : ``getBestFace``
+#### Class fn : ``None->int[5]`` : ``getBestFace``
 
 Return the face value of the cards that make up the best hand found with ``findBestHand``. See section on ``bestFace_`` for a more in depth description.
 
-###### Class fn : ``None->int[5]`` : ``getBestSuit``
+#### Class fn : ``None->int[5]`` : ``getBestSuit``
 
 Return the suit values of the cards that make up the best hand found with ``findBestHand``. Note each ith element of the returned array is the suit of the corresponding face value returned with ``getBestFace``.
 
-
-
-
-
-
-
-
-
-####  Full example
+####  Example
 
 If we have the cards in the hold, flop, turn and river of AS, 2C, 4H, 6D, 8C, AD and 6H, then we can set these and check for the best hand with
 ```
@@ -265,6 +496,177 @@ print("Best hand code: ", H.getHandCode())
 print("Best hand face: ", H.getBestFace())
 print("Best hand suit: ", H.getBestSuit())
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### ``deck`` Class
+
+The Python wrapping of the C++ ``deck`` class, note class variables are exactly the same as in the C++ case and as such are omitted here.
+
+#### Class fn : ``void`` : ``setDeckFull``
+
+Populate the deck with 52 cards, not shuffled.
+
+#### Class fn : ``int[],int[]->int`` : ``setDeckFull``
+
+Initialise the deck of cards with all 52 cards excluding those given in the two input arrays, where these arrays are (respectively)
+- ``igFace`` :: The face values of the cards not to add to deck.
+- ``igSuit`` :: The suit values of the cards not to add to deck.
+
+Return 0 on success and -1 if the face and suit input arrays are of differing sizes.
+
+#### Class fn : ``int->void`` : ``setDeckIndex``
+
+Set the deck index array based on input ``maxIndex``, such that the deckIndex array is of length ``maxIndex`` with all integers in ``[0,maxIndex-1]`` represented.
+
+This is the array that is shuffled, and its initialisation is required in order to deal cards from the deck.
+
+#### Class fn : ``int[],int[]->int`` : ``remCards``
+
+Remove the cards given in the two input arrays from the deck, where the two inputs are (respectively)
+- ``remFace`` :: The face values of the cards to remove from the deck.
+- ``remSuit`` :: The suit values of the cards to remove from the deck. Note each ith element of ``remSuit`` is the suit of the ith element of ``remFace``.
+
+Returns 0 on success and -1 if the card to be removed from the deck is not actually in the deck.
+
+#### Class fn : ``void`` : ``shuffleI``
+
+Shuffle the index array, this must be done between calls to ``remCards`` and ``dealCards``.
+
+#### Class fn : ``int -> int`` : ``dealCards``
+
+Deal cards from the ``deckFace_`` and ``deckSuit_`` vectors into the ``dealFace_`` and ``dealSuit_`` vectors.
+
+Note: if ``deckIndex_`` has not been shuffled (i.e. ``deckShuffled_==false``) this function will just pull cards from the end of the deck vectors sequentially.
+
+Note: if ``deckIndex_`` has been shuffled and then some cards have been removed from ``deckFace_`` and ``deckSuit_`` with ``remCards`` and ``shuffleI`` has not been called again then this array may return cards no longer in the deck. To avoid this once ``remCards`` has been called then call ``setDeckIndex(numCards_)`` followed by ``shuffleI()``.
+
+#### Class fn : ``void -> bool`` : ``getDeckSet``
+
+Return ``deckSet_``.
+
+#### Class fn : ``void -> int[]`` : ``getDeckFace``
+
+Return ``deckFace_``.
+
+#### Class fn : ``void -> int[]`` : ``getDeckSuit`
+
+Return ``deckSuit_``.
+
+#### Class fn : ``void -> int[]`` : ``getDeckIndex`
+
+Return ``deckIndex_``.
+
+#### Class fn : ``void -> int`` : ``getNumCards`
+
+Return ``numCards_``.
+
+#### Class fn : ``void -> int[]`` : ``getDealFace`
+
+Return ``dealFace_``.
+
+#### Class fn : ``void -> int[]`` : ``getDealSuit`
+
+Return ``dealSuit_``.
+
+#### Example
+
+The below example is a Python script that uses the ``holdEm`` module (compiled with ``make python``) and the ``deck`` class. Here we first initialise a deck without 3S and 4C, then remove AH and 2D from the deck and print the remaining cards in the deck.
+
+We then shuffle the indexes and deal 40 shuffled cards into one hand and 10 shuffled cards into another, printing these hands.
+
+This python script can be found in ``examples/deck_example.py``.
+
+```
+import holdEm
+
+# Class initialisation
+D = holdEm.deck()
+
+# Initialise a deck without a 3S and 4C
+D.setDeckPartial((3,4),(1,2))
+
+# Now remove the AH, 2D from the deck
+D.remCards((1,2),(3,4))
+
+# Get all the cards to have a look at
+faces = D.getDeckFace()
+suits = D.getDeckSuit()
+
+print("\nNum cards in deck ", len(faces), "\n")
+for i in range(len(faces)):
+    print("Card ", i, " : ", faces[i], "     ", suits[i])
+
+# Shuffle the cards
+D.shuffleI()
+    
+# Deal one hand
+stat = D.dealCards(40)
+print("\nCurrent status ", stat ,"\n")
+hand1Face = D.getDealFace()
+hand1Suit = D.getDealSuit()
+
+# Deal second hand
+stat = D.dealCards(10)
+print("\nCurrent status ", stat ,"\n")
+hand2Face = D.getDealFace()
+hand2Suit = D.getDealSuit()
+
+# Print both hands
+print("\n\n\nHand 1:\n")
+for i in range(len(hand1Face)):
+    print("Card ", i+1, " : ", hand1Face[i], "     ", hand1Suit[i])
+
+# Print both hands
+print("\n\n\nHand 2:\n")
+for i in range(len(hand2Face)):
+    print("Card ", i+1, " : ", hand2Face[i], "     ", hand2Suit[i])
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
