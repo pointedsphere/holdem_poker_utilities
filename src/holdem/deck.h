@@ -60,7 +60,7 @@ public:
   void setDeckIndex(int maxIndex);
   
   // Remove some input cards from the deck
-  int remCardsFromDeck(std::vector<int> remFace, std::vector<int> remSuit);
+  int remCards(std::vector<int> remFace, std::vector<int> remSuit);
 
   // Shuffle the indexes of the known cards
   void shuffleIndex();
