@@ -21,6 +21,9 @@ void deck::setDeckFull()
     Populate the class arrays deckFace and deckSuit with the face and suit values of all 52
     cards in a deck.
    */
+
+  // Check if the deck has been set, if it has discard the old deck before populating
+  if (deckSet==true) deckIndex.clear();
   
   // Do for the 4 suits
   for (int s=1; s<5; s++) {
@@ -31,7 +34,9 @@ void deck::setDeckFull()
       deckSuit.push_back(s);
     }
   }
+  
   deckSet = true;
+  
 };
 
 int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
@@ -53,6 +58,9 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
         -1 :: The face and suit input arrays are of different sizes
    */
 
+  // Check if the deck has been set, if it has discard the old deck before populating
+  if (deckSet==true) deckIndex.clear();
+  
   // Check that the input arrays are the same size
   if (igFace.size()!=igSuit.size()) {
     return -1; // Return error
