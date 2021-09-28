@@ -45,17 +45,17 @@ private:
 public:
 
   /* Hand descriptor where
-n    -1  ::: No hand, i.e. not yet checked
-n     1  ::: High card
-y     2  ::: Pair
-y     3  ::: Two pair
-y     4  ::: Three of a kind
-y     5  ::: Straight
-y     6  ::: Flush
-y     7  ::: Full house
-y     8  ::: 4 of a kind
-y     9  ::: Straight flush
-y     10 ::: Royal Flush
+     -1  ::: No hand, i.e. not yet checked
+      1  ::: High card
+      2  ::: Pair
+      3  ::: Two pair
+      4  ::: Three of a kind
+      5  ::: Straight
+      6  ::: Flush
+      7  ::: Full house
+      8  ::: 4 of a kind
+      9  ::: Straight flush
+      10 ::: Royal Flush
   */
   
   int handCode;
@@ -92,7 +92,7 @@ y     10 ::: Royal Flush
      
      Three of a kind:
          Three of a kind as the final elements in best_hands, with two highest cards not
-	 in the three of a kind in ascending order in index 0 and 1, i.e.
+	 in the three of a kind in ascending order in index 0 and 1
 	 e.g. { 2, 13, 4, 4, 4 }
 
      Two Pair:
@@ -144,7 +144,7 @@ y     10 ::: Royal Flush
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
   int findBestHand();
 
-  // Sort the cards_face_ and cards_suit_ arrays such cards_face_ is in ascending order
+  // Sort the cardsFace_ and cardsSuit_ arrays such cardsFace_ is in ascending order
   void sortCards();
 
   // Check for a straight and return the high card of the straight or -1 for no straight
