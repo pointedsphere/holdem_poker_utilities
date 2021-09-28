@@ -131,14 +131,14 @@ public:
     with routines that are faster when wrapped with Python
   */
   
-  // Set the cards private array from a full array
-  int setCardsFull(int cards_in[2][7]);
-  // Or for the arrays split into hole, flop, turn and river
-  int setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
+  // Set the cards private array from a full ARRAYS
+  int ASetCardsFull(int cards_in[2][7]);
+  // Or for the ARRAYS split into hole, flop, turn and river
+  int ASetCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
 
-  // Set the cards using vectors, used for python wrapping
-  int pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in);
-  int pSetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
+  // Set the cards using VECTORS
+  int SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in);
+  int SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
 		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
   
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_

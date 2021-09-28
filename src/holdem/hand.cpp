@@ -14,14 +14,20 @@
 
 
 
-// Assign the hand, including some minor error checks of the cards formats
-// Do this from the full hand as single array
-int hand::setCardsFull(int cards_in[2][7])
+int hand::ASetCardsFull(int cards_in[2][7])
 {
 
   /*
-    Error Codes
-    ===========
+    Set the hands cards from an input ARRAY that contains
+        card_in[0][:] :: The face values of the ith cards
+	card_in[1][:] :: The suit values of the ith cards
+
+    Though some error checks are carried out the length of input arrays is not checked, this is
+    as we wish to reduce cost as much as possible. Therefore, care must be taken when calling 
+    this function as giving arrays of less than 7 may cause unexpected results.
+
+    Returns
+    =======
       Error codes returned from function, 0 means everything ran smoothly.
         -1 ::: Invalid card face value outside range of [1,14] given as an input.
         -2 ::: Invalid card suit value outside range of [1,4] given as an input.
@@ -69,13 +75,19 @@ int hand::setCardsFull(int cards_in[2][7])
   
 }
 
-// Assign the hand, including some minor error checks of the cards formats
-// Do this from the full hand as single array
-// This is done for setting using vectors, i.e. for calling when wrapped with python
-int hand::pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
+
+
+int hand::SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
 {
 
   /*
+    Set the hand cards using two input VECTORS, this routine takes in one vector of the
+    face values and one of the respective suit values.
+
+    Though some error checks are carried out the length of input vectors is not checked, 
+    this is as we wish to reduce cost as much as possible. Therefore, care must be taken 
+    when calling this function as giving arrays of less than 7 may cause unexpected results.
+
     Error Codes
     ===========
       Error codes returned from function, 0 means everything ran smoothly.
@@ -127,16 +139,21 @@ int hand::pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
 
 
 
-
-
-// Assign the hand, including some minor error checks of the cards formats
-// Do this from the full hand seperated into hole, flop, turn and river arrays
-int hand::setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1])
+int hand::ASetCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1])
 {
 
   /*
-    Error Codes
-    ===========
+    Assign the hand from 4 input ARRAYS that contain the hole, flop, turn and river cards.
+    The 0 row of each array contains the face values and the 1 row contains their respective
+    suit values.
+
+    This routine also carries out some basic input error checks, but not thourogh ones as it
+    will likely be called multiple times so we need to minimise cost. Note the sizes of input 
+    arrays is not checked (for cost reasons) so we must ensure that the correct sizes arrays
+    are given as inputs otherwise unusual behaviour may result.
+
+    Returns
+    =======
       Error codes returned from function, 0 means everything ran smoothly.
         -1 ::: Invalid card face value outside range of [1,14] given as an input.
         -2 ::: Invalid card suit value outside range of [1,4] given as an input.
@@ -198,14 +215,23 @@ int hand::setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][
   
 }
 
-// Assign the hand, including some minor error checks of the cards formats
-// Do this from the full hand seperated into hole, flop, turn and river arrays
-// Do this with vectors for ease of Python wrapping
-int hand::pSetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
+
+
+int hand::SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
 		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S)
 {
 
   /*
+    Assign the hand from VECTORS containing the hole and flop cards (one for the face _F and
+    the other for the suit _S values, with each ith element of each vector referencing the
+    same card. The turn and river are set with an integer, with one for the face value and the
+    other for the suit.
+  
+    This routine also carries out some basic input error checks, but not thourogh ones as it
+    will likely be called multiple times so we need to minimise cost. Note the sizes of input 
+    vectors is not checked (for cost reasons) so we must ensure that the correct sizes arrays
+    are given as inputs otherwise unusual behaviour may result.
+
     Error Codes
     ===========
       Error codes returned from function, 0 means everything ran smoothly.
