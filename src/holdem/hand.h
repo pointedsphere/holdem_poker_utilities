@@ -2,6 +2,9 @@
 #ifndef HOLDEMHAND_H_
 #define HOLDEMHAND_H_
 
+#include <iostream>
+#include <vector>
+
 class hand
 {
 
@@ -33,8 +36,8 @@ private:
   // Note a _ postfix means a private variable
   
   // The cards to use in the hand
-  int cards_face_[7];
-  int cards_suit_[7];
+  int cardsFace_[7];
+  int cardsSuit_[7];
   
   // Have the cards been read or not
   bool isCards_;
@@ -42,20 +45,20 @@ private:
 public:
 
   /* Hand descriptor where
-n    -1  ::: No hand, i.e. not yet checked
-n     1  ::: High card
-y     2  ::: Pair
-y     3  ::: Two pair
-y     4  ::: Three of a kind
-y     5  ::: Straight
-y     6  ::: Flush
-y     7  ::: Full house
-y     8  ::: 4 of a kind
-y     9  ::: Straight flush
-y     10 ::: Royal Flush
+     -1  ::: No hand, i.e. not yet checked
+      1  ::: High card
+      2  ::: Pair
+      3  ::: Two pair
+      4  ::: Three of a kind
+      5  ::: Straight
+      6  ::: Flush
+      7  ::: Full house
+      8  ::: 4 of a kind
+      9  ::: Straight flush
+      10 ::: Royal Flush
   */
   
-  int hand_code;
+  int handCode;
 
   /* 
      The best hand, which is ordered in a special way for each hand one has.
@@ -89,7 +92,7 @@ y     10 ::: Royal Flush
      
      Three of a kind:
          Three of a kind as the final elements in best_hands, with two highest cards not
-	 in the three of a kind in ascending order in index 0 and 1, i.e.
+	 in the three of a kind in ascending order in index 0 and 1
 	 e.g. { 2, 13, 4, 4, 4 }
 
      Two Pair:
@@ -106,8 +109,8 @@ y     10 ::: Royal Flush
          Return the highest face value cards in ascending order
 
   */
-  int best_face[5];
-  int best_suit[5];  
+  int bestFace[5];
+  int bestSuit[5];  
   
   // Constructor for initial variables
   // NOTE: Initial values for all face values set to -1 which signifies no hand.
@@ -115,27 +118,44 @@ y     10 ::: Royal Flush
     isCards_ = false; // On initialisation we haven't read the cards in
 
     // Also, on initialisation we do not have a hand
-    hand_code = -1;
+    handCode = -1;
 
     for (int i=0; i<5; i++) {
-      best_face[i] = -1;
-      best_suit[i] = -1;
+      bestFace[i] = -1;
+      bestSuit[i] = -1;
     }
   }
+
+  /*
+    Set the cards in the hand, first using routines faster in pure C++ and secondly
+    with routines that are faster when wrapped with Python
+  */
   
   // Set the cards private array from a full array
-  int setCards(int cards[2][7]);
+  int setCardsFull(int cards_in[2][7]);
   // Or for the arrays split into hole, flop, turn and river
   int setCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1]);
 
+  // Set the cards using vectors, used for python wrapping
+  int pSetCardsFull(std::vector<int> face_in, std::vector<int> suit_in);
+  int pSetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
+		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
+  
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
-  int getBestHand();
+  int findBestHand();
 
-  // Sort the cards_face_ and cards_suit_ arrays such cards_face_ is in ascending order
+  // Sort the cardsFace_ and cardsSuit_ arrays such cardsFace_ is in ascending order
   void sortCards();
 
   // Check for a straight and return the high card of the straight or -1 for no straight
   int getStraight(int S_cards[], int hand_size);
+
+  // Get variables from the class
+  std::vector<int> getCardsFace();
+  std::vector<int> getCardsSuit();
+  std::vector<int> getBestFace();
+  std::vector<int> getBestSuit();
+  int getHandCode();
   
 };
 
