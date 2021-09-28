@@ -63,7 +63,7 @@ public:
   int remCards(std::vector<int> remFace, std::vector<int> remSuit);
 
   // Shuffle the indexes of the known cards
-  void shuffleIndex();
+  void shuffleI();
 
   // Deal cards to dealFace and dealSuit. Note: This destroys the vectors if they
   // have previously been set
