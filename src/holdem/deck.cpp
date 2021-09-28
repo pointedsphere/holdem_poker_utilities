@@ -114,7 +114,7 @@ void deck::setDeckIndex(int maxIndex)
 
 
 
-int deck::remCardsFromDeck(std::vector<int> remFace, std::vector<int> remSuit)
+int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 {
 
   /* 
