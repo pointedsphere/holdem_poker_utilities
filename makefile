@@ -1,12 +1,16 @@
 # Compiler to use
-CC = g++
+CXX = g++
+CC = $(CXX)
 
 # Compiler flags for development
 #  -g         :: Debug info
 #  -wall      :: Run all error checks
 #  -Wpedantic :: Be pedantic with warnings
-DFLAGS = -Wall -g -Wpedantic
-FLAGS  = -O3
+CFLAGS = -Wall -g -Wpedantic -O3 -std=c++11
+CXXFLAGS        = $(CFLAGS)
+CCFLAGS         = $(CXXFLAGS)
+
+CXXCFLAGS = -std=c++14
 
 # Directories things are stored in
 SRC_DIR   := src
@@ -21,13 +25,9 @@ SRC_FILES_PY := wrapper.cpp \
              $(wildcard $(SRC_DIR)/holdem/*.cpp) \
              $(wildcard $(SRC_DIR)/test/*.cpp)
 OBJ = $(SRC_FILES:.cpp=.o)
-# OBJ_PY = $(SRC_FILES_PY:.cpp=.o)
 
 opt: $(OBJ)
-	$(CC) -o holdem_tools.out $(FLAGS) $^
-
-devel: $(OBJ)
-	$(CC) -o holdem_tools_dev.out $(DFLAGS) $^
+	$(CC) -o holdem_tools.out $(CFLAGS) $^
 
 # Note for the bash variables we use the double $$ to escape the makefile std $
 python:
