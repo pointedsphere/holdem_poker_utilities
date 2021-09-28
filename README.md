@@ -2,17 +2,19 @@
 
 A C++ library of utilities for calculations involving Texas HoldEm poker.
 
-**NOTE:** This library is under very active development.
+**NOTE: This library is under very active development.**
 
 
 
-## General use
+## General use and compilation
 
 This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis that can also be compiled for use as a Python module.
 
-In order to compile one may run ``make`` and to compile as a python library run ``make python``.
+In order to compile for C++ one may run ``make`` and to compile as the python library ``holdEm`` one should run ``make python``.
 
-### Notes
+**Note:** as this library is under very active development compilation has not been checking in many different environments yet.
+
+### General Notes
 
 - As the exact suit doesn't matter in HoldEm suits are referred to by integers [1,4], which suit is which is of no consequence as long as each suit is consistently referred to by the same integer throughout.
 - Each face value card is referred to by an integer, with [2,10] being self explanatory. 11, 12 and 13 refer to Jack, Queen and King respectively. An Ace is given the value 14.
