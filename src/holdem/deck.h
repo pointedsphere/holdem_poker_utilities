@@ -15,6 +15,7 @@ private:
   bool deckSet;
   std::vector<int> deckFace;
   std::vector<int> deckSuit;
+  bool indexSet;
   std::vector<int> deckIndex;
 
   int numCards;
@@ -37,6 +38,7 @@ public:
     deckSet = false;
     
     // Set the array of indexes of the deck, for use with shuffling
+    indexSet = false;
     setDeckIndex(52);
 
     // Not yet shuffled

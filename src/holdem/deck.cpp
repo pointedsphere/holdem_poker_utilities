@@ -90,20 +90,40 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
 // Set the deck index values
 void deck::setDeckIndex(int maxIndex)
 {
-  // Do for the 4 suits
+
+  /*
+    Set the index array, which is initially an array of integers from 0 to maxIndex-1
+    If it is already set then destroy the data in it and start again.
+
+    Inputs:
+        maxIndex :: The number of elements that will be created in deckIndex from 0
+	            to maxIndex-1.
+  */
+  
+  // If the index array is already set, discard all data in it
+  if (indexSet==true) deckIndex.clear();
+  
+  // Now populate all the index values in ascending order
   for (int i=0; i<maxIndex; i++) {
     deckIndex.push_back(i);
   }
+  
+  indexSet = true;
+  
 };
 
 
-// Remove input cards from the deck
-// Not remFace and remSuit must be of the same length. For cost reasons we do not
-// check, though ideally we would
+
 int deck::remCardsFromDeck(std::vector<int> remFace, std::vector<int> remSuit)
 {
 
   /* 
+     Remove the cards given in remFace and remSuit from the current deck.
+
+     NOTE: No error checks are carried out as this routine may need to be called multiple times,
+           so remFace and remSuit MUST be of the same size. Also deckFace and deckSuit MUST have
+	   been set prior to calling this function.
+
      Returns:
           0 : Success!
          -1 : Card to remove from deck not actually in the deck.
@@ -176,6 +196,14 @@ std::vector<int> deck::getDealSuit()
 // so we use this to draw random cards from the deck (or what is left of it)
 void deck::shuffleIndex()
 {
+
+  /*
+    Suffle the index array, where there is one index for each of the cards left in the deck
+    so we use this to draw random cards from the deck (or what is left of it).
+
+    NOTE: This routine may need to be called many times, so no error checks are carried out
+          here.
+  */
   
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   shuffle(deckIndex.begin(), deckIndex.begin()+numCards, std::default_random_engine(seed));
@@ -183,16 +211,28 @@ void deck::shuffleIndex()
   
 };
 
-// Deal N cards from the deck, this is done by just pulling the last N cards from the deck
-// based on the indexes in deckIndex. So if deckIndex has not been shuffled the cards will
-// not be randomised
-// Note: As we wish to return two sets of values (as vectors) a vector of face values and
-//       a vector of relevant suit values we actually set the class based variables dealFace
-//       and dealSuit, which are private and in their raw state must be accessed with the
-//       get functions getDealFace and getDealSuit
+
 int deck::dealCards(int numToDeal)
 {
 
+  /*
+
+    Deal N cards from the deck, this is done by just pulling the last N cards from the deck
+    based on the indexes in deckIndex. So if deckIndex has not been shuffled the cards will
+    not be randomised.
+
+    NOTE: If numCards is incorrectly set, or the shuffle was done when numCards is larger 
+          than it currently is this routine may deal cards that are no longer in the deck.
+	  This could be avoided with an error check, however this would increace the cost
+	  of this routine.
+
+    NOTE: As we wish to return two sets of values (as vectors) a vector of face values and
+          a vector of relevant suit values we actually set the class based variables dealFace
+	  and dealSuit, which are private and in their raw state must be accessed with the
+	  get functions getDealFace and getDealSuit
+
+   */
+  
   // If we have previously dealt then destroy the deal vectors
   if (dealDone==true) {
     dealFace.clear();
