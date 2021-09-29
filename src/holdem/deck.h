@@ -64,6 +64,7 @@ public:
   
   // Remove some input cards from the deck
   int remCards(std::vector<int> remFace, std::vector<int> remSuit);
+  int remCard(int remFace, int remSuit);
 
   // Shuffle the indexes of the known cards
   void shuffleI();

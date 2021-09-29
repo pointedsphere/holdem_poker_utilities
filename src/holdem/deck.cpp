@@ -60,6 +60,7 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
     Returns:
          0 :: Success!
         -1 :: The face and suit input arrays are of different sizes
+	-2 :: There would be less than 0 cards left in the deck after removing these cards
    */
 
   // Check if the deck has been set, if it has discard the old deck before populating
@@ -72,7 +73,7 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
 
   // Check that some cards will be left in the deck
   if (igFace.size()>52) {
-    return -1; // Return error
+    return -2; // Return error
   }
   
   // Change igFace values from 1 => 14, just incase input is given with ace value as 1
@@ -162,7 +163,45 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
     }
   }
 
-  // If we have shiffled the cards we need new index values as we could have an index
+  // If we have shuffled the cards we need new index values as we could have an index
+  // outside the range of where the cards now exist
+  if (deckShuffled_==true) setDeckIndex(numCards_);
+  
+  return 0; // Success!
+  
+};
+
+
+
+int deck::remCard(int remFace, int remSuit)
+{
+
+  /* 
+     Remove the card given in remFace and remSuit from the current deck.
+
+     NOTE: No error checks are carried out as this routine may need to be called multiple times,
+           so remFace and remSuit MUST be of the same size. Also deckFace_ and deckSuit_ MUST have
+	   been set prior to calling this function.
+
+     Returns:
+          0 : Success!
+         -1 : Card to remove from deck not actually in the deck.
+  */
+  
+  for (int j=0; j<53; j++) {
+    if (j==53) return -1; // overflow error
+    if (remFace==1) remFace=14; // Check for aces
+    // Now check each card in the deck against the current one to remove
+    if (remFace==deckFace_[j] && remSuit==deckSuit_[j]) {
+      // then delete and break to the next card to remove
+      deckFace_.erase(deckFace_.begin()+j);
+      deckSuit_.erase(deckSuit_.begin()+j);
+      numCards_=numCards_-1;
+      break;
+    }
+  }
+
+  // If we have shuffled the cards we need new index values as we could have an index
   // outside the range of where the cards now exist
   if (deckShuffled_==true) setDeckIndex(numCards_);
   
