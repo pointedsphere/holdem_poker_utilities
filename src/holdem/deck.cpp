@@ -219,6 +219,10 @@ bool deck::getDeckSet()
 {
   return deckSet_;
 };
+bool deck::getDeckShuffled()
+{
+  return deckShuffled_;
+};
 std::vector<int> deck::getDeckFace()
 {
   return deckFace_;
@@ -317,6 +321,23 @@ int deck::dealCards(int numToDeal)
   numCards_ = numCards_ - numToDeal;
   dealDone_ = true;
   return 0; // Success!!
+  
+}
+
+
+
+void deck::remDealtCards()
+{
+
+  /*
+
+    Remove the dealt cards from the deck array of cards, this will generally not need to be done
+    as we will generally deal out all the cards then discard the deck, but it's here just in case
+
+   */
+  
+  remCards(dealFace_,dealSuit_);
+  numCards_=numCards_+dealSuit_.size();
   
 }
 
