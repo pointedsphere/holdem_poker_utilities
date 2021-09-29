@@ -13,7 +13,7 @@
 
 /*
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                      HOLD CLASS
+                      PLAYER CLASS
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 */
 
@@ -22,7 +22,7 @@ class player
 
   /*
 
-    The class which holds just two hold cards
+    The class which holds the variables that pertain to the players, inc hold cards
 
     Note: This could go into the hand class, but we will hard copy this to save setting
           it each time we loop for a Monte Carlo simulation, so we want to keep minimal
@@ -35,7 +35,12 @@ public:
 
   // Constructor
   player() {
-    numHKnown = 0;
+    numHKnown = 0; // Initially we do not know any hold cards
+    numWins=0;     // Nor have we won (yet...)
+    for (int i=0, i<10, i++) {
+      // Never won any way yet
+      winHandCtr.push_back(0);
+    }
   }
 
   int numHKnown; // The number of hold cards known, either 0, 1 or 2
@@ -43,6 +48,10 @@ public:
   // Vectors contianing face and suit values of hold cards
   std::vector<int> holdFace;
   std::vector<int> holdSuit;
+
+  // Wisns data
+  int numWins;
+  std::vector<int> winHandCtr;
   
 };
 
