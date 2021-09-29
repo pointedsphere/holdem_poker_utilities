@@ -82,7 +82,8 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
   if (holdInF.size()!=holdInS.size()) return -1;
   
   // Assign the known hold cards
-  P_[playerAdd].numHKnown = holdInF.size();
+  P_[playerAdd].numHKnown = holdInF.size();   // Note the number of hold cards in the player hold
+  totHoldsKnown=totHoldsKnown+holdInF.size(); // Add the current number of hold cards to the total known
   for (int i=0; i<P_[playerAdd].numHKnown; i++) {
     // Add the cards to the relevant hold
     P_[playerAdd].holdFace.push_back(holdInF[i]);

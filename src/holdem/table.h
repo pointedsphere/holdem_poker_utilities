@@ -73,7 +73,8 @@ private:
   int noPlayers_;    // Number of players at table
   int noPlayersSet_; // Has the number of players been set
 
-
+  int totHoldsKnown; // Total number of hold cards
+  
   std::vector<int> flopS_;
   int turnF_;
   int turnS_;
@@ -100,7 +101,8 @@ public:
     noPlayersSet_ = false;    // Initially no players set
     D_.setDeckFull();         // Initially we have a full deck
     setNoPlayers(numPlayers); // Set up all the vectors etc for the number of players
-
+    totHoldsKnown=0;          // Total hold cards known is initially zero
+    
     // No table cards set initially
     flopSet_  = false;
     turnSet_  = false;
