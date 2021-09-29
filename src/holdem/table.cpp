@@ -224,10 +224,6 @@ int table::dealFlopTrunRiver()
   if (D_.getDeckShuffled()==false) D_.shuffleI();
 
   std::vector<int> TEST = D_.getDeckIndex();
-
-  for (int x=0; x<52; x++) {
-    std::cout << "Index array : " << TEST[x] << std::endl;
-  }
   
   // Then find the number of cards we need to add, and deal these out to the deck class arrays
   // dealFace_ and dealSuit_
@@ -238,10 +234,6 @@ int table::dealFlopTrunRiver()
 
   // Now deal out the number of required cards to the dealFace_ and dealSuit_ arrays
   D_.dealCards(numToDeal);
-
-  for (int y=0; y<numToDeal; y++) {
-    std::cout << "dealt face values : " << D_.dealFace_[y] << std::endl;
-  }
   
   // Set the cards from the single dealt array of numToDeal cards
   int FTRiter=0;
