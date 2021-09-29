@@ -8,7 +8,7 @@
 
 /*
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                      HOLD CLASS
+                      PLAYER CLASS
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 */
 
@@ -61,8 +61,8 @@ int table::setNoPlayers(int noP)
 
   // Now initialise the player class vector and the known hold cards for each player
   for (int i=0; i<noPlayers_; i++) {
-    P_.push_back(hand());
-    H_.push_back(hold());
+    H_.push_back(hand());
+    P_.push_back(player());
   }
   
   return 0;
@@ -81,11 +81,11 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
   if (holdInF.size()!=holdInS.size()) return -1;
   
   // Assign the known hold cards
-  H_[playerAdd].numKnown = holdInF.size();
-  for (int i=0; i<H_[playerAdd].numKnown; i++) {
+  P_[playerAdd].numHKnown = holdInF.size();
+  for (int i=0; i<P_[playerAdd].numHKnown; i++) {
     // Add the cards to the relevant hold
-    H_[playerAdd].holdFace.push_back(holdInF[i]);
-    H_[playerAdd].holdSuit.push_back(holdInS[i]);
+    P_[playerAdd].holdFace.push_back(holdInF[i]);
+    P_[playerAdd].holdSuit.push_back(holdInS[i]);
   }
 
   // Then remove the known hold cards from the deck

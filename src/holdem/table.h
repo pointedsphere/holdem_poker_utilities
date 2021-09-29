@@ -17,7 +17,7 @@
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 */
 
-class hold
+class player
 {
 
   /*
@@ -34,11 +34,11 @@ public:
   // Let everything about the hold cards be public (which is a touch unusual for the hold)
 
   // Constructor
-  hold() {
-    numKnown = 0;
+  player() {
+    numHKnown = 0;
   }
 
-  int numKnown; // The number of hold cards known, either 0, 1 or 2
+  int numHKnown; // The number of hold cards known, either 0, 1 or 2
 
   // Vectors contianing face and suit values of hold cards
   std::vector<int> holdFace;
@@ -76,9 +76,9 @@ public:
 
   deck D_; // We need a deck on the table
   
-  std::vector<hand> P_; // A vector of players hands  
+  std::vector<hand>   H_; // A vector of hands
 
-  std::vector<hold> H_; // A vector of each players hold cards (known and unknown)
+  std::vector<player> P_; // A vector of players
 
 
 
@@ -99,6 +99,7 @@ public:
 
   // Set hold cards when known, this also removes the cards from the deck
   int setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int> holdInS);
+
   
 };
 
