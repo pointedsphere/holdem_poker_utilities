@@ -124,6 +124,9 @@ public:
 
   // Deal random cards to the flop turn and river (if not currently set)
   int dealFlopTrunRiver();
+
+  // Set the hands arrays by dealing random cards to `fill up' hold cards
+  int dealAllHands();
   
 };
 

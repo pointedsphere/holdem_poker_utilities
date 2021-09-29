@@ -18,7 +18,7 @@ class hand
      A card is split into two integers representing first the face value then the suit.
 
      Suits are given in integer value in [1,4], though which suit is which is irrelevant
-     as long as THE SUIT NUMBER ARE CONSISTANT throughout any program.
+     as long as THE SUIT NUMBER IS CONSISTANT throughout any program.
 
      The face value used is 2 to 10 for face values in [2,10], then we use
          11: jack

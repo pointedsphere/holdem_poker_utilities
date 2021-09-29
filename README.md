@@ -240,11 +240,11 @@ The number of cards that have been dealt into the vectors ``dealFace_`` and ``de
 
 #### Class var : private : ``vector<int>`` : ``dealFace_``
 
-Then face values of the cards pulled from the array ``deckFace_``. Note: each card has a corresponding face value in ``dealSuit_``. 
+Then face values of the cards pulled to the array ``deckFace_``. Note: each card has a corresponding face value in ``dealSuit_``. 
 
 #### Class var : private : ``vector<int>`` : ``dealSuit_``
 
-Then face values of the cards pulled from the array ``deckSuit_``. Note: each card has a corresponding face value in ``dealFace``. 
+Then face values of the cards pulled to the array ``deckSuit_``. Note: each card has a corresponding face value in ``dealFace``. 
 
 #### Class fn : ``void`` : ``setDeckFull``
 
@@ -290,6 +290,8 @@ Deal cards from the ``deckFace_`` and ``deckSuit_`` vectors into the ``dealFace_
 Note: if ``deckIndex_`` has not been shuffled (i.e. ``deckShuffled_==false``) this function will just pull cards from the end of the deck vectors sequentially.
 
 Note: if ``deckIndex_`` has been shuffled and then some cards have been removed from ``deckFace_`` and ``deckSuit_`` with ``remCards`` and ``shuffleI`` has not been called again then this array may return cards no longer in the deck. To avoid this once ``remCards`` has been called then call ``setDeckIndex(numCards_)`` followed by ``shuffleI()``.
+
+Note: dealCards does not delete dealt cards from the deck array, this is so we can run multiple times with the same partial deck after setting known cards.
 
 #### Class fn : ``void -> bool`` : ``getDeckSet``
 
