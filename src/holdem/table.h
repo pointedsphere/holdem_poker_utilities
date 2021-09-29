@@ -37,9 +37,11 @@ public:
   player() {
     numHKnown = 0; // Initially we do not know any hold cards
     numWins=0;     // Nor have we won (yet...)
+    numDraw=0;     // Nor have we drawn (yet...)
     for (int Playeri=0; Playeri<10; Playeri++) {
       // Never won any way yet
-      winHandCtr.push_back(0);
+      winCodesCtr.push_back(0);
+      drawCodesCtr.push_back(0);
     }
   }
 
@@ -49,10 +51,12 @@ public:
   std::vector<int> holdFace;
   std::vector<int> holdSuit;
 
-  // Total number of wins for this player
+  // Total number of wins and drawsfor this player
   int numWins;
-  // each ith element corresponds to wincode handCode-1
-  std::vector<int> winCodeCtr;
+  int numDraw;
+  // each ith element corresponds to winCode handCode-1
+  std::vector<int> winCodesCtr;
+  std::vector<int> drawCodesCtr;
   
 };
 
@@ -90,6 +94,22 @@ private:
   bool riverSet_;
 
   bool handsDealt_; // Have hands been dealt or not
+
+  // Temporary class variables, used here to save on repeated allocation
+
+  // General
+  int ip;                            // Iterator
+  int numOccurances_;                // Number of occurances of a given handCode
+  int drawIntTmp_;                   // a temp integer for draw calculations
+  std::vector<int> handCodeArr_;     // Array of all handCodes, the higher the handCode better the hand
+  std::vector<int> tTmpVec_;
+  // Straight Flush
+  int straightFlushHighCard;
+  // Four of a kind
+  int fourKindHighCard_;
+  // Full House/Three of a kind/Pair
+  int threeKindHighCard_;
+  int pairHighCard_;
   
 public:
 
@@ -142,6 +162,12 @@ public:
 
   // Find who won and with what
   int findWinner();
+
+  // Get functions
+  std::vector<int> getWinsArray();
+  std::vector<int> getDrawsArray();
+  std::vector<int> getWinsPerPlayer(int playerWins);
+  std::vector<int> getDrawsPerPlayer(int playerWins);
   
 };
 

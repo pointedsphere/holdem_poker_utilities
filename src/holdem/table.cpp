@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "table.h"
 #include "hand.h"
@@ -227,8 +228,18 @@ int table::setRiver(int riverInF, int riverInS)
 
 
 /*
+  
   Deal cards that are unknown
+
+  During dealing the cards we do not remove them from the deck. This allws us to repeat the
+  deal quickly.
+
+  MAY BE WORTH ADDING A FUNCTION TO REMOVE ALL THE CARDS IN THE FLOP, TURN, RIVER AND ALL HOLDS
+  FROM THE DECK.
+
 */
+
+
 
 
 
@@ -373,11 +384,300 @@ int table::findWinner()
   /*
     Find the winner at the table, add this to the player object win counter and win hand type
     counter variables. Also return an integer of the winning player
+
+    RETURNS
+    =======
+        >0 :: Success, return the player that has won or 0 if more than one has drawn
+	-1 :: Hands have not been dealt, so no one can win (yet)
+
   */
 
+  int fWStat;
+  
+  // Can only run if hands have been dealt
+  if (handsDealt_==false) return -1;
+  
+  // Find the best hand in each 7 card hand
+  for (int fWi=0; fWi<noPlayers_; fWi++) {
+    fWStat = H_[fWi].findBestHand();
+    handCodeArr_.push_back(H_[fWi].getHandCode());
+  }
+
+  // Check for the best hand at the table
+  for (int hc=10; hc>0; hc--) {
+
+    // First see how many times the current hand code occurs at the table
+    numOccurances_ = count(handCodeArr_.begin(), handCodeArr_.end(), hc);
+
+    if (numOccurances_==0) {
+      
+      // There are no occurences of this hand code, so check the next one down
+      continue;
+
+    } else if (numOccurances_==1) {
+
+      // We only have one card with this hand cose, so this hand has won
+      drawIntTmp_ = std::distance(handCodeArr_.begin(), std::find(handCodeArr_.begin(),handCodeArr_.end(),hc));
+      // Then note the in in the for the player
+      P_[drawIntTmp_].numWins++;           // Increment players win counter
+      P_[drawIntTmp_].winCodesCtr[hc-1]++; // Increment iterator of win codes
+
+      handCodeArr_.clear(); // Release un-needed memory
+      return drawIntTmp_;   // We are now done, we've found a winner!
+      
+    } else {
+      
+      // We have more then one player with the same hand type, so we must compare the exact hands
+      // This depends on what type of hand it is
+      switch(hc) {
+
+      case 10: // Royal Flush
+
+	// Two or more royal flushes would draw, were they possible, but for brevity this is included
+	for (int ip=0; ip<noPlayers_; ip++) {
+	  if (H_[ip].handCode==hc) {
+	    P_[ip].numDraw++;            // Iterate number of draws
+	    P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	  }
+	}
+
+	handCodeArr_.clear(); // Release un-needed memory
+	return 0; // Found the drawn straight flushes
+	
+      case 9: // Straight Flush
+
+	// For the royal flush we only need check the highest card in the flush, where
+	// the highest card wins. If more than one hand has an identical high card then
+	// they draw
+
+	// Use drawIntTmp_ here as a counter of the number of times the same high card
+	// (i.e. drawn hands if more than 1)
+
+	// Loop through once to find the highest high card in the straight flushes
+	straightFlushHighCard = -1;
+	for (ip=0; ip<noPlayers_; ip++) {
+	  // Must be hand coe 9 for straight flush
+	  if (H_[ip].handCode==9) {
+	  
+	    if (H_[ip].bestFace[4]>straightFlushHighCard) {
+	      // Found a new highest flush card
+	      straightFlushHighCard = H_[ip].bestFace[4];
+	      drawIntTmp_=1; // Only one straight flush with this high card so far
+	    } else if (H_[ip].bestFace[4]==straightFlushHighCard) {
+	      // Multiple high cards
+	      drawIntTmp_++; // More than one straight flush with this high card
+	    }
+	    
+	  }	  
+	}
+
+	// We now know the highest card in a straight. All winning or drawn will have this
+	// high card, but we dont know if one player has won or more than one have drawn
+	
+	// Now find all players that have drawn
+	if (drawIntTmp_==1) {
+	  
+	  // Only one with the best high card, so just record this one as a win
+	  for (ip=0; ip<noPlayers_; ip++) {
+
+	    if (H_[ip].handCode==9 && H_[ip].bestFace[4]==straightFlushHighCard) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  }
+	  
+	} else {
+	  
+	  // Multiple best cards, so record them as draws
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==9 && H_[ip].bestFace[4]==straightFlushHighCard) {
+	      P_[ip].numDraw++;            // Iterate number of draws
+	      P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	    }
+	  }
+
+	  handCodeArr_.clear(); // Release un-needed memory
+	  return 0; // Return the draw integer
+	  
+	}
+
+      case 8: // Four of a kind
+
+	// We know there are more than one four of a kind, the highest value of the four of a
+	// kind always wins, there can be no draw for four of a kind
+
+	// Loop through all hands and check for highest four of a kind, storing in tmp
+        fourKindHighCard_ = -1;
+	for (ip=0; ip<noPlayers_; ip++) {
+	  if (H_[ip].handCode==8 && H_[ip].bestFace[4]>fourKindHighCard_) {
+	    fourKindHighCard_=H_[ip].bestFace[4];
+	  }
+	}
+	
+	// We now know the face value of the highest four of a kind, so just find it and return
+	for (ip=0; ip<noPlayers_; ip++) {
+	  if (H_[ip].handCode==8 && H_[ip].bestFace[4]==fourKindHighCard_) {
+	    P_[ip].numWins++;           // Iterate number of wins
+	    P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	    handCodeArr_.clear(); // Release un-needed memory
+	    return ip;            // Only one best hand, so return here
+	  }
+	}
+
+      case 7: // Full House
+
+	// We know there is more than one full house. We first check the three of a kinds, if
+	// one is larger than that hand wins, if not then check the pair, if they're also the
+	// same then we have a draw
+
+	// Find the value of the highest three of a kind and the player(s) who have it
+	threeKindHighCard_ = -1;
+	drawIntTmp_=0;
+
+	// Loop over all players
+	for (ip=0; ip<noPlayers_; ip++) {
+
+	  // Only take account of those with a full house
+	  if (H_[ip].handCode==7) {
+
+	    // Either count an identical 3 of a kind or note new highest three of a kind
+	    if (H_[ip].bestFace[4]>threeKindHighCard_) {
+	      fourKindHighCard_=H_[ip].bestFace[4];
+	      drawIntTmp_=1;
+	    } else if (H_[ip].bestFace[4]==threeKindHighCard_) {
+	      drawIntTmp_++;
+	    }
+	  }
+	}
+
+	// If only one has the highest 3 of a kind then we have a winner
+	if (drawIntTmp_==1) {
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==7 && H_[ip].bestFace[4]==threeKindHighCard_) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  } 
+	}
+	
+	// We only reach this point if more than one player has an identical 3 of a kind, so
+	// now we look for highest pair
+	pairHighCard_=-1;
+	drawIntTmp_=0;
+
+	// Loop over all players
+	for (ip=0; ip<noPlayers_; ip++) {
+
+	  // Only take account of those with a full house
+	  if (H_[ip].handCode==7) {
+
+	    // Either count an identical pair or note new highest pair
+	    if (H_[ip].bestFace[0]>pairHighCard_) {
+	      pairHighCard_=H_[ip].bestFace[0];
+	      drawIntTmp_=1;
+	    } else if (H_[ip].bestFace[0]==pairHighCard_) {
+	      drawIntTmp_++;
+	    }
+	  }
+	}
+
+	// If only one has the highest pair then this player is the winner
+	if (drawIntTmp_==1) {
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==7 && H_[ip].bestFace[0]==pairHighCard_) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  }
+	} else {
+	  // Otherwise we have a draw, so note the draw values for each drawing player
+	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==7 && H_[ip].bestFace[0]==pairHighCard_) {
+	      P_[ip].numDraw++;            // Iterate number of draws
+	      P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	    }
+	  }
+
+	  handCodeArr_.clear(); // Release un-needed memory
+	  return 0; // Return the draw integer
+
+	}
+	
+      }
+      
+    }
+
+  }
+  
   return 0;
   
 }
+
+
+
+
+
+/*
+  
+  Return values from the table
+
+*/
+
+
+
+
+
+std::vector<int> table::getWinsArray()
+{
+
+  tTmpVec_.clear();
+  for (int g=0; g<noPlayers_; g++) {
+    tTmpVec_.push_back(P_[g].numWins);
+  }
+  return tTmpVec_;
+  
+};
+std::vector<int> table::getDrawsArray()
+{
+
+  tTmpVec_.clear();
+  for (int g=0; g<noPlayers_; g++) {
+    tTmpVec_.push_back(P_[g].numDraw);
+  }
+  return tTmpVec_;
+  
+};
+std::vector<int> table::getWinsPerPlayer(int playerWins)
+{
+
+  tTmpVec_.clear();
+  for (int g=0; g<10; g++) {
+    tTmpVec_.push_back(P_[playerWins].winCodesCtr[g]);
+  }
+  return tTmpVec_;
+  
+};
+std::vector<int> table::getDrawsPerPlayer(int playerWins)
+{
+
+  tTmpVec_.clear();
+  for (int g=0; g<10; g++) {
+    tTmpVec_.push_back(P_[playerWins].drawCodesCtr[g]);
+  }
+  return tTmpVec_;
+  
+};
 
 
 

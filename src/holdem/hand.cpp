@@ -381,6 +381,7 @@ int hand::getStraight(int S_cards[], int hand_size)
   int straight_dif;
   bool gotStraight=false;
   int straightHighCard;
+  
   // If the hand contains an ace and lowest face is a 2 we must also consider a straight 
   // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
   if ( S_cards[0]==2 && S_cards[hand_size-1]==14 ) straight_tmp=1;
@@ -551,6 +552,10 @@ int hand::findBestHand()
       }
 
       // Copy over the cards from the stright to the best face/suit
+      if (aceInStraight==true) {
+	bestFace[0] = 14;
+	bestSuit[0] = cardsSuit_[6];
+      }
       for (int i=flushSize-1; i>-1; i--) {
 	// Note only copy over elements of the flush that are also in the straight
 	// This accounts for 6 or 7 cards of same suit in hand
