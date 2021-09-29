@@ -74,20 +74,20 @@ private:
   int noPlayersSet_; // Has the number of players been set
 
 
-  std::vector<int> flopS;
-  int turnF;
-  int turnS;
-  int riverF;
-  int riverS;
+  std::vector<int> flopS_;
+  int turnF_;
+  int turnS_;
+  int riverF_;
+  int riverS_;
 
-  bool flopSet;
-  bool turnSet;
-  bool riverSet;
+  bool flopSet_;
+  bool turnSet_;
+  bool riverSet_;
   
 public:
 
   // MAKE THE FOLLOWING PRIVATE AFTER TESTING
-  std::vector<int> flopF;
+  std::vector<int> flopF_;
   deck D_; // We need a deck on the table
   std::vector<hand>   H_; // A vector of HANDS
   std::vector<player> P_; // A vector of PLAYERS
@@ -102,9 +102,9 @@ public:
     setNoPlayers(numPlayers); // Set up all the vectors etc for the number of players
 
     // No table cards set initially
-    flopSet  = false;
-    turnSet  = false;
-    riverSet = false;
+    flopSet_  = false;
+    turnSet_  = false;
+    riverSet_ = false;
     
   }
 
@@ -118,6 +118,9 @@ public:
   int setFlop(std::vector<int> flopInF, std::vector<int> flopInS);
   int setTurn(int turnInF, int turnInS);
   int setRiver(int riverInF, int riverInS);
+
+  // Deal random cards to the flop turn and river (if not currently set)
+  int dealFlopTrunRiver();
   
 };
 
