@@ -12,20 +12,6 @@
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 */
 
-void hold::setHoldCards(std::vector<int> holdInF, std::vector<int> holdInS, int noKnown)
-{
-
-  /*
-    Set the hold card for the current class (player), and the number of hold cards known.
-  */
-
-  noHoldKnown = noKnown;
-  for (int i=0; i<noKnown; i++) {
-    holdFace.push_back(holdInF[i]);
-    holdSuit.push_back(holdInS[i]);
-  }
-  
-}
 
 
 
@@ -82,4 +68,31 @@ int table::setNoPlayers(int noP)
   return 0;
   
 }
+
+
+int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int> holdInS)
+{
+
+  /*
+    Set the hold card for the current class (player), and the number of hold cards known.
+  */
+
+  // Check input arrays
+  if (holdInF.size()!=holdInS.size()) return -1;
+  
+  // Assign the known hold cards
+  H_[playerAdd].numKnown = holdInF.size();
+  for (int i=0; i<H_[playerAdd].numKnown; i++) {
+    // Add the cards to the relevant hold
+    H_[playerAdd].holdFace.push_back(holdInF[i]);
+    H_[playerAdd].holdSuit.push_back(holdInS[i]);
+  }
+
+  // Then remove the known hold cards from the deck
+  D_.remCards(holdInF,holdInS);
+  
+  return 0;
+  
+}
+
 
