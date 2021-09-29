@@ -37,7 +37,7 @@ public:
   player() {
     numHKnown = 0; // Initially we do not know any hold cards
     numWins=0;     // Nor have we won (yet...)
-    for (int i=0, i<10, i++) {
+    for (int Playeri=0; Playeri<10; Playeri++) {
       // Never won any way yet
       winHandCtr.push_back(0);
     }
@@ -49,7 +49,7 @@ public:
   std::vector<int> holdFace;
   std::vector<int> holdSuit;
 
-  // Wisns data
+  // Wins data
   int numWins;
   std::vector<int> winHandCtr;
   
@@ -74,25 +74,25 @@ private:
   int noPlayersSet_; // Has the number of players been set
 
 
+  std::vector<int> flopS;
+  int turnF;
+  int turnS;
+  int riverF;
+  int riverS;
 
-
-
+  bool flopSet;
+  bool turnSet;
+  bool riverSet;
   
 public:
 
-
   // MAKE THE FOLLOWING PRIVATE AFTER TESTING
-
+  std::vector<int> flopF;
   deck D_; // We need a deck on the table
-  
-  std::vector<hand>   H_; // A vector of hands
-
-  std::vector<player> P_; // A vector of players
+  std::vector<hand>   H_; // A vector of HANDS
+  std::vector<player> P_; // A vector of PLAYERS
 
 
-
-  
-  
   
   // Constructor
   table(int numPlayers) {
@@ -100,6 +100,11 @@ public:
     noPlayersSet_ = false;    // Initially no players set
     D_.setDeckFull();         // Initially we have a full deck
     setNoPlayers(numPlayers); // Set up all the vectors etc for the number of players
+
+    // No table cards set initially
+    flopSet  = false;
+    turnSet  = false;
+    riverSet = false;
     
   }
 
@@ -109,6 +114,10 @@ public:
   // Set hold cards when known, this also removes the cards from the deck
   int setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int> holdInS);
 
+  // Set the flop, turn and river
+  int setFlop(std::vector<int> flopInF, std::vector<int> flopInS);
+  int setTurn(int turnInF, int turnInS);
+  int setRiver(int riverInF, int riverInS);
   
 };
 

@@ -70,6 +70,7 @@ int table::setNoPlayers(int noP)
 }
 
 
+
 int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int> holdInS)
 {
 
@@ -91,6 +92,98 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
   // Then remove the known hold cards from the deck
   D_.remCards(holdInF,holdInS);
   
+  return 0;
+  
+}
+
+
+
+int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
+{
+
+  /*
+    Set the flop array for the table, removing the cards from the deck once set.
+
+    RETURNS
+    =======
+        0 :: Success!
+	-1 :: flopInF wrong size (/=3)
+	-2 :: flopInS wrong size (/=3)
+	-3 :: Error removing cards from the deck, possibly not currently in deck
+  */
+
+  // Error checks
+  if (flopInF.size()!=3) return -1;
+  if (flopInS.size()!=3) return -2;
+
+  // Set the class variables
+  flopF = flopInF;
+  flopS = flopInS;
+
+  // Remove the cards from array
+  int D_stat;
+  D_stat = D_.remCards(flopF,flopS);
+  if(D_stat!=0) return -3;
+  
+  flopSet = true;
+  return 0;
+  
+}
+
+
+
+int table::setTurn(int turnInF, int turnInS)
+{
+
+  /*
+    Set the turn card for the table, removing the cards from the deck once set.
+
+    RETURNS
+    =======
+        0 :: Success!
+	-3 :: Error removing cards from the deck, possibly not currently in deck
+  */
+
+
+  // Set the class variables
+  turnF = turnInF;
+  turnS = turnInS;
+
+  // Remove the cards from array
+  int D_stat;
+  D_stat = D_.remCard(turnF,turnS);
+  if(D_stat!=0) return -3;
+  
+  turnSet = true;
+  return 0;
+  
+}
+
+
+
+int table::setRiver(int riverInF, int riverInS)
+{
+
+  /*
+    Set the turn card for the table, removing the cards from the deck once set.
+
+    RETURNS
+    =======
+        0 :: Success!
+	-3 :: Error removing cards from the deck, possibly not currently in deck
+  */
+
+
+  // Set the class variables
+  riverF = riverInF;
+  riverS = riverInS;
+
+  // Remove the cards from array
+  int D_stat;
+  D_stat = D_.remCard(riverF,riverS);
+  if(D_stat!=0) return -3;
+  
+  riverSet = true;
   return 0;
   
 }
