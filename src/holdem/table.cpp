@@ -71,6 +71,34 @@ int table::setNoPlayers(int noP)
 
 
 
+int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
+{
+
+  /*
+    Add a hold card to the ``playerAdd'' players hold.
+
+  */
+
+  // We cant have more than two hold cards
+  if (P_[playerAdd-1].numHKnown>1) return -1;
+  
+  // Assign the known hold cards
+  P_[playerAdd-1].numHKnown++; // Note we now know one more hold card
+  totHoldsKnown_++;            // Increment the total known holds
+
+  // Add the cards to the relevant hold
+  P_[playerAdd-1].holdFace.push_back(holdInF);
+  P_[playerAdd-1].holdSuit.push_back(holdInS);
+
+  // Then remove the known hold card from the deck
+  D_.remCard(holdInF,holdInS);
+  
+  return 0;
+  
+}
+
+
+
 int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int> holdInS)
 {
 
@@ -82,12 +110,12 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
   if (holdInF.size()!=holdInS.size()) return -1;
   
   // Assign the known hold cards
-  P_[playerAdd].numHKnown = holdInF.size();   // Note the number of hold cards in the player hold
-  totHoldsKnown=totHoldsKnown+holdInF.size(); // Add the current number of hold cards to the total known
-  for (int i=0; i<P_[playerAdd].numHKnown; i++) {
+  P_[playerAdd-1].numHKnown = holdInF.size();   // Note the number of hold cards in the player hold
+  totHoldsKnown_=totHoldsKnown_+holdInF.size(); // Add the current number of hold cards to the total known
+  for (int i=0; i<P_[playerAdd-1].numHKnown; i++) {
     // Add the cards to the relevant hold
-    P_[playerAdd].holdFace.push_back(holdInF[i]);
-    P_[playerAdd].holdSuit.push_back(holdInS[i]);
+    P_[playerAdd-1].holdFace.push_back(holdInF[i]);
+    P_[playerAdd-1].holdSuit.push_back(holdInS[i]);
   }
 
   // Then remove the known hold cards from the deck
