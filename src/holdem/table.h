@@ -49,9 +49,10 @@ public:
   std::vector<int> holdFace;
   std::vector<int> holdSuit;
 
-  // Wins data
+  // Total number of wins for this player
   int numWins;
-  std::vector<int> winHandCtr;
+  // each ith element corresponds to wincode handCode-1
+  std::vector<int> winCodeCtr;
   
 };
 
@@ -74,21 +75,26 @@ private:
   int noPlayersSet_; // Has the number of players been set
 
   int totHoldsKnown_; // Total number of hold cards
-  
+
+  // Shared table cards
+  std::vector<int> flopF_;
   std::vector<int> flopS_;
   int turnF_;
   int turnS_;
   int riverF_;
   int riverS_;
 
+  // Check if shared table cards set
   bool flopSet_;
   bool turnSet_;
   bool riverSet_;
+
+  bool handsDealt_; // Have hands been dealt or not
   
 public:
 
   // MAKE THE FOLLOWING PRIVATE AFTER TESTING
-  std::vector<int> flopF_;
+
   deck D_; // We need a deck on the table
   std::vector<hand>   H_; // A vector of HANDS
   std::vector<player> P_; // A vector of PLAYERS
@@ -107,6 +113,12 @@ public:
     flopSet_  = false;
     turnSet_  = false;
     riverSet_ = false;
+    turnF_=-1;
+    turnS_=-1;
+    riverF_=-1;
+    riverS_=-1;
+
+    handsDealt_ = false; // Hands not initially set
     
   }
 
@@ -127,6 +139,9 @@ public:
 
   // Set the hands arrays by dealing random cards to `fill up' hold cards
   int dealAllHands();
+
+  // Find who won and with what
+  int findWinner();
   
 };
 

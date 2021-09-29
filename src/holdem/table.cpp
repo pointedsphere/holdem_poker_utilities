@@ -53,8 +53,10 @@ int table::setNoPlayers(int noP)
 
   // If number of players has already been set then destroy all that data
   if (noPlayersSet_==true) {
-    D_.setDeckFull(); // Reset the deck to 52 cards
-    P_.clear();
+    D_.setDeckFull();    // Reset the deck to 52 cards
+    D_.setDeckIndex(52); // Set the deck index for 52 cards
+    P_.clear();          // Delete player objects
+    H_.clear();          // Delete hand objects
   } else {
     noPlayersSet_ = true;
   }
@@ -357,9 +359,25 @@ int table::dealAllHands()
     }
     
   }
-  
+
+  handsDealt_=true;
   return 0; // Success
   
 }
+
+
+
+int table::findWinner()
+{
+
+  /*
+    Find the winner at the table, add this to the player object win counter and win hand type
+    counter variables. Also return an integer of the winning player
+  */
+
+  return 0;
+  
+}
+
 
 
