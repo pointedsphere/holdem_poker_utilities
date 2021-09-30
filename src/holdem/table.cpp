@@ -785,7 +785,7 @@ int table::findWinner()
 	    }
 	  }
 	}
-	std::cout << " D " << std::endl;
+
       	// If we still haven't found a winner then we have a draw
 	for (ip=0; ip<noPlayers_; ip++) {
 	  if (H_[ip].handCode==3 && H_[ip].bestFace[0]==highCardI_
@@ -800,6 +800,105 @@ int table::findWinner()
 
 
 
+      case 2: // Pair
+
+	// For a single pair we must check the pair, then the three kickers
+	// First we check the highest pair
+	cntHCforHC(4, 2);
+
+	// If only one has this high card it wins
+	if (numHighCardI_==1) {
+	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==2 && H_[ip].bestFace[4]==highCardI_) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  }
+	}
+
+	// Now check the highest kicker, where we also need it to be a kicker for a highest pair
+	int pairPval;
+	pairPval = highCardI_;
+
+	cntHCforHC(2, 2);
+
+	// If only one has this high card it wins
+	if (numHighCardI_==1) {
+	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==2 && H_[ip].bestFace[4]==pairPval
+		&& H_[ip].bestFace[2]==highCardI_) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  }
+	}
+
+	// Check the next highest kicker, where we also need it to be a kicker for a highest pair
+	int pairK1val;
+	pairK1val = highCardI_;
+
+	cntHCforHC(1, 2);
+
+	// If only one has this high card it wins
+	if (numHighCardI_==1) {
+	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==2 && H_[ip].bestFace[4]==pairPval
+		&& H_[ip].bestFace[2]==pairK1val && H_[ip].bestFace[1]==highCardI_) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  }
+	}
+
+	// Check the smallest kicker, where we also need it to be a kicker for a highest pair
+	int pairK2val;
+	pairK2val = highCardI_;
+
+	cntHCforHC(0, 2);
+
+	// If only one has this high card it wins
+	if (numHighCardI_==1) {
+	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==2 && H_[ip].bestFace[4]==pairPval
+		&& H_[ip].bestFace[2]==pairK1val && H_[ip].bestFace[1]==pairK2val
+		&& H_[ip].bestFace[0]==highCardI_) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  }
+	}
+
+      	// If we still haven't found a winner then we have a draw
+	for (ip=0; ip<noPlayers_; ip++) {
+	  if (H_[ip].handCode==2 && H_[ip].bestFace[4]==pairPval
+		&& H_[ip].bestFace[2]==pairK1val && H_[ip].bestFace[1]==pairK2val
+		&& H_[ip].bestFace[0]==highCardI_) {
+	    P_[ip].numDraw++;            // Iterate number of draws
+	    P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	  }
+	}
+
+	handCodeArr_.clear(); // Release un-needed memory
+	return 0; // Return the draw integer
+
+
+	
 
 
 
