@@ -570,7 +570,33 @@ int table::findWinner()
 	
 	// We have more than one flush, so we need to find the highest card in the flush
 	// Hand with the highest card wins, regardless as to what other cards are
+	// This is in essence searching for the player with the high card but only
+	// considering those players with a flush
 	
+	drawIntTmp_ = searchForHighCard(6);
+
+	// Now check if there is a draw
+	if (drawIntTmp_>-1) {
+
+	  // If searchForHighCard returns a non-negative integer then one player has won
+	  // with player index the returned value of searchForHighCard
+	  P_[drawIntTmp_].numWins++;
+	  P_[drawIntTmp_].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	  handCodeArr_.clear(); // Release un-needed memory
+	  return drawIntTmp_;   // Only one best hand, so return here
+
+	} else {
+
+	  // Otherwise we have a draw, with all drawn players given by index returned
+	  // by searchForHighCard into the class variable tTmpVec_
+	  for (ip=0; ip<tTmpVec_.size(); ip++) {
+	    P_[tTmpVec_[ip]].numDraw++;            // Iterate number of draws
+	    P_[tTmpVec_[ip]].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	  }
+	  handCodeArr_.clear(); // Release un-needed memory
+	  return 0;             // Return the draw integer
+	}
 	
       }
       
@@ -598,7 +624,7 @@ void table::cntHCforHC(int index, int HC) {
     in hands where handCode==HC.
 
     This is used for checking draws, i.e. checking or high cards for similar hands
-   */
+  */
 
   highCardI_=-1;
   numHighCardI_=0;
@@ -623,6 +649,74 @@ void table::cntHCforHC(int index, int HC) {
 
 }
 
+
+
+
+
+int table::searchForHighCard(int HC)
+{
+
+  /*
+
+    Find and return the index of the player with the best hand if we assume the handCode given
+    by HC is a high card. This is given as an input to allow for comparison of flushes also.
+
+    RETURNS
+    =======
+        -1  :: Draw, stored all in tTmpVec_ class variable
+	>-1 :: Index of winning player
+    
+   */
+
+  int HCIs;
+  int HCbest;
+  std::vector<int> HCIv;
+  
+  // Get indexes of the players with the handCode HC
+  HCIs=0;
+  for (int iq=0; iq<noPlayers_; iq++) {
+    if (H_[iq].handCode==HC) HCIv.push_back(iq);
+    HCIs++;
+  }
+
+  // Loop over all hands looking for highest unique high card
+  for (int iq=4; iq>-1; iq--) {
+
+    // Find the best high card in high card arrays
+    HCbest=-1;
+    for (int ir=0; ir<HCIs; ir++) {
+      if (H_[HCIv[ir]].bestFace[iq]>HCbest) {
+	HCbest = H_[HCIv[ir]].bestFace[iq];
+      } 
+    }
+    
+    // Remove any players from the mix who do not have the best high card or kicker
+    for (int ir=0; ir<HCIs; ir++) {
+      if (H_[HCIv[ir]].bestFace[iq]!=HCbest) {
+	HCIv.erase(HCIv.begin()+ir);
+	HCIs--;
+      }
+    }
+
+    // If we only have one card left, this player has the best high card hand with handCode HC
+    if (HCIs==1) {
+      return HCIv[0];
+    }
+
+    // If we get to the end and we still have players in it's a draw
+    if (iq==0) {
+      tTmpVec_.clear();
+      for (int ir=0; ir<HCIs; ir++) {
+	tTmpVec_.push_back(HCIv[ir]);
+      }
+      return -1;
+    }
+    
+  }
+
+  return -1000; // Should not reach here
+  
+};
 
 
 

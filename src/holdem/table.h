@@ -99,21 +99,18 @@ private:
   int highCardI_;
   int numHighCardI_;
 
-  // Temporary class variables, used here to save on repeated allocation
+  // Temporary class variables, used here to save on repeated allocation during checking for winners
 
   // General
   int ip;                            // Iterator
   int numOccurances_;                // Number of occurances of a given handCode
   int drawIntTmp_;                   // a temp integer for draw calculations
   std::vector<int> handCodeArr_;     // Array of all handCodes, the higher the handCode better the hand
-  std::vector<int> tTmpVec_;
+  std::vector<int> tTmpVec_;         // A general use temporary vector for use in hand checking
   // Straight Flush
   int straightFlushHighCard;
   // Four of a kind
   int fourKindHighCard_;
-  // Full House/Three of a kind/Pair
-  int threeKindHighCard_;
-  int pairHighCard_;
   
 public:
 
@@ -172,6 +169,9 @@ public:
   // handCode.
   void cntHCforHC(int index, int HC); // count high card for hand count
 
+  // Search all players hands for a high card, with restriction to one handCode
+  int searchForHighCard(int HC);
+  
   // Get functions
   std::vector<int> getWinsArray();
   std::vector<int> getDrawsArray();
