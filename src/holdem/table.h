@@ -95,6 +95,10 @@ private:
 
   bool handsDealt_; // Have hands been dealt or not
 
+  // Results from countin the number of occurences of highest card in best hand index
+  int highCardI_;
+  int numHighCardI_;
+
   // Temporary class variables, used here to save on repeated allocation
 
   // General
@@ -162,6 +166,11 @@ public:
 
   // Find who won and with what
   int findWinner();
+
+  // Find the highest card at a given index over all the best hands in the H_ hands with
+  // a given hand code. Also count the number of times this card occurs with the given
+  // handCode.
+  void cntHCforHC(int index, int HC); // count high card for hand count
 
   // Get functions
   std::vector<int> getWinsArray();

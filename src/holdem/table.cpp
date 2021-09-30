@@ -489,19 +489,6 @@ int table::findWinner()
 	    }
 	  }
 	  
-	} else {
-	  
-	  // Multiple best cards, so record them as draws
-	  for (ip=0; ip<noPlayers_; ip++) {
-	    if (H_[ip].handCode==9 && H_[ip].bestFace[4]==straightFlushHighCard) {
-	      P_[ip].numDraw++;            // Iterate number of draws
-	      P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
-	    }
-	  }
-
-	  handCodeArr_.clear(); // Release un-needed memory
-	  return 0; // Return the draw integer
-	  
 	}
 
       case 8: // Four of a kind
@@ -535,29 +522,12 @@ int table::findWinner()
 	// same then we have a draw
 
 	// Find the value of the highest three of a kind and the player(s) who have it
-	threeKindHighCard_ = -1;
-	drawIntTmp_=0;
-
-	// Loop over all players
-	for (ip=0; ip<noPlayers_; ip++) {
-
-	  // Only take account of those with a full house
-	  if (H_[ip].handCode==7) {
-
-	    // Either count an identical 3 of a kind or note new highest three of a kind
-	    if (H_[ip].bestFace[4]>threeKindHighCard_) {
-	      fourKindHighCard_=H_[ip].bestFace[4];
-	      drawIntTmp_=1;
-	    } else if (H_[ip].bestFace[4]==threeKindHighCard_) {
-	      drawIntTmp_++;
-	    }
-	  }
-	}
-
+	cntHCforHC(4, 7);
+	
 	// If only one has the highest 3 of a kind then we have a winner
-	if (drawIntTmp_==1) {
+	if (numHighCardI_==1) {
 	  for (ip=0; ip<noPlayers_; ip++) {
-	    if (H_[ip].handCode==7 && H_[ip].bestFace[4]==threeKindHighCard_) {
+	    if (H_[ip].handCode==7 && H_[ip].bestFace[4]==highCardI_) {
 	      P_[ip].numWins++;           // Iterate number of wins
 	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
 	      
@@ -569,29 +539,12 @@ int table::findWinner()
 	
 	// We only reach this point if more than one player has an identical 3 of a kind, so
 	// now we look for highest pair
-	pairHighCard_=-1;
-	drawIntTmp_=0;
-
-	// Loop over all players
-	for (ip=0; ip<noPlayers_; ip++) {
-
-	  // Only take account of those with a full house
-	  if (H_[ip].handCode==7) {
-
-	    // Either count an identical pair or note new highest pair
-	    if (H_[ip].bestFace[0]>pairHighCard_) {
-	      pairHighCard_=H_[ip].bestFace[0];
-	      drawIntTmp_=1;
-	    } else if (H_[ip].bestFace[0]==pairHighCard_) {
-	      drawIntTmp_++;
-	    }
-	  }
-	}
-
+	cntHCforHC(0, 7);
+	
 	// If only one has the highest pair then this player is the winner
-	if (drawIntTmp_==1) {
+	if (numHighCardI_==1) {
 	  for (ip=0; ip<noPlayers_; ip++) {
-	    if (H_[ip].handCode==7 && H_[ip].bestFace[0]==pairHighCard_) {
+	    if (H_[ip].handCode==7 && H_[ip].bestFace[0]==highCardI_) {
 	      P_[ip].numWins++;           // Iterate number of wins
 	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
 	      
@@ -603,7 +556,7 @@ int table::findWinner()
 	  // Otherwise we have a draw, so note the draw values for each drawing player
 	  
 	  for (ip=0; ip<noPlayers_; ip++) {
-	    if (H_[ip].handCode==7 && H_[ip].bestFace[0]==pairHighCard_) {
+	    if (H_[ip].handCode==7 && H_[ip].bestFace[0]==highCardI_) {
 	      P_[ip].numDraw++;            // Iterate number of draws
 	      P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
 	    }
@@ -611,8 +564,13 @@ int table::findWinner()
 
 	  handCodeArr_.clear(); // Release un-needed memory
 	  return 0; // Return the draw integer
-
 	}
+
+      case 6: // Flush
+	
+	// We have more than one flush, so we need to find the highest card in the flush
+	// Hand with the highest card wins, regardless as to what other cards are
+	
 	
       }
       
@@ -620,9 +578,52 @@ int table::findWinner()
 
   }
   
-  return 0;
+  return -10; // We shouldn't get to here, so return -10 for major error
   
+};
+
+
+
+
+
+void table::cntHCforHC(int index, int HC) {
+
+  /*
+    Loop over all the hands for all the players, find the highest card at a given
+    index in the best hand for all players with a given hand code. Also return the
+    number of cards with this vaue at the index for hands with hand code HC
+
+    Returns are indirect, with the class variables highCardI_ and numHighCardI_ set
+    by this routine for face value of highest card and the number of times it occurs
+    in hands where handCode==HC.
+
+    This is used for checking draws, i.e. checking or high cards for similar hands
+   */
+
+  highCardI_=-1;
+  numHighCardI_=0;
+  
+  // Loop over all players
+  for (ip=0; ip<noPlayers_; ip++) {
+
+    // Only take account of those with a full house
+    if (H_[ip].handCode==HC) {
+
+      // Either count an identical 3 of a kind or note new highest three of a kind
+      if (H_[ip].bestFace[index]>highCardI_) {
+	highCardI_=H_[ip].bestFace[index];
+	numHighCardI_=1;
+      } else if (H_[ip].bestFace[index]==highCardI_) {
+        numHighCardI_++;
+      }
+
+    }
+
+  }
+
 }
+
+
 
 
 
@@ -678,6 +679,7 @@ std::vector<int> table::getDrawsPerPlayer(int playerWins)
   return tTmpVec_;
   
 };
+
 
 
 

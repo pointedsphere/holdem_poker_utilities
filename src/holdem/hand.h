@@ -66,21 +66,21 @@ public:
            and best_suit are the corresponding suit values for each ith card in 
 	   best_face
 
-     Royal Flush:
+     10 - Royal Flush:
          { 10, J, Q, K, A }
 
-     Straight Flush:
+     9 - Straight Flush:
          In ascending order, e.g. { 3, 4, 5, 6, 7 }
 
-     Four of a Kind:
+     8 - Four of a Kind:
          Last 4 elements of array are the 4 of a kind cards and first is the odd one
 	 e.g. face values in order { 3, 6, 6, 6, 6 }
 
-     Full House:
+     7 - Full House:
          The three of a kind elemnts are the last in the array
 	 e.g. face values in order { 3, 3, 6, 6, 6 }
 
-     Flush:
+     6 - Flush:
          Flush values of highest face cards of flush suit in ascending order
 	 e.g. face values in order { 2, 4, 7, 8, 9 }
 
