@@ -646,7 +646,7 @@ int table::findWinner()
 
 	
       case 4: // Three of a kind
-
+	
 	// We have more than one three of a kind, highest 3 of a kind wins before looking at kickers
 	cntHCforHC(4, 4);
 
@@ -664,28 +664,54 @@ int table::findWinner()
 	  }
 	}
 
-	for (int II=1; II>-1; II--) {
-	  // If more than one hand shares the same three of a kind check the kickers starting with the highest
-	  cntHCforHC(II, 4);
+	// We need a few more variables to check the kickers
+	int threeKindCheck3 = highCardI_;
 
-	  // If only one has this high card kicker
-	  if (numHighCardI_==1) {
+	// If more than one hand shares the same three of a kind check the highest kicker
+	cntHCforHC(1, 4);
+
+	// If only one has this high card kicker
+	if (numHighCardI_==1) {
 	  
-	    for (ip=0; ip<noPlayers_; ip++) {
-	      if (H_[ip].handCode==4 && H_[ip].bestFace[II]==highCardI_) {
-		P_[ip].numWins++;           // Iterate number of wins
-		P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==4 && H_[ip].bestFace[1]==highCardI_
+		&& H_[ip].bestFace[4]==threeKindCheck3) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
 	      
-		handCodeArr_.clear(); // Release un-needed memory
-		return ip;            // Only one best hand, so return here
-	      }
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
 	    }
 	  }
 	}
 
+	// Now check the final kicker if we still haven't got a winner
+	int threeKindCheckK;
+	threeKindCheckK = highCardI_;
+
+	// Count the number of identical highest kickers
+	cntHCforHC(0, 4);
+	
+	// If only one has this high card kicker
+	if (numHighCardI_==1) {
+	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==4 && H_[ip].bestFace[0]==highCardI_
+		&& H_[ip].bestFace[4]==threeKindCheck3 && H_[ip].bestFace[1]==threeKindCheckK) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  }
+	}
+	
+
 	// If we still haven't found a winner then we have a draw
 	for (ip=0; ip<noPlayers_; ip++) {
-	  if (H_[ip].handCode==4 && H_[ip].bestFace[0]==highCardI_) {
+	  if (H_[ip].handCode==4 && H_[ip].bestFace[0]==highCardI_
+		&& H_[ip].bestFace[4]==threeKindCheck3 && H_[ip].bestFace[1]==threeKindCheckK) {
 	    P_[ip].numDraw++;            // Iterate number of draws
 	    P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
 	  }
@@ -697,6 +723,11 @@ int table::findWinner()
 
 	
 
+
+
+
+
+      
       }
       
     }
