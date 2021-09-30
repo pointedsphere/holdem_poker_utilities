@@ -95,7 +95,7 @@ public:
 	 in the three of a kind in ascending order in index 0 and 1
 	 e.g. { 2, 13, 4, 4, 4 }
 
-     Two Pair:
+     3 - Two Pair:
          The two pairs in ascending order as the last 4 elements of the array with element
 	 0 being the highest card not in a pair
 	 e.g. { 7, 2, 2, 10, 10 }
