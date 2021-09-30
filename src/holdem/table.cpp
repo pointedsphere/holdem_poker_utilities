@@ -898,6 +898,36 @@ int table::findWinner()
 	return 0; // Return the draw integer
 
 
+
+      case 1: // High Card
+
+	// We have a nice function for this one, so we just use that like we did for the flush
+	drawIntTmp_ = searchForHighCard(1);
+
+	// Now check if there is a draw
+	if (drawIntTmp_>-1) {
+
+	  // If searchForHighCard returns a non-negative integer then one player has won
+	  // with player index the returned value of searchForHighCard
+	  P_[drawIntTmp_].numWins++;
+	  P_[drawIntTmp_].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	  handCodeArr_.clear(); // Release un-needed memory
+	  return drawIntTmp_;   // Only one best hand, so return here
+
+	} else {
+
+	  // Otherwise we have a draw, with all drawn players given by index returned
+	  // by searchForHighCard into the class variable tTmpVec_
+	  for (ip=0; ip<tTmpVec_.size(); ip++) {
+	    P_[tTmpVec_[ip]].numDraw++;            // Iterate number of draws
+	    P_[tTmpVec_[ip]].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	  }
+	  handCodeArr_.clear(); // Release un-needed memory
+	  return 0;             // Return the draw integer
+	}
+
+	
 	
 
 

@@ -100,12 +100,12 @@ public:
 	 0 being the highest card not in a pair
 	 e.g. { 7, 2, 2, 10, 10 }
 
-     Pair:
+     2 - Pair:
          Store the single pair in the final two elements of the array and ascending high
 	 cards in all lower elements
 	 e.g. { 2, 4, 6, 5, 5 }
 
-     High Card:
+     1- High Card:
          Return the highest face value cards in ascending order
 
   */
