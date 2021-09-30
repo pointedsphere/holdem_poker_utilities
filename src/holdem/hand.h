@@ -84,13 +84,13 @@ public:
          Flush values of highest face cards of flush suit in ascending order
 	 e.g. face values in order { 2, 4, 7, 8, 9 }
 
-     Straight:
+     5 - Straight:
          Straight cards in ascending order
 	 e.g. face values in order { 4, 5, 6, 7, 8 }
 	 Note: If an Ace is part of the straight then we have cards in order
 	 { 14, 2, 3, 4, 5 }
      
-     Three of a kind:
+     4- Three of a kind:
          Three of a kind as the final elements in best_hands, with two highest cards not
 	 in the three of a kind in ascending order in index 0 and 1
 	 e.g. { 2, 13, 4, 4, 4 }

@@ -431,6 +431,8 @@ int table::findWinner()
       // This depends on what type of hand it is
       switch(hc) {
 
+
+	
       case 10: // Royal Flush
 
 	// Two or more royal flushes would draw, were they possible, but for brevity this is included
@@ -443,6 +445,8 @@ int table::findWinner()
 
 	handCodeArr_.clear(); // Release un-needed memory
 	return 0; // Found the drawn straight flushes
+
+
 	
       case 9: // Straight Flush
 
@@ -491,6 +495,8 @@ int table::findWinner()
 	  
 	}
 
+
+	
       case 8: // Four of a kind
 
 	// We know there are more than one four of a kind, the highest value of the four of a
@@ -515,6 +521,8 @@ int table::findWinner()
 	  }
 	}
 
+
+	
       case 7: // Full House
 
 	// We know there is more than one full house. We first check the three of a kinds, if
@@ -566,6 +574,8 @@ int table::findWinner()
 	  return 0; // Return the draw integer
 	}
 
+
+	
       case 6: // Flush
 	
 	// We have more than one flush, so we need to find the highest card in the flush
@@ -598,6 +608,8 @@ int table::findWinner()
 	  return 0;             // Return the draw integer
 	}
 
+
+	
       case 5: // Straight
 
 	// We have more than one straight, so we need to see which one has the highest high card
@@ -630,7 +642,61 @@ int table::findWinner()
 	  return 0; // Return the draw integer
 
 	}
+
+
 	
+      case 4: // Three of a kind
+
+	// We have more than one three of a kind, highest 3 of a kind wins before looking at kickers
+	cntHCforHC(4, 4);
+
+	// If only one has this high card it wins
+	if (numHighCardI_==1) {
+	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==4 && H_[ip].bestFace[4]==highCardI_) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
+	  }
+	}
+
+	for (int II=1; II>-1; II--) {
+	  // If more than one hand shares the same three of a kind check the kickers starting with the highest
+	  cntHCforHC(II, 4);
+
+	  // If only one has this high card kicker
+	  if (numHighCardI_==1) {
+	  
+	    for (ip=0; ip<noPlayers_; ip++) {
+	      if (H_[ip].handCode==4 && H_[ip].bestFace[II]==highCardI_) {
+		P_[ip].numWins++;           // Iterate number of wins
+		P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	      
+		handCodeArr_.clear(); // Release un-needed memory
+		return ip;            // Only one best hand, so return here
+	      }
+	    }
+	  }
+	}
+
+	// If we still haven't found a winner then we have a draw
+	for (ip=0; ip<noPlayers_; ip++) {
+	  if (H_[ip].handCode==4 && H_[ip].bestFace[0]==highCardI_) {
+	    P_[ip].numDraw++;            // Iterate number of draws
+	    P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	  }
+	}
+
+	handCodeArr_.clear(); // Release un-needed memory
+	return 0; // Return the draw integer
+
+
+	
+
       }
       
     }
