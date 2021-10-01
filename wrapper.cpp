@@ -69,15 +69,21 @@ PYBIND11_MODULE(holdEm, m) {
       .def("findWinner",        &table::findWinner)
       .def("resetTableToKnown", &table::resetTableToKnown)
       .def("resetTable",        &table::resetTable)
+      .def("MC",                &table::MC)
+      .def("getPlayerHoldFace", &table::getPlayerHoldFace)
+      .def("getPlayerHoldSuit", &table::getPlayerHoldSuit)
       .def("getWins",           &table::getWins)
       .def("getWinsP",          &table::getWinsP)
       .def("getDraws",          &table::getDraws)
       .def("getDrawsP",         &table::getDrawsP)
       .def("getWinsPP",         &table::getWinsPP)
-      .def("getWinsPPP",        &table::getWinsPPP)
+      .def("getWinsPPp",        &table::getWinsPPp)
       .def("getDrawsPP",        &table::getDrawsPP)
-      .def("getDrawsPPP",       &table::getDrawsPPP)
-      .def("runMC",             &table::runMC);
+      .def("getDrawsPPp",       &table::getDrawsPPp)
+      .def("getHandsPP",        &table::getHandsPP)
+      .def("getHandsPPp",       &table::getHandsPPp)
+      .def("getNumCardsInDeck", &table::getNumCardsInDeck);
+
 
 }  
 

@@ -4,8 +4,6 @@
 
 #include "table.h"
 #include "hand.h"
-#include "../tools/constants.h"
-
 
 /*
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -92,21 +90,21 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
   */
 
   // We cant have more than two hold cards
-  if (P_[playerAdd-1].numHoldKnown>1) return -2;
+  if (P_[playerAdd].numHoldKnown>1) return -2;
 
   // Player must exist at the table
   if (playerAdd>=noPlayers_) return -3;
   
   // Assign the known hold cards
-  P_[playerAdd-1].numHoldKnown++; // Note we now know one more hold card
-  P_[playerAdd-1].numHoldDealt++; // This known card is dealt
+  P_[playerAdd].numHoldKnown++; // Note we now know one more hold card
+  P_[playerAdd].numHoldDealt++; // This known card is dealt
   totHoldsKnown_++;               // Increment the total known holds
 
   // Add the cards to the relevant hold and save as known cards
-  P_[playerAdd-1].holdFace.push_back(holdInF);
-  P_[playerAdd-1].holdSuit.push_back(holdInS);
-  P_[playerAdd-1].holdFaceKnown.push_back(holdInF);
-  P_[playerAdd-1].holdSuitKnown.push_back(holdInS);
+  P_[playerAdd].holdFace.push_back(holdInF);
+  P_[playerAdd].holdSuit.push_back(holdInS);
+  P_[playerAdd].holdFaceKnown.push_back(holdInF);
+  P_[playerAdd].holdSuitKnown.push_back(holdInS);
 
   // Then remove the known hold card from the deck
   D_.remCard(holdInF,holdInS);
@@ -136,7 +134,7 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
   if (holdInF.size()!=holdInS.size()) return -1;
 
   // We can't have more than two hold cards
-  if (holdInF.size()+totHoldsKnown_>2) return -2;
+  if (holdInF.size()+P_[playerAdd].numHoldKnown>2) return -2;
 
   // Player must exist at the table
   if (playerAdd>=noPlayers_) return -3;
@@ -446,6 +444,7 @@ int table::findWinner()
   for (int fWi=0; fWi<noPlayers_; fWi++) {
     fWStat = H_[fWi].findBestHand();
     handCodeArr_.push_back(H_[fWi].getHandCode());
+    P_[fWi].handFoundCtr[H_[fWi].getHandCode()-1]++;
   }
 
   // Iterare the number of runs
@@ -1207,15 +1206,16 @@ int table::resetTable()
     P_[p].holdSuitKnown.clear();
     P_[p].winCodesCtr.clear();
     P_[p].drawCodesCtr.clear();
+    P_[p].handFoundCtr.clear();
     for (int Pi=0; Pi<10; Pi++) {
       // Never won any way yet
       P_[p].winCodesCtr.push_back(0);
       P_[p].drawCodesCtr.push_back(0);
+      P_[p].handFoundCtr.push_back(0);
     }
   }
   totHoldsKnown_ = 0;
 
-  
   // Reset the deck to a full deck
   D_.setDeckFull();
   
@@ -1225,7 +1225,7 @@ int table::resetTable()
 
 
 
-void table::runMC(int numMC)
+void table::MC(int numMC)
 {
 
   /*
@@ -1234,10 +1234,12 @@ void table::runMC(int numMC)
     This Monte Carlo simulation is ran numMC times.
    */
 
-  for (int mc=0; mc<numMC; mc++) {
-    stat = dealAll();
-    stat = findWinner();
-    stat = resetTableToKnown();
+  int MCstat;
+  
+  for (int Nmc=0; Nmc<numMC; Nmc++) {
+    MCstat = dealAll();
+    MCstat = findWinner();
+    MCstat = resetTableToKnown();
   }
   
 }
@@ -1254,7 +1256,18 @@ void table::runMC(int numMC)
 
 
 
+std::vector<int> table::getPlayerHoldFace(int playerPP)
+{
 
+  return P_[playerPP].holdFace;
+  
+};
+std::vector<int> table::getPlayerHoldSuit(int playerPP)
+{
+
+  return P_[playerPP].holdSuit;
+  
+};
 std::vector<int> table::getWins()
 {
 
@@ -1295,46 +1308,75 @@ std::vector<double> table::getDrawsP()
   return getTmp;
   
 };
-std::vector<int> table::getWinsPP(int playerWins)
+std::vector<int> table::getWinsPP(int playerPP)
 {
 
   std::vector<int> getTmp;
   for (int g=0; g<10; g++) {
-    getTmp.push_back(P_[playerWins].winCodesCtr[g]);
+    getTmp.push_back(P_[playerPP].winCodesCtr[g]);
   }
   return getTmp;
   
 };
-std::vector<double> table::getWinsPPP(int playerWins)
+std::vector<double> table::getWinsPPp(int playerPP)
 {
 
   std::vector<double> getTmp;
   for (int g=0; g<10; g++) {
-    getTmp.push_back((double)P_[playerWins].winCodesCtr[g]/(double)numRuns_);
+    getTmp.push_back((double)P_[playerPP].winCodesCtr[g]/(double)numRuns_);
   }
   return getTmp;
   
 };
-std::vector<int> table::getDrawsPP(int playerWins)
+std::vector<int> table::getDrawsPP(int playerPP)
 {
 
   std::vector<int> getTmp;
   for (int g=0; g<10; g++) {
-    getTmp.push_back(P_[playerWins].drawCodesCtr[g]);
+    getTmp.push_back(P_[playerPP].drawCodesCtr[g]);
   }
   return getTmp;
   
 };
-std::vector<double> table::getDrawsPPP(int playerWins)
+std::vector<double> table::getDrawsPPp(int playerPP)
 {
 
   std::vector<double> getTmp;
   for (int g=0; g<10; g++) {
-    getTmp.push_back((double)P_[playerWins].drawCodesCtr[g]/(double)numRuns_);
+    getTmp.push_back((double)P_[playerPP].drawCodesCtr[g]/(double)numRuns_);
   }
   return getTmp;
   
 };
+std::vector<int> table::getHandsPP(int playerPP)
+{
+
+  std::vector<int> getTmp;
+  for (int g=0; g<10; g++) {
+    getTmp.push_back(P_[playerPP].handFoundCtr[g]);
+  }
+  return getTmp;
+  
+};
+std::vector<double> table::getHandsPPp(int playerPP)
+{
+
+  std::vector<double> getTmp;
+  for (int g=0; g<10; g++) {
+    getTmp.push_back((double)P_[playerPP].handFoundCtr[g]/(double)numRuns_);
+  }
+  return getTmp;
+  
+};
+int table::getNumCardsInDeck()
+{
+
+  return D_.getNumCards();
+  
+}
+
+
+
 
 
 
