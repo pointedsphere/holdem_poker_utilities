@@ -83,10 +83,19 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
   /*
     Add a hold card to the ``playerAdd'' players hold.
 
+    RETURNS
+    =======
+        0  :: Success!
+	-2 :: Adding a card to the players hold would take number of hold cards above 2.
+	-3 :: playerAdd exceeds number of players at table.
+
   */
 
   // We cant have more than two hold cards
-  if (P_[playerAdd-1].numHoldKnown>1) return -1;
+  if (P_[playerAdd-1].numHoldKnown>1) return -2;
+
+  // Player must exist at the table
+  if (playerAdd>=noPlayers_) return -3;
   
   // Assign the known hold cards
   P_[playerAdd-1].numHoldKnown++; // Note we now know one more hold card
@@ -113,21 +122,35 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
 
   /*
     Set the hold card for the current class (player), and the number of hold cards known.
-  */
 
-  // Check input arrays
+    RETURNS
+    =======
+        0  :: Success!
+	-1 :: Input vectors holdInF and holdInS are of different lengths.
+	-2 :: adding cards in holdInF would take number of cards in player hold above 2.
+	-3 :: playerAdd exceeds number of players at table.
+
+  */
+  
+  // Check input arrays, they need to be the same size
   if (holdInF.size()!=holdInS.size()) return -1;
+
+  // We can't have more than two hold cards
+  if (holdInF.size()+totHoldsKnown_>2) return -2;
+
+  // Player must exist at the table
+  if (playerAdd>=noPlayers_) return -3;
   
   // Assign the known hold cards
-  P_[playerAdd-1].numHoldKnown += holdInF.size(); // Note the number of hold cards in the player hold
-  P_[playerAdd-1].numHoldDealt += holdInF.size(); // Note the number of hold cards dealt to the player
-  totHoldsKnown_=totHoldsKnown_+holdInF.size();  // Add the current number of hold cards to the total known
-  for (int i=0; i<P_[playerAdd-1].numHoldKnown; i++) {
+  P_[playerAdd].numHoldKnown += holdInF.size(); // Note the number of hold cards in the player hold
+  P_[playerAdd].numHoldDealt += holdInF.size(); // Note the number of hold cards dealt to the player
+  totHoldsKnown_ += holdInF.size();  // Add the current number of hold cards to the total known
+  for (int i=0; i<P_[playerAdd].numHoldKnown; i++) {
     // Add the cards to the relevant hold and to save the hold cards
-    P_[playerAdd-1].holdFace.push_back(holdInF[i]);
-    P_[playerAdd-1].holdSuit.push_back(holdInS[i]);
-    P_[playerAdd-1].holdFaceKnown.push_back(holdInF[i]);
-    P_[playerAdd-1].holdSuitKnown.push_back(holdInS[i]);
+    P_[playerAdd].holdFace.push_back(holdInF[i]);
+    P_[playerAdd].holdSuit.push_back(holdInS[i]);
+    P_[playerAdd].holdFaceKnown.push_back(holdInF[i]);
+    P_[playerAdd].holdSuitKnown.push_back(holdInS[i]);
   }
 
   // Then remove the known hold cards from the deck
@@ -147,16 +170,18 @@ int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
 
     RETURNS
     =======
-        0 :: Success!
+        0  :: Success!
 	-1 :: flopInF wrong size (/=3)
 	-2 :: flopInS wrong size (/=3)
 	-3 :: Error removing cards from the deck, possibly not currently in deck
+	-4 :: Flop already set
   */
-
+  
   // Error checks
   if (flopInF.size()!=3) return -1;
   if (flopInS.size()!=3) return -2;
-
+  if (flopSet_==true)    return -4;
+  
   // Set the class variables
   flopF_ = flopInF;
   flopS_ = flopInS;
@@ -182,10 +207,13 @@ int table::setTurn(int turnInF, int turnInS)
 
     RETURNS
     =======
-        0 :: Success!
+        0  :: Success!
 	-3 :: Error removing cards from the deck, possibly not currently in deck
+	-4 :: Trun already set
   */
 
+  // Error checks
+  if (turnSet_==true) return -4;
 
   // Set the class variables
   turnF_ = turnInF;
@@ -212,11 +240,14 @@ int table::setRiver(int riverInF, int riverInS)
 
     RETURNS
     =======
-        0 :: Success!
+        0  :: Success!
 	-3 :: Error removing cards from the deck, possibly not currently in deck
+	-4 :: River already set
   */
 
-
+  // Error checks
+  if (riverSet_==true) return -4;  
+  
   // Set the class variables
   riverF_ = riverInF;
   riverS_ = riverInS;
