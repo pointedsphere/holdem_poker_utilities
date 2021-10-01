@@ -393,10 +393,12 @@ void hand::sortCards()
 int hand::getStraight(int S_cards[], int hand_size)
 {
 
-  int straight_tmp=0;
+  int straight_tmp;
   int straight_dif;
   bool gotStraight=false;
   int straightHighCard;
+
+  straight_tmp=0;
   
   // If the hand contains an ace and lowest face is a 2 we must also consider a straight 
   // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
@@ -493,7 +495,7 @@ int hand::findBestHand()
   int pairSuit[2]={-1,-1};
   
   // Number of cards of each face value
-  int  faceValCount[7];
+  int faceValCount[7];
 
   
   
@@ -561,7 +563,7 @@ int hand::findBestHand()
       if (straightFlushHighCard==14) {
 	// If the high card of the flush straight is an ace we have a royal flush !!!
 	handCode = 10;
-
+	
       } else {
 	// Otherwise we just have a stright flush, still pretty good
 	handCode = 9;
@@ -580,6 +582,7 @@ int hand::findBestHand()
 	  bestSuit[straightFlush_i] = flushSuit;
 	  straightFlush_i--;
 	  if (straightFlush_i==-1) break;
+	  if (straightFlush_i==0 && aceInStraight==true) break;
 	}
       }
 
@@ -708,10 +711,11 @@ int hand::findBestHand()
   if (gotFlush==true) {
     
     int flush_tmp=4;
-    for (int i=flushSize-1; i>0; i--) {
+    for (int i=flushSize-1; i>-1; i--) {
       bestFace[flush_tmp] = flushCards[i];
       bestSuit[flush_tmp] = flushSuit;
       flush_tmp--;
+      if (flush_tmp==-1) break;
     }
 
     handCode = 6;
