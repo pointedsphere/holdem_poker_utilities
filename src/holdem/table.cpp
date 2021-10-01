@@ -444,6 +444,7 @@ int table::findWinner()
   for (int fWi=0; fWi<noPlayers_; fWi++) {
     fWStat = H_[fWi].findBestHand();
     handCodeArr_.push_back(H_[fWi].getHandCode());
+    P_[fWi].handFoundCtr[H_[fWi].getHandCode()-1]++;
   }
 
   // Iterare the number of runs
@@ -1205,15 +1206,16 @@ int table::resetTable()
     P_[p].holdSuitKnown.clear();
     P_[p].winCodesCtr.clear();
     P_[p].drawCodesCtr.clear();
+    P_[p].handFoundCtr.clear();
     for (int Pi=0; Pi<10; Pi++) {
       // Never won any way yet
       P_[p].winCodesCtr.push_back(0);
       P_[p].drawCodesCtr.push_back(0);
+      P_[p].handFoundCtr.push_back(0);
     }
   }
   totHoldsKnown_ = 0;
 
-  
   // Reset the deck to a full deck
   D_.setDeckFull();
   
@@ -1254,7 +1256,18 @@ void table::MC(int numMC)
 
 
 
+std::vector<int> table::getPlayerHoldFace(int playerPP)
+{
 
+  return P_[playerPP].holdFace;
+  
+};
+std::vector<int> table::getPlayerHoldSuit(int playerPP)
+{
+
+  return P_[playerPP].holdSuit;
+  
+};
 std::vector<int> table::getWins()
 {
 
@@ -1295,47 +1308,67 @@ std::vector<double> table::getDrawsP()
   return getTmp;
   
 };
-std::vector<int> table::getWinsPP(int playerWins)
+std::vector<int> table::getWinsPP(int playerPP)
 {
 
   std::vector<int> getTmp;
   for (int g=0; g<10; g++) {
-    getTmp.push_back(P_[playerWins].winCodesCtr[g]);
+    getTmp.push_back(P_[playerPP].winCodesCtr[g]);
   }
   return getTmp;
   
 };
-std::vector<double> table::getWinsPPP(int playerWins)
+std::vector<double> table::getWinsPPp(int playerPP)
 {
 
   std::vector<double> getTmp;
   for (int g=0; g<10; g++) {
-    getTmp.push_back((double)P_[playerWins].winCodesCtr[g]/(double)numRuns_);
+    getTmp.push_back((double)P_[playerPP].winCodesCtr[g]/(double)numRuns_);
   }
   return getTmp;
   
 };
-std::vector<int> table::getDrawsPP(int playerWins)
+std::vector<int> table::getDrawsPP(int playerPP)
 {
 
   std::vector<int> getTmp;
   for (int g=0; g<10; g++) {
-    getTmp.push_back(P_[playerWins].drawCodesCtr[g]);
+    getTmp.push_back(P_[playerPP].drawCodesCtr[g]);
   }
   return getTmp;
   
 };
-std::vector<double> table::getDrawsPPP(int playerWins)
+std::vector<double> table::getDrawsPPp(int playerPP)
 {
 
   std::vector<double> getTmp;
   for (int g=0; g<10; g++) {
-    getTmp.push_back((double)P_[playerWins].drawCodesCtr[g]/(double)numRuns_);
+    getTmp.push_back((double)P_[playerPP].drawCodesCtr[g]/(double)numRuns_);
   }
   return getTmp;
   
 };
-int table::getNumCardsLeftInDeck()
+std::vector<int> table::getHandsPP(int playerPP)
+{
+
+  std::vector<int> getTmp;
+  for (int g=0; g<10; g++) {
+    getTmp.push_back(P_[playerPP].handFoundCtr[g]);
+  }
+  return getTmp;
+  
+};
+std::vector<double> table::getHandsPPp(int playerPP)
+{
+
+  std::vector<double> getTmp;
+  for (int g=0; g<10; g++) {
+    getTmp.push_back((double)P_[playerPP].handFoundCtr[g]/(double)numRuns_);
+  }
+  return getTmp;
+  
+};
+int table::getNumCardsInDeck()
 {
 
   return D_.getNumCards();

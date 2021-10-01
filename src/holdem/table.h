@@ -43,6 +43,7 @@ public:
       // Never won any way yet
       winCodesCtr.push_back(0);
       drawCodesCtr.push_back(0);
+      handFoundCtr.push_back(0);
     }
   }
 
@@ -64,6 +65,7 @@ public:
   // each ith element corresponds to winCode handCode-1
   std::vector<int> winCodesCtr;
   std::vector<int> drawCodesCtr;
+  std::vector<int> handFoundCtr;
   
 };
 
@@ -92,6 +94,7 @@ private:
   deck D_;                // We need a deck on the table
   std::vector<hand>   H_; // A vector of HANDS
   std::vector<player> P_; // A vector of PLAYERS
+
 
   // Shared table cards
   std::vector<int> flopF_;
@@ -192,15 +195,20 @@ public:
   void MC(int numMC);
   
   // Get functions
+  std::vector<int>    getPlayerHoldFace(int PlayerPP);
+  std::vector<int>    getPlayerHoldSuit(int PlayerPP);
+  
   std::vector<int>    getWins();
   std::vector<double> getWinsP();
   std::vector<int>    getDraws();
   std::vector<double> getDrawsP();
-  std::vector<int>    getWinsPP(int playerWins);
-  std::vector<double> getWinsPPP(int playerWins);
-  std::vector<int>    getDrawsPP(int playerWins);
-  std::vector<double> getDrawsPPP(int playerWins);
-  int getNumCardsLeftInDeck();
+  std::vector<int>    getWinsPP(int playerPP);
+  std::vector<double> getWinsPPp(int playerPP);
+  std::vector<int>    getDrawsPP(int playerPP);
+  std::vector<double> getDrawsPPp(int playerPP);
+  std::vector<int>    getHandsPP(int playerPP);
+  std::vector<double> getHandsPPp(int playerPP);
+  int getNumCardsInDeck();
 
   
 };
