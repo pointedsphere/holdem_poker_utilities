@@ -468,6 +468,9 @@ int table::findWinner()
     handCodeArr_.push_back(H_[fWi].getHandCode());
   }
 
+  // Iterare the number of runs
+  numRuns_++;
+  
   // Check for the best hand at the table
   for (int hc=10; hc>0; hc--) {
 

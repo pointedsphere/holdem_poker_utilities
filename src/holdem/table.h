@@ -87,6 +87,8 @@ private:
   
   int totHoldsKnown_; // Total number of hold cards
 
+  int numRuns_;
+  
   // Shared table cards
   std::vector<int> flopF_;
   std::vector<int> flopS_;
@@ -139,7 +141,7 @@ public:
     D_.setDeckFull();         // Initially we have a full deck
     setNoPlayers(numPlayers); // Set up all the vectors etc for the number of players
     totHoldsKnown_=0;         // Total hold cards known is initially zero
-    
+    numRuns_=0;               // Not carried out any runs initially
     // No table cards set initially
     flopSet_    = false;
     flopDealt_  = false;
