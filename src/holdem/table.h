@@ -35,9 +35,10 @@ public:
 
   // Constructor
   player() {
-    numHKnown = 0; // Initially we do not know any hold cards
-    numWins=0;     // Nor have we won (yet...)
-    numDraw=0;     // Nor have we drawn (yet...)
+    numHoldKnown = 0; // Initially we do not know any hold cards
+    numHoldKnown = 0; // Nor have we dealt any
+    numWins=0;        // Nor have we won (yet...)
+    numDraw=0;        // Nor have we drawn (yet...)
     for (int Playeri=0; Playeri<10; Playeri++) {
       // Never won any way yet
       winCodesCtr.push_back(0);
@@ -45,15 +46,21 @@ public:
     }
   }
 
-  int numHKnown; // The number of hold cards known, either 0, 1 or 2
+  int numHoldDealt; // The number of hold cards known, either 0, 1 or 2
+  int numHoldKnown; // The number of hold cards currently dealt to the player
 
   // Vectors contianing face and suit values of hold cards
   std::vector<int> holdFace;
   std::vector<int> holdSuit;
 
+  // Vectors containing the known components of the holds
+  std::vector<int> holdFaceKnown;
+  std::vector<int> holdSuitKnown;
+
   // Total number of wins and drawsfor this player
   int numWins;
   int numDraw;
+  
   // each ith element corresponds to winCode handCode-1
   std::vector<int> winCodesCtr;
   std::vector<int> drawCodesCtr;
@@ -77,7 +84,7 @@ private:
 
   int noPlayers_;    // Number of players at table
   int noPlayersSet_; // Has the number of players been set
-
+  
   int totHoldsKnown_; // Total number of hold cards
 
   // Shared table cards
@@ -92,6 +99,9 @@ private:
   bool flopSet_;
   bool turnSet_;
   bool riverSet_;
+  bool flopDealt_;
+  bool turnDealt_;
+  bool riverDealt_;
 
   bool handsDealt_; // Have hands been dealt or not
 
@@ -131,9 +141,12 @@ public:
     totHoldsKnown_=0;         // Total hold cards known is initially zero
     
     // No table cards set initially
-    flopSet_  = false;
-    turnSet_  = false;
-    riverSet_ = false;
+    flopSet_    = false;
+    flopDealt_  = false;
+    turnSet_    = false;
+    turnDealt_  = false;
+    riverSet_   = false;
+    riverDealt_ = false;
     turnF_=-1;
     turnS_=-1;
     riverF_=-1;
@@ -158,6 +171,9 @@ public:
   // Deal random cards to the flop turn and river (if not currently set)
   int dealFlopTrunRiver();
 
+  // Deal the hold cards
+  int dealHold(int player);
+  
   // Set the hands arrays by dealing random cards to `fill up' hold cards
   int dealAllHands();
 
@@ -171,6 +187,9 @@ public:
 
   // Search all players hands for a high card, with restriction to one handCode
   int searchForHighCard(int HC);
+
+  // Reset the table to just the known cards to allow for re-dealing
+  int resetTableToKnown();
   
   // Get functions
   std::vector<int> getWinsArray();

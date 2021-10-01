@@ -86,15 +86,18 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
   */
 
   // We cant have more than two hold cards
-  if (P_[playerAdd-1].numHKnown>1) return -1;
+  if (P_[playerAdd-1].numHoldKnown>1) return -1;
   
   // Assign the known hold cards
-  P_[playerAdd-1].numHKnown++; // Note we now know one more hold card
-  totHoldsKnown_++;            // Increment the total known holds
+  P_[playerAdd-1].numHoldKnown++; // Note we now know one more hold card
+  P_[playerAdd-1].numHoldDealt++; // This known card is dealt
+  totHoldsKnown_++;               // Increment the total known holds
 
-  // Add the cards to the relevant hold
+  // Add the cards to the relevant hold and save as known cards
   P_[playerAdd-1].holdFace.push_back(holdInF);
   P_[playerAdd-1].holdSuit.push_back(holdInS);
+  P_[playerAdd-1].holdFaceKnown.push_back(holdInF);
+  P_[playerAdd-1].holdSuitKnown.push_back(holdInS);
 
   // Then remove the known hold card from the deck
   D_.remCard(holdInF,holdInS);
@@ -116,12 +119,15 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
   if (holdInF.size()!=holdInS.size()) return -1;
   
   // Assign the known hold cards
-  P_[playerAdd-1].numHKnown = holdInF.size();   // Note the number of hold cards in the player hold
-  totHoldsKnown_=totHoldsKnown_+holdInF.size(); // Add the current number of hold cards to the total known
-  for (int i=0; i<P_[playerAdd-1].numHKnown; i++) {
-    // Add the cards to the relevant hold
+  P_[playerAdd-1].numHoldKnown += holdInF.size(); // Note the number of hold cards in the player hold
+  P_[playerAdd-1].numHoldDealt += holdInF.size(); // Note the number of hold cards dealt to the player
+  totHoldsKnown_=totHoldsKnown_+holdInF.size();  // Add the current number of hold cards to the total known
+  for (int i=0; i<P_[playerAdd-1].numHoldKnown; i++) {
+    // Add the cards to the relevant hold and to save the hold cards
     P_[playerAdd-1].holdFace.push_back(holdInF[i]);
     P_[playerAdd-1].holdSuit.push_back(holdInS[i]);
+    P_[playerAdd-1].holdFaceKnown.push_back(holdInF[i]);
+    P_[playerAdd-1].holdSuitKnown.push_back(holdInS[i]);
   }
 
   // Then remove the known hold cards from the deck
@@ -160,7 +166,8 @@ int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
   D_stat = D_.remCards(flopF_,flopS_);
   if(D_stat!=0) return -3;
   
-  flopSet_ = true;
+  flopSet_   = true;
+  flopDealt_ = true;
   return 0;
   
 }
@@ -189,7 +196,8 @@ int table::setTurn(int turnInF, int turnInS)
   D_stat = D_.remCard(turnF_,turnS_);
   if(D_stat!=0) return -3;
   
-  turnSet_ = true;
+  turnSet_   = true;
+  turnDealt_ = true;
   return 0;
   
 }
@@ -218,7 +226,8 @@ int table::setRiver(int riverInF, int riverInS)
   D_stat = D_.remCard(riverF_,riverS_);
   if(D_stat!=0) return -3;
   
-  riverSet_ = true;
+  riverSet_   = true;
+  riverDealt_ = true;
   return 0;
   
 }
@@ -256,10 +265,10 @@ int table::dealFlopTrunRiver()
 	1 :: Nothing to do, the turn, flop and river are set. So sort of success...
 
   */
-
+  
   // If the flop, turn and river are set, then there is nothing left to do, so stop here
-  if (flopSet_==false && turnSet_==false && riverSet_==false) return 1;
-
+  if (flopDealt_==true && turnDealt_==true && riverDealt_==true) return 1;
+  
   // If we have to deal some cards to the flop turn or river, then some have been dealt,
   // therefore we need to re initialise the index array
   D_.setDeckIndex(D_.getNumCards());
@@ -270,9 +279,9 @@ int table::dealFlopTrunRiver()
   // Then find the number of cards we need to add, and deal these out to the deck class arrays
   // dealFace_ and dealSuit_
   int numToDeal=0;
-  if (flopSet_==false)  numToDeal = numToDeal + 3;
-  if (turnSet_==false)  numToDeal++;
-  if (riverSet_==false) numToDeal++;
+  if (flopDealt_==false)  numToDeal+=3;
+  if (turnDealt_==false)  numToDeal++;
+  if (riverDealt_==false) numToDeal++;
 
   // Now deal out the number of required cards to the dealFace_ and dealSuit_ arrays
   D_.dealCards(numToDeal);
@@ -280,26 +289,26 @@ int table::dealFlopTrunRiver()
   // Set the cards from the single dealt array of numToDeal cards
   int FTRiter=0;
   // Start with the flop
-  if (flopSet_==false) {
-    for (int FTRi=0; FTRi<3; FTRi++) {
+  if (flopDealt_==false) {
+    for (int FTRi=0; FTRi<3; FTRi++) {      
       flopF_.push_back(D_.dealFace_[FTRiter]);
       flopS_.push_back(D_.dealSuit_[FTRiter]);
       FTRiter++;
     }
-    flopSet_=true;
+    flopDealt_=true;
   }
   // Then the turn
-  if (turnSet_==false) {
+  if (turnDealt_==false) {
     turnF_   = D_.dealFace_[FTRiter];
     turnS_   = D_.dealSuit_[FTRiter];
-    turnSet_ = true;
+    turnDealt_ = true;
     FTRiter++;
   }
   // Finally the river
-  if (riverSet_==false) {
+  if (riverDealt_==false) {
     riverF_   = D_.dealFace_[FTRiter];
     riverS_   = D_.dealSuit_[FTRiter];
-    riverSet_ = true;
+    riverDealt_ = true;
   }
   
   return 0;
@@ -308,73 +317,129 @@ int table::dealFlopTrunRiver()
 
 
 
+
+int table::dealHold(int player)
+{
+
+  /*
+
+    Deal the hold cards to the current player, that is if any cards are needed to be dealt
+
+    RETURNS
+    =======
+        0 :: Success!
+	1 :: Nothing to do, the turn, flop and river are set. So sort of success...
+
+  */
+
+  // If we have 2 cards in the hold then exit, we can't deal any more
+  if (P_[player].numHoldDealt==2) return 1;
+  
+  // If we have to deal some cards to the hold we may have already set some cards
+  // therefore we need to re initialise the index array
+  D_.setDeckIndex(D_.getNumCards());
+  
+  // If deck isnt shuffled then shuffle
+  if (D_.getDeckShuffled()==false) D_.shuffleI();
+  
+  // Then find the number of cards we need to add, and deal these out to the deck class arrays
+  // dealFace_ and dealSuit_
+  int numToDeal;
+  numToDeal = 2-P_[player].numHoldDealt;
+  
+  // Now deal out the number of required cards to the dealFace_ and dealSuit_ arrays
+  D_.dealCards(numToDeal);
+  
+  // Now set the hold cards for the given player
+  int dealIter = 0;
+  for (int np=P_[player].numHoldDealt; np<2; np++) {
+    P_[player].holdFace.push_back(D_.dealFace_[dealIter]);
+    P_[player].holdSuit.push_back(D_.dealSuit_[dealIter]);
+    P_[player].numHoldDealt++;
+    dealIter++;
+  }
+  
+  return 0;
+  
+}
+
+
+
+
 int table::dealAllHands()
 {
 
   /*
+ 
     Deal cards to all hands.
 
-    This routine starts by dealing the flop turn and river (if they are not already dealt).
+    This routine starts by dealing the flop, turn and river (if they are not already dealt).
     It then assigns each hand using the flop turn and river, taking any known hold cards and 
     combining with some randomly dealt cards to fill all unknown holds.
-   */
 
-  int dStat; // deal stat integer
+  */
+
+  int dStat; // deal status
   
   // Initially check if the flop turn and river are set, if not this routine sets them
   dStat = dealFlopTrunRiver();
-
-  // If deck isnt shuffled then shuffle
-  if (D_.getDeckShuffled()==false) D_.shuffleI();
   
   // Now deal some new cards to the deck deal class vectors, based on the total number of
   // hold cards (noPlayers*2) minus number known hold cards (totHoldsKnown)
-  D_.dealCards((noPlayers_*2)-totHoldsKnown_);
+  // D_.dealCards((noPlayers_*2)-totHoldsKnown_);
   
-  // Now loop through the hands, dealing flop values if needed
-  int HDealI=0;                 // Which card from the dealt stack should we deal
-  std::vector<int> holdFaceTmp; // Temp face array
-  std::vector<int> holdSuitTmp; // Temp suit array
+  // // Now loop through the hands, dealing flop values if needed
+  // int HDealI=0;                 // Which card from the dealt stack should we deal
+  // std::vector<int> holdFaceTmp; // Temp face array
+  // std::vector<int> holdSuitTmp; // Temp suit array
 
-  for (int h=0; h<noPlayers_; h++) {
+  // for (int h=0; h<noPlayers_; h++) {
 
-    switch (P_[h].numHKnown) {
-    case 2:
+  //   switch (P_[h].numHoldDealt) {
+  //   case 2:
       
-      // If there are two known flop cards for the current playerwe do not need to deal any
-      // cards nor do we need to use the temporary hold buffer arrays
-      H_[h].SetCards(P_[h].holdFace, P_[h].holdSuit, flopF_, flopS_, turnF_, turnS_, riverF_, riverS_);
+  //     // If there are two known flop cards for the current playerwe do not need to deal any
+  //     // cards nor do we need to use the temporary hold buffer arrays
+  //     H_[h].SetCards(P_[h].holdFace, P_[h].holdSuit, flopF_, flopS_, turnF_, turnS_, riverF_, riverS_);
 
-    default:
+  //   default:
 
-      // If there are less than 2 known hold cards we must deal up to two, we do this using the temporary
-      // arrays so we can reuse the same player object over multiple hand setting for a Monte Carlo sim
-      holdFaceTmp = P_[h].holdFace;
-      holdSuitTmp = P_[h].holdSuit;
+  //     // If there are less than 2 known hold cards we must deal up to two, we do this using the temporary
+  //     // arrays so we can reuse the same player object over multiple hand setting for a Monte Carlo sim
+  //     holdFaceTmp = P_[h].holdFace;
+  //     holdSuitTmp = P_[h].holdSuit;
 
-      // Then deal up the hold, such that there are two cards in the current players temporary hold
-      for (int q=P_[h].numHKnown; q<2; q++) {
+  //     // Then deal up the hold, such that there are two cards in the current players temporary hold
+  //     for (int q=P_[h].numHoldDealt; q<2; q++) {
 	
-	holdFaceTmp.push_back(D_.dealFace_[HDealI]);
-	holdSuitTmp.push_back(D_.dealSuit_[HDealI]);
-	HDealI++;
-      }
+  // 	holdFaceTmp.push_back(D_.dealFace_[HDealI]);
+  // 	holdSuitTmp.push_back(D_.dealSuit_[HDealI]);
+  // 	HDealI++;
+	
+  //     }
 
-      // Now set the hand from this temp hold
-      H_[h].SetCards(holdFaceTmp, holdSuitTmp, flopF_, flopS_, turnF_, turnS_, riverF_, riverS_);
+  //     // Now set the hand from this temp hold
+  //     H_[h].SetCards(holdFaceTmp, holdSuitTmp, flopF_, flopS_, turnF_, turnS_, riverF_, riverS_);
 
-      // And as we are done with the temp vectors clear them
-      holdFaceTmp.clear();
-      holdSuitTmp.clear();
+  //     // And as we are done with the temp vectors clear them
+  //     holdFaceTmp.clear();
+  //     holdSuitTmp.clear();
       
-    }
-    
+  //   }
+  
+  // Now deal up all the players hold cards, and after this set the players full hand (including the
+  // flop, turn and river
+  for (int p=0; p<noPlayers_; p++) {
+    dealHold(p);
+    H_[p].SetCards(P_[p].holdFace, P_[p].holdSuit, flopF_, flopS_, turnF_, turnS_, riverF_, riverS_);
   }
-
+  
   handsDealt_=true;
   return 0; // Success
   
 }
+
+
 
 
 
@@ -600,7 +665,8 @@ int table::findWinner()
 
 	  // Otherwise we have a draw, with all drawn players given by index returned
 	  // by searchForHighCard into the class variable tTmpVec_
-	  for (ip=0; ip<tTmpVec_.size(); ip++) {
+	  int tmpVecSize=tTmpVec_.size();
+	  for (ip=0; ip<tmpVecSize; ip++) {
 	    P_[tTmpVec_[ip]].numDraw++;            // Iterate number of draws
 	    P_[tTmpVec_[ip]].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
 	  }
@@ -919,7 +985,8 @@ int table::findWinner()
 
 	  // Otherwise we have a draw, with all drawn players given by index returned
 	  // by searchForHighCard into the class variable tTmpVec_
-	  for (ip=0; ip<tTmpVec_.size(); ip++) {
+	  int tmpVecSize=tTmpVec_.size();
+	  for (ip=0; ip<tmpVecSize; ip++) {
 	    P_[tTmpVec_[ip]].numDraw++;            // Iterate number of draws
 	    P_[tTmpVec_[ip]].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
 	  }
@@ -1012,8 +1079,10 @@ int table::searchForHighCard(int HC)
   // Get indexes of the players with the handCode HC
   HCIs=0;
   for (int iq=0; iq<noPlayers_; iq++) {
-    if (H_[iq].handCode==HC) HCIv.push_back(iq);
-    HCIs++;
+    if (H_[iq].handCode==HC) {
+      HCIv.push_back(iq);
+      HCIs++;
+    }
   }
 
   // Loop over all hands looking for highest unique high card
@@ -1055,6 +1124,62 @@ int table::searchForHighCard(int HC)
   
 };
 
+
+
+
+
+
+
+int table::resetTableToKnown()
+{
+
+  /*
+    
+    Reset the table to only have the known cards, this allows for re-dealing fresh random cards
+    whilst keeping the known cards.
+
+  */
+   
+  // Look first at the cards on the table
+  if (flopSet_==false) {
+    flopDealt_=false;
+    flopF_.clear();
+    flopS_.clear();
+    D_.itNumCardsInDeck(3);
+  }
+  if (turnSet_==false) {
+    turnDealt_=false;
+    turnF_=-1;
+    turnS_=-1;
+    D_.itNumCardsInDeck(1);
+  }
+  if (riverSet_==false) {
+    riverDealt_=false;
+    riverF_=-1;
+    riverS_=-1;
+    D_.itNumCardsInDeck(1);
+  }
+
+  for (int p=0; p<noPlayers_; p++) {
+    // Now loop through and discard all dealt cards (that are not known a priori) from the holds
+    if (P_[p].numHoldKnown==0) {
+      // If there are no known hold cards then clear all the hold arrays
+      P_[p].holdFace.clear();
+      P_[p].holdSuit.clear();
+      P_[p].numHoldDealt=0;
+      D_.itNumCardsInDeck(2);
+    } else if (P_[p].numHoldKnown==1) {
+      // If one card is known then just remove the last dealt card from the hold
+      P_[p].holdFace.pop_back();
+      P_[p].holdSuit.pop_back();
+      P_[p].numHoldDealt--;
+      D_.itNumCardsInDeck(1);
+    } // Don't need to take any action if both hold cards are known for a player
+  }
+  
+  return 0;
+  
+};
 
 
 

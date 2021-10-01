@@ -68,6 +68,9 @@ public:
   int dealCards(int numToDeal);
   void remDealtCards();
 
+  // Iterate the number of cards in the deck (used for resets)
+  void itNumCardsInDeck(int deckIter);
+  
   // Class values for dealing the cards
   bool dealDone_;
   int  numDealt_;
