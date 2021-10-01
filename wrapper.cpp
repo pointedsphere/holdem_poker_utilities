@@ -16,6 +16,7 @@ g++ -O3 -Wall -shared -std=c++11 -undefined dynamic_lookup $(python3 -m pybind11
 
 #include "src/holdem/hand.h"
 #include "src/holdem/deck.h"
+#include "src/holdem/table.h"
 
 namespace py = pybind11;
 
@@ -30,8 +31,8 @@ PYBIND11_MODULE(holdEm, m) {
 
     py::class_<hand>(m, "hand")
       .def(py::init<>())
-      .def("pSetCards",     &hand::pSetCards)
-      .def("pSetCardsFull", &hand::pSetCardsFull)
+      .def("SetCards",     &hand::SetCards)
+      .def("SetCardsFull", &hand::SetCardsFull)
       .def("findBestHand",  &hand::findBestHand)
       .def("getCardsFace",  &hand::getCardsFace)
       .def("getCardsSuit",  &hand::getCardsSuit)
@@ -54,6 +55,28 @@ PYBIND11_MODULE(holdEm, m) {
       .def("getNumCards",    &deck::getNumCards)
       .def("getDealFace",    &deck::getDealFace)
       .def("getDealSuit",    &deck::getDealSuit);
+
+    py::class_<table>(m, "table")
+      .def(py::init<int>())
+      .def("setHoldCards",      &table::setHoldCards)
+      .def("setHoldCard",       &table::setHoldCard)
+      .def("setFlop",           &table::setHoldCard)
+      .def("setTurn",           &table::setHoldCard)
+      .def("setRiver",          &table::setHoldCard)
+      .def("dealFlopTurnRiver", &table::dealFlopTurnRiver)
+      .def("dealHold",          &table::dealHold)
+      .def("dealAll",           &table::dealAll)
+      .def("findWinner",        &table::findWinner)
+      .def("resetTableToKnown", &table::resetTableToKnown)
+      .def("resetTable",        &table::resetTable)
+      .def("getWins",           &table::getWins)
+      .def("getWinsP",          &table::getWinsP)
+      .def("getDraws",          &table::getDraws)
+      .def("getDrawsP",         &table::getDrawsP)
+      .def("getWinsPP",         &table::getWinsPP)
+      .def("getWinsPPP",        &table::getWinsPPP)
+      .def("getDrawsPP",        &table::getDrawsPP)
+      .def("getDrawsPPP",       &table::getDrawsPPP);
 
 }  
 
