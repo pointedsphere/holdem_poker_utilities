@@ -134,7 +134,7 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
   if (holdInF.size()!=holdInS.size()) return -1;
 
   // We can't have more than two hold cards
-  if (holdInF.size()+totHoldsKnown_>2) return -2;
+  if (holdInF.size()+P_[playerAdd].numHoldKnown>2) return -2;
 
   // Player must exist at the table
   if (playerAdd>=noPlayers_) return -3;
