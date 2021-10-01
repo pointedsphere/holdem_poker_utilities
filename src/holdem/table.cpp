@@ -269,12 +269,12 @@ int table::dealFlopTrunRiver()
   // If the flop, turn and river are set, then there is nothing left to do, so stop here
   if (flopDealt_==true && turnDealt_==true && riverDealt_==true) return 1;
   
-  // If we have to deal some cards to the flop turn or river, then some have been dealt,
-  // therefore we need to re initialise the index array
-  D_.setDeckIndex(D_.getNumCards());
+  // // If we have to deal some cards to the flop turn or river, then some have been dealt,
+  // // therefore we need to re initialise the index array
+  // D_.setDeckIndex(D_.getNumCards());
   
-  // If deck isnt shuffled then shuffle
-  if (D_.getDeckShuffled()==false) D_.shuffleI();
+  // // If deck isnt shuffled then shuffle
+  // if (D_.getDeckShuffled()==false) D_.shuffleI();
   
   // Then find the number of cards we need to add, and deal these out to the deck class arrays
   // dealFace_ and dealSuit_
@@ -335,12 +335,12 @@ int table::dealHold(int player)
   // If we have 2 cards in the hold then exit, we can't deal any more
   if (P_[player].numHoldDealt==2) return 1;
   
-  // If we have to deal some cards to the hold we may have already set some cards
-  // therefore we need to re initialise the index array
-  D_.setDeckIndex(D_.getNumCards());
+  // // If we have to deal some cards to the hold we may have already set some cards
+  // // therefore we need to re initialise the index array
+  // D_.setDeckIndex(D_.getNumCards());
   
-  // If deck isnt shuffled then shuffle
-  if (D_.getDeckShuffled()==false) D_.shuffleI();
+  // // If deck isnt shuffled then shuffle
+  // if (D_.getDeckShuffled()==false) D_.shuffleI();
   
   // Then find the number of cards we need to add, and deal these out to the deck class arrays
   // dealFace_ and dealSuit_
@@ -380,6 +380,12 @@ int table::dealAllHands()
   */
 
   int dStat; // deal status
+
+  // Set the deck index before dealing
+  D_.setDeckIndex(D_.getNumCards());
+
+  // Shuffle cards before dealing things out
+  D_.shuffleI();
   
   // Initially check if the flop turn and river are set, if not this routine sets them
   dStat = dealFlopTrunRiver();
@@ -503,7 +509,7 @@ int table::findWinner()
 	
       case 10: // Royal Flush
 
-	// Two or more royal flushes would draw, were they possible, but for brevity this is included
+	// Two or more royal flushes draw
 	for (int ip=0; ip<noPlayers_; ip++) {
 	  if (H_[ip].handCode==hc) {
 	    P_[ip].numDraw++;            // Iterate number of draws
