@@ -151,7 +151,6 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 
      Returns:
           0 : Success!
-         -1 : Card to remove from deck not actually in the deck.
   */
 
   int remFaceSize=remFace.size();
@@ -165,7 +164,14 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
     suitToRem = remSuit[i];
     
     for (int j=0; j<53; j++) {
-      if (j==53) return -1; // overflow error
+
+      if (j==53) {
+	// Exit everything with an error if a card not in the deck is requested for removal
+	std::cout << "ERROR : remCard requested to remove card not in deck with face value "
+		  << faceToRem << " and suit value " << suitToRem << "." << std::endl;;
+	exit (EXIT_FAILURE);
+      }
+      
       // Now check each card in the deck against the current one to remove
       if (faceToRem==deckFace_[j] && suitToRem==deckSuit_[j]) {
 	// then delete and break to the next card to remove
