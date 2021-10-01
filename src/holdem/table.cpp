@@ -300,13 +300,6 @@ int table::dealFlopTurnRiver()
   // If the flop, turn and river are set, then there is nothing left to do, so stop here
   if (flopDealt_==true && turnDealt_==true && riverDealt_==true) return 1;
   
-  // // If we have to deal some cards to the flop turn or river, then some have been dealt,
-  // // therefore we need to re initialise the index array
-  // D_.setDeckIndex(D_.getNumCards());
-  
-  // // If deck isnt shuffled then shuffle
-  // if (D_.getDeckShuffled()==false) D_.shuffleI();
-  
   // Then find the number of cards we need to add, and deal these out to the deck class arrays
   // dealFace_ and dealSuit_
   int numToDeal=0;
@@ -366,13 +359,6 @@ int table::dealHold(int player)
   // If we have 2 cards in the hold then exit, we can't deal any more
   if (P_[player].numHoldDealt==2) return 1;
   
-  // // If we have to deal some cards to the hold we may have already set some cards
-  // // therefore we need to re initialise the index array
-  // D_.setDeckIndex(D_.getNumCards());
-  
-  // // If deck isnt shuffled then shuffle
-  // if (D_.getDeckShuffled()==false) D_.shuffleI();
-  
   // Then find the number of cards we need to add, and deal these out to the deck class arrays
   // dealFace_ and dealSuit_
   int numToDeal;
@@ -420,49 +406,6 @@ int table::dealAll()
   
   // Initially check if the flop turn and river are set, if not this routine sets them
   dStat = dealFlopTurnRiver();
-  
-  // Now deal some new cards to the deck deal class vectors, based on the total number of
-  // hold cards (noPlayers*2) minus number known hold cards (totHoldsKnown)
-  // D_.dealCards((noPlayers_*2)-totHoldsKnown_);
-  
-  // // Now loop through the hands, dealing flop values if needed
-  // int HDealI=0;                 // Which card from the dealt stack should we deal
-  // std::vector<int> holdFaceTmp; // Temp face array
-  // std::vector<int> holdSuitTmp; // Temp suit array
-
-  // for (int h=0; h<noPlayers_; h++) {
-
-  //   switch (P_[h].numHoldDealt) {
-  //   case 2:
-      
-  //     // If there are two known flop cards for the current playerwe do not need to deal any
-  //     // cards nor do we need to use the temporary hold buffer arrays
-  //     H_[h].SetCards(P_[h].holdFace, P_[h].holdSuit, flopF_, flopS_, turnF_, turnS_, riverF_, riverS_);
-
-  //   default:
-
-  //     // If there are less than 2 known hold cards we must deal up to two, we do this using the temporary
-  //     // arrays so we can reuse the same player object over multiple hand setting for a Monte Carlo sim
-  //     holdFaceTmp = P_[h].holdFace;
-  //     holdSuitTmp = P_[h].holdSuit;
-
-  //     // Then deal up the hold, such that there are two cards in the current players temporary hold
-  //     for (int q=P_[h].numHoldDealt; q<2; q++) {
-	
-  // 	holdFaceTmp.push_back(D_.dealFace_[HDealI]);
-  // 	holdSuitTmp.push_back(D_.dealSuit_[HDealI]);
-  // 	HDealI++;
-	
-  //     }
-
-  //     // Now set the hand from this temp hold
-  //     H_[h].SetCards(holdFaceTmp, holdSuitTmp, flopF_, flopS_, turnF_, turnS_, riverF_, riverS_);
-
-  //     // And as we are done with the temp vectors clear them
-  //     holdFaceTmp.clear();
-  //     holdSuitTmp.clear();
-      
-  //   }
   
   // Now deal up all the players hold cards, and after this set the players full hand (including the
   // flop, turn and river
