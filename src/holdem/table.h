@@ -119,10 +119,6 @@ private:
   int drawIntTmp_;                   // a temp integer for draw calculations
   std::vector<int> handCodeArr_;     // Array of all handCodes, the higher the handCode better the hand
   std::vector<int> tTmpVec_;         // A general use temporary vector for use in hand checking
-  // Straight Flush
-  int straightFlushHighCard;
-  // Four of a kind
-  int fourKindHighCard_;
   
 public:
 

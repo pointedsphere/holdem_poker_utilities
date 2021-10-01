@@ -524,41 +524,13 @@ int table::findWinner()
 	
       case 9: // Straight Flush
 
-	// For the royal flush we only need check the highest card in the flush, where
-	// the highest card wins. If more than one hand has an identical high card then
-	// they draw
-
-	// Use drawIntTmp_ here as a counter of the number of times the same high card
-	// (i.e. drawn hands if more than 1)
-
-	// Loop through once to find the highest high card in the straight flushes
-	straightFlushHighCard = -1;
-	for (ip=0; ip<noPlayers_; ip++) {
-	  // Must be hand coe 9 for straight flush
-	  if (H_[ip].handCode==9) {
-	  
-	    if (H_[ip].bestFace[4]>straightFlushHighCard) {
-	      // Found a new highest flush card
-	      straightFlushHighCard = H_[ip].bestFace[4];
-	      drawIntTmp_=1; // Only one straight flush with this high card so far
-	    } else if (H_[ip].bestFace[4]==straightFlushHighCard) {
-	      // Multiple high cards
-	      drawIntTmp_++; // More than one straight flush with this high card
-	    }
-	    
-	  }	  
-	}
-
-	// We now know the highest card in a straight. All winning or drawn will have this
-	// high card, but we dont know if one player has won or more than one have drawn
+	// Loop through all hands and check for highest cards in all stright flushes
+	cntHCforHC(4, 9);
 	
-	// Now find all players that have drawn
-	if (drawIntTmp_==1) {
-	  
-	  // Only one with the best high card, so just record this one as a win
+	// If there is only one of this 4 of a kind return it
+	if (numHighCardI_==1) {
 	  for (ip=0; ip<noPlayers_; ip++) {
-
-	    if (H_[ip].handCode==9 && H_[ip].bestFace[4]==straightFlushHighCard) {
+	    if (H_[ip].handCode==9 && H_[ip].bestFace[4]==highCardI_) {
 	      P_[ip].numWins++;           // Iterate number of wins
 	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
 	      
@@ -566,7 +538,18 @@ int table::findWinner()
 	      return ip;            // Only one best hand, so return here
 	    }
 	  }
+	} else {
+	  // Otherwise we have a draw, so note the draw values for each drawing player
 	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==9 && H_[ip].bestFace[4]==highCardI_) {
+	      P_[ip].numDraw++;            // Iterate number of draws
+	      P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	    }
+	  }
+
+	  handCodeArr_.clear(); // Release un-needed memory
+	  return 0; // Return the draw integer
 	}
 
 
@@ -576,25 +559,33 @@ int table::findWinner()
 	// We know there are more than one four of a kind, the highest value of the four of a
 	// kind always wins, there can be no draw for four of a kind
 
-	// Loop through all hands and check for highest four of a kind, storing in tmp
-        fourKindHighCard_ = -1;
-	for (ip=0; ip<noPlayers_; ip++) {
-	  if (H_[ip].handCode==8 && H_[ip].bestFace[4]>fourKindHighCard_) {
-	    fourKindHighCard_=H_[ip].bestFace[4];
-	  }
-	}
+	// Loop through all hands and check for highest four of a kind, storing in class tmp variables
+	cntHCforHC(4, 8);
 	
-	// We now know the face value of the highest four of a kind, so just find it and return
-	for (ip=0; ip<noPlayers_; ip++) {
-	  if (H_[ip].handCode==8 && H_[ip].bestFace[4]==fourKindHighCard_) {
-	    P_[ip].numWins++;           // Iterate number of wins
-	    P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
+	// If there is only one of this 4 of a kind return it
+	if (numHighCardI_==1) {
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==8 && H_[ip].bestFace[4]==highCardI_) {
+	      P_[ip].numWins++;           // Iterate number of wins
+	      P_[ip].winCodesCtr[hc-1]++; // Iterate hand type wins with
 	      
-	    handCodeArr_.clear(); // Release un-needed memory
-	    return ip;            // Only one best hand, so return here
+	      handCodeArr_.clear(); // Release un-needed memory
+	      return ip;            // Only one best hand, so return here
+	    }
 	  }
-	}
+	} else {
+	  // Otherwise we have a draw, so note the draw values for each drawing player
+	  
+	  for (ip=0; ip<noPlayers_; ip++) {
+	    if (H_[ip].handCode==8 && H_[ip].bestFace[4]==highCardI_) {
+	      P_[ip].numDraw++;            // Iterate number of draws
+	      P_[ip].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	    }
+	  }
 
+	  handCodeArr_.clear(); // Release un-needed memory
+	  return 0; // Return the draw integer
+	}
 
 	
       case 7: // Full House
