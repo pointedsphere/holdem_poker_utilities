@@ -37,6 +37,14 @@ void deck::setDeckFull()
       deckSuit_.push_back(s);
     }
   }
+
+  // Set number of cards to 52 for the full deck
+  numCards_     = 52;
+  indexSet_     = false;
+  setDeckIndex(52);
+  deckShuffled_ = false;
+  dealDone_     = false;
+  numDealt_     = 0;
   
   deckSet_ = true;
   
