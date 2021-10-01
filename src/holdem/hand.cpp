@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 #include <algorithm>
 
@@ -241,7 +242,22 @@ int hand::SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector
 
   int tmp_face;
   int tmp_suit;
-    
+  
+  // Error check for the size ofo the input vectors
+  if (hole_F.size()!=2) {
+    std::cout << "ERROR : Vector input hole_F to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (hole_S.size()!=2) {
+    std::cout << "ERROR : Vector input hole_S to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_F.size()!=3) {
+    std::cout << "ERROR : Vector input flop_F to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_S.size()!=3) {
+    std::cout << "ERROR : Vector input flop_S to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  
   // Check each card for errors in face or suit value
   for ( int i=0 ; i<7 ; i++ ) {
 
@@ -377,10 +393,13 @@ void hand::sortCards()
 int hand::getStraight(int S_cards[], int hand_size)
 {
 
-  int straight_tmp=0;
+  int straight_tmp;
   int straight_dif;
   bool gotStraight=false;
   int straightHighCard;
+
+  straight_tmp=0;
+  
   // If the hand contains an ace and lowest face is a 2 we must also consider a straight 
   // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
   if ( S_cards[0]==2 && S_cards[hand_size-1]==14 ) straight_tmp=1;
@@ -476,7 +495,7 @@ int hand::findBestHand()
   int pairSuit[2]={-1,-1};
   
   // Number of cards of each face value
-  int  faceValCount[7];
+  int faceValCount[7];
 
   
   
@@ -544,13 +563,17 @@ int hand::findBestHand()
       if (straightFlushHighCard==14) {
 	// If the high card of the flush straight is an ace we have a royal flush !!!
 	handCode = 10;
-
+	
       } else {
 	// Otherwise we just have a stright flush, still pretty good
 	handCode = 9;
       }
 
       // Copy over the cards from the stright to the best face/suit
+      if (aceInStraight==true) {
+	bestFace[0] = 14;
+	bestSuit[0] = cardsSuit_[6];
+      }
       for (int i=flushSize-1; i>-1; i--) {
 	// Note only copy over elements of the flush that are also in the straight
 	// This accounts for 6 or 7 cards of same suit in hand
@@ -559,6 +582,7 @@ int hand::findBestHand()
 	  bestSuit[straightFlush_i] = flushSuit;
 	  straightFlush_i--;
 	  if (straightFlush_i==-1) break;
+	  if (straightFlush_i==0 && aceInStraight==true) break;
 	}
       }
 
@@ -687,10 +711,11 @@ int hand::findBestHand()
   if (gotFlush==true) {
     
     int flush_tmp=4;
-    for (int i=flushSize-1; i>0; i--) {
+    for (int i=flushSize-1; i>-1; i--) {
       bestFace[flush_tmp] = flushCards[i];
       bestSuit[flush_tmp] = flushSuit;
       flush_tmp--;
+      if (flush_tmp==-1) break;
     }
 
     handCode = 6;

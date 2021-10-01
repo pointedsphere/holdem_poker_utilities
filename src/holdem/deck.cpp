@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 #include <algorithm>
 #include <random>
@@ -36,6 +37,14 @@ void deck::setDeckFull()
       deckSuit_.push_back(s);
     }
   }
+
+  // Set number of cards to 52 for the full deck
+  numCards_     = 52;
+  indexSet_     = false;
+  setDeckIndex(52);
+  deckShuffled_ = false;
+  dealDone_     = false;
+  numDealt_     = 0;
   
   deckSet_ = true;
   
@@ -60,8 +69,11 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
     Returns:
          0 :: Success!
         -1 :: The face and suit input arrays are of different sizes
+	-2 :: There would be less than 0 cards left in the deck after removing these cards
    */
 
+  int deckPartialSize;
+  
   // Check if the deck has been set, if it has discard the old deck before populating
   if (deckSet_==true) deckIndex_.clear();
   
@@ -72,11 +84,12 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
 
   // Check that some cards will be left in the deck
   if (igFace.size()>52) {
-    return -1; // Return error
+    return -2; // Return error
   }
   
   // Change igFace values from 1 => 14, just incase input is given with ace value as 1
-  for (int i=0; i<igFace.size(); i++) {
+  deckPartialSize=igFace.size();
+  for (int i=0; i<deckPartialSize; i++) {
     if (igFace[i]==1) igFace[i]=14;
   }
   
@@ -86,11 +99,12 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
     for (int f=2; f<15; f++) {
       // Check each of the ignore vector elements to see if the current card to be added should
       // be ignored or not
-      for (int i=0; i<igFace.size(); i++) {
+      deckPartialSize=igFace.size();
+      for (int i=0; i<deckPartialSize; i++) {
 	if (igFace[i]==f && igSuit[i]==s) {
 	  numCards_--;
 	  break;
-	} else if (i==igFace.size()-1) {
+	} else if (i==deckPartialSize-1) {
 	  deckFace_.push_back(f);
 	  deckSuit_.push_back(s);
 	  break;
@@ -125,8 +139,9 @@ void deck::setDeckIndex(int maxIndex)
   for (int i=0; i<maxIndex; i++) {
     deckIndex_.push_back(i);
   }
-  
-  indexSet_ = true;
+
+  deckShuffled_ = false; // No longer got the shuffled indexes
+  indexSet_     = true;  // The indes is however now set
   
 };
 
@@ -144,15 +159,29 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 
      Returns:
           0 : Success!
-         -1 : Card to remove from deck not actually in the deck.
   */
-  
-  for (int i=0; i<remFace.size(); i++) {
+
+  int remFaceSize=remFace.size();
+  int faceToRem;
+  int suitToRem;
+  for (int i=0; i<remFaceSize; i++) {
+
+    // Set the face and suit values to integers to allow for ace checking and less lookups
+    faceToRem = remFace[i];
+    if (faceToRem==1) faceToRem=14;
+    suitToRem = remSuit[i];
+    
     for (int j=0; j<53; j++) {
-      if (j==53) return -1; // overflow error
-      if (remFace[i]==1) remFace[i]=14; // Check for aces
+
+      if (j==53) {
+	// Exit everything with an error if a card not in the deck is requested for removal
+	std::cout << "ERROR : remCard requested to remove card not in deck with face value "
+		  << faceToRem << " and suit value " << suitToRem << "." << std::endl;;
+	exit (EXIT_FAILURE);
+      }
+      
       // Now check each card in the deck against the current one to remove
-      if (remFace[i]==deckFace_[j] && remSuit[i]==deckSuit_[j]) {
+      if (faceToRem==deckFace_[j] && suitToRem==deckSuit_[j]) {
 	// then delete and break to the next card to remove
 	deckFace_.erase(deckFace_.begin()+j);
 	deckSuit_.erase(deckSuit_.begin()+j);
@@ -162,13 +191,67 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
     }
   }
 
-  // If we have shiffled the cards we need new index values as we could have an index
+  // If we have shuffled the cards we need new index values as we could have an index
   // outside the range of where the cards now exist
   if (deckShuffled_==true) setDeckIndex(numCards_);
   
   return 0; // Success!
   
 };
+
+
+
+int deck::remCard(int remFace, int remSuit)
+{
+
+  /* 
+     Remove the card given in remFace and remSuit from the current deck.
+
+     NOTE: No error checks are carried out as this routine may need to be called multiple times,
+           so remFace and remSuit MUST be of the same size. Also deckFace_ and deckSuit_ MUST have
+	   been set prior to calling this function.
+
+     Returns:
+          0 : Success!
+         -1 : Card to remove from deck not actually in the deck.
+  */
+  
+  for (int j=0; j<53; j++) {
+    if (j==53) return -1; // overflow error
+    if (remFace==1) remFace=14; // Check for aces
+    // Now check each card in the deck against the current one to remove
+    if (remFace==deckFace_[j] && remSuit==deckSuit_[j]) {
+      // then delete and break to the next card to remove
+      deckFace_.erase(deckFace_.begin()+j);
+      deckSuit_.erase(deckSuit_.begin()+j);
+      numCards_=numCards_-1;
+      break;
+    }
+  }
+
+  // If we have shuffled the cards we need new index values as we could have an index
+  // outside the range of where the cards now exist
+  if (deckShuffled_==true) setDeckIndex(numCards_);
+  
+  return 0; // Success!
+  
+};
+
+
+
+void deck::itNumCardsInDeck(int deckIter)
+{
+
+  /*
+    Iterate the number of cards in the deck based on input number.
+
+    This is used during resets of a table, to essentially put cards dealt out back into the deck.
+  */
+
+  numCards_+=deckIter;
+  
+};
+
 
 
 
@@ -179,6 +262,10 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 bool deck::getDeckSet()
 {
   return deckSet_;
+};
+bool deck::getDeckShuffled()
+{
+  return deckShuffled_;
 };
 std::vector<int> deck::getDeckFace()
 {
@@ -225,9 +312,8 @@ void deck::shuffleI()
   */
   
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  shuffle(deckIndex_.begin(), deckIndex_.begin()+numCards_, std::default_random_engine(seed));
-  deckShuffled_ = true;
-  
+  shuffle(deckIndex_.begin(), deckIndex_.end(), std::default_random_engine(seed));
+
 };
 
 
@@ -265,7 +351,11 @@ int deck::dealCards(int numToDeal)
   }
 
   // If the number of cards asked to deal is more than that left in deck return with an error
-  if (numCards_<numToDeal) return -1;
+  if (numCards_<numToDeal) {
+    std::cout << "ERROR : Number of cards to deal using dealCards more than the cards left in the deck.";
+    exit (EXIT_FAILURE);
+  }
+
   
   // Now deal the cards, starting from the end of the shuffled index array
   for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {
@@ -278,6 +368,23 @@ int deck::dealCards(int numToDeal)
   numCards_ = numCards_ - numToDeal;
   dealDone_ = true;
   return 0; // Success!!
+  
+}
+
+
+
+void deck::remDealtCards()
+{
+
+  /*
+
+    Remove the dealt cards from the deck array of cards, this will generally not need to be done
+    as we will generally deal out all the cards then discard the deck, but it's here just in case
+
+   */
+  
+  remCards(dealFace_,dealSuit_);
+  numCards_=numCards_+dealSuit_.size();
   
 }
 

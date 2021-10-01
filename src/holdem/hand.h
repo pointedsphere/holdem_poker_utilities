@@ -18,7 +18,7 @@ class hand
      A card is split into two integers representing first the face value then the suit.
 
      Suits are given in integer value in [1,4], though which suit is which is irrelevant
-     as long as THE SUIT NUMBER ARE CONSISTANT throughout any program.
+     as long as THE SUIT NUMBER IS CONSISTANT throughout any program.
 
      The face value used is 2 to 10 for face values in [2,10], then we use
          11: jack
@@ -66,46 +66,46 @@ public:
            and best_suit are the corresponding suit values for each ith card in 
 	   best_face
 
-     Royal Flush:
+     10 - Royal Flush:
          { 10, J, Q, K, A }
 
-     Straight Flush:
+     9 - Straight Flush:
          In ascending order, e.g. { 3, 4, 5, 6, 7 }
 
-     Four of a Kind:
+     8 - Four of a Kind:
          Last 4 elements of array are the 4 of a kind cards and first is the odd one
 	 e.g. face values in order { 3, 6, 6, 6, 6 }
 
-     Full House:
+     7 - Full House:
          The three of a kind elemnts are the last in the array
 	 e.g. face values in order { 3, 3, 6, 6, 6 }
 
-     Flush:
+     6 - Flush:
          Flush values of highest face cards of flush suit in ascending order
 	 e.g. face values in order { 2, 4, 7, 8, 9 }
 
-     Straight:
+     5 - Straight:
          Straight cards in ascending order
 	 e.g. face values in order { 4, 5, 6, 7, 8 }
 	 Note: If an Ace is part of the straight then we have cards in order
 	 { 14, 2, 3, 4, 5 }
      
-     Three of a kind:
+     4- Three of a kind:
          Three of a kind as the final elements in best_hands, with two highest cards not
 	 in the three of a kind in ascending order in index 0 and 1
 	 e.g. { 2, 13, 4, 4, 4 }
 
-     Two Pair:
+     3 - Two Pair:
          The two pairs in ascending order as the last 4 elements of the array with element
 	 0 being the highest card not in a pair
 	 e.g. { 7, 2, 2, 10, 10 }
 
-     Pair:
+     2 - Pair:
          Store the single pair in the final two elements of the array and ascending high
 	 cards in all lower elements
 	 e.g. { 2, 4, 6, 5, 5 }
 
-     High Card:
+     1- High Card:
          Return the highest face value cards in ascending order
 
   */

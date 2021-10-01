@@ -24,12 +24,6 @@ private:
   // To keep track of the deck
   int numCards_;
   bool deckShuffled_;
-
-  // Class values for dealing the cards
-  bool dealDone_;
-  int  numDealt_;
-  std::vector<int> dealFace_;
-  std::vector<int> dealSuit_;
   
 public:
 
@@ -64,6 +58,7 @@ public:
   
   // Remove some input cards from the deck
   int remCards(std::vector<int> remFace, std::vector<int> remSuit);
+  int remCard(int remFace, int remSuit);
 
   // Shuffle the indexes of the known cards
   void shuffleI();
@@ -71,9 +66,20 @@ public:
   // Deal cards to dealFace_ and dealSuit_. Note: This destroys the vectors if they
   // have previously been set
   int dealCards(int numToDeal);
+  void remDealtCards();
+
+  // Iterate the number of cards in the deck (used for resets)
+  void itNumCardsInDeck(int deckIter);
+  
+  // Class values for dealing the cards
+  bool dealDone_;
+  int  numDealt_;
+  std::vector<int> dealFace_;
+  std::vector<int> dealSuit_;
   
   // C++ get functions
   bool getDeckSet();
+  bool getDeckShuffled();
   std::vector<int> getDeckFace();
   std::vector<int> getDeckSuit();
   std::vector<int> getDeckIndex();
