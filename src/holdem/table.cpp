@@ -1204,44 +1204,84 @@ int table::resetTableToKnown()
 
 
 
-std::vector<int> table::getWinsArray()
+std::vector<int> table::getWins()
 {
 
-  tTmpVec_.clear();
+  std::vector<int> getTmp;
   for (int g=0; g<noPlayers_; g++) {
-    tTmpVec_.push_back(P_[g].numWins);
+    getTmp.push_back(P_[g].numWins);
   }
-  return tTmpVec_;
+  return getTmp;
   
 };
-std::vector<int> table::getDrawsArray()
+std::vector<double> table::getWinsP()
 {
 
-  tTmpVec_.clear();
+  std::vector<double> getTmp;
+  for (int g=0; g<noPlayers_; g++) {    
+    getTmp.push_back((double)P_[g].numWins/(double)numRuns_);
+  }
+  return getTmp;
+  
+};
+std::vector<int> table::getDraws()
+{
+
+  std::vector<int> getTmp;
   for (int g=0; g<noPlayers_; g++) {
-    tTmpVec_.push_back(P_[g].numDraw);
+    getTmp.push_back(P_[g].numDraw);
   }
-  return tTmpVec_;
+  return getTmp;
   
 };
-std::vector<int> table::getWinsPerPlayer(int playerWins)
+std::vector<double> table::getDrawsP()
 {
 
-  tTmpVec_.clear();
-  for (int g=0; g<10; g++) {
-    tTmpVec_.push_back(P_[playerWins].winCodesCtr[g]);
+  std::vector<double> getTmp;
+  for (int g=0; g<noPlayers_; g++) {    
+    getTmp.push_back((double)P_[g].numDraw/(double)numRuns_);
   }
-  return tTmpVec_;
+  return getTmp;
   
 };
-std::vector<int> table::getDrawsPerPlayer(int playerWins)
+std::vector<int> table::getWinsPP(int playerWins)
 {
 
-  tTmpVec_.clear();
+  std::vector<int> getTmp;
   for (int g=0; g<10; g++) {
-    tTmpVec_.push_back(P_[playerWins].drawCodesCtr[g]);
+    getTmp.push_back(P_[playerWins].winCodesCtr[g]);
   }
-  return tTmpVec_;
+  return getTmp;
+  
+};
+std::vector<double> table::getWinsPPP(int playerWins)
+{
+
+  std::vector<double> getTmp;
+  for (int g=0; g<10; g++) {
+    getTmp.push_back((double)P_[playerWins].winCodesCtr[g]/(double)numRuns_);
+  }
+  return getTmp;
+  
+};
+std::vector<int> table::getDrawsPP(int playerWins)
+{
+
+  std::vector<int> getTmp;
+  for (int g=0; g<10; g++) {
+    getTmp.push_back(P_[playerWins].drawCodesCtr[g]);
+  }
+  return getTmp;
+  
+};
+std::vector<double> table::getDrawsPPP(int playerWins)
+{
+
+  std::vector<double> getTmp;
+  for (int g=0; g<10; g++) {
+    getTmp.push_back((double)P_[playerWins].drawCodesCtr[g]/(double)numRuns_);
+  }
+  return getTmp;
   
 };
 

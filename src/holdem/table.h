@@ -194,10 +194,14 @@ public:
   int resetTableToKnown();
   
   // Get functions
-  std::vector<int> getWinsArray();
-  std::vector<int> getDrawsArray();
-  std::vector<int> getWinsPerPlayer(int playerWins);
-  std::vector<int> getDrawsPerPlayer(int playerWins);
+  std::vector<int> getWins();
+  std::vector<double> getWinsP();
+  std::vector<int> getDraws();
+  std::vector<double> getDrawsP();
+  std::vector<int> getWinsPP(int playerWins);
+  std::vector<double> getWinsPPP(int playerWins);
+  std::vector<int> getDrawsPP(int playerWins);
+  std::vector<double> getDrawsPPP(int playerWins);
   
 };
 
