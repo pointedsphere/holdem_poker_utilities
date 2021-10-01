@@ -4,7 +4,7 @@
 
 #include "table.h"
 #include "hand.h"
-
+#include "../tools/constants.h"
 
 
 /*
@@ -1223,6 +1223,24 @@ int table::resetTable()
   
 };
 
+
+
+void table::runMC(int numMC)
+{
+
+  /*
+    Run a Monte Carlo simulation by taking the known cards, dealing out other cards (from a
+    shuffled deck). Then finding a winner and finally resetting the table to just the known cards.
+    This Monte Carlo simulation is ran numMC times.
+   */
+
+  for (int mc=0; mc<numMC; mc++) {
+    stat = dealAll();
+    stat = findWinner();
+    stat = resetTableToKnown();
+  }
+  
+}
 
 
 

@@ -187,6 +187,9 @@ public:
 
   // Reset the table completely
   int resetTable();
+
+  // Run Monte Carlo
+  void runMC(int numMC);
   
   // Get functions
   std::vector<int>    getWins();

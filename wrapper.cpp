@@ -76,7 +76,8 @@ PYBIND11_MODULE(holdEm, m) {
       .def("getWinsPP",         &table::getWinsPP)
       .def("getWinsPPP",        &table::getWinsPPP)
       .def("getDrawsPP",        &table::getDrawsPP)
-      .def("getDrawsPPP",       &table::getDrawsPPP);
+      .def("getDrawsPPP",       &table::getDrawsPPP)
+      .def("runMC",             &table::runMC);
 
 }  
 
