@@ -1196,22 +1196,26 @@ int table::resetTable()
   }
 
   for (int p=0; p<noPlayers_; p++) {
-    // Now loop through and discard all dealt cards (that are not known a priori) from the holds
-    if (P_[p].numHoldKnown==0) {
-      // If there are no known hold cards then clear all the hold arrays
-      P_[p].holdFace.clear();
-      P_[p].holdSuit.clear();
-      P_[p].numHoldDealt=0;
-      D_.itNumCardsInDeck(2);
-    } else if (P_[p].numHoldKnown==1) {
-      // If one card is known then just remove the last dealt card from the hold
-      P_[p].holdFace.pop_back();
-      P_[p].holdSuit.pop_back();
-      P_[p].numHoldDealt--;
-      D_.itNumCardsInDeck(1);
-    } // Don't need to take any action if both hold cards are known for a player
+    // Now loop through and discard all players and reset everything
+    P_[p].numHoldKnown = 0;
+    P_[p].numHoldDealt = 0;
+    P_[p].numWins      = 0;
+    P_[p].numDraw      = 0;
+    P_[p].holdFace.clear();
+    P_[p].holdSuit.clear();
+    P_[p].holdFaceKnown.clear();
+    P_[p].holdSuitKnown.clear();
+    P_[p].winCodesCtr.clear();
+    P_[p].drawCodesCtr.clear();
+    for (int Pi=0; Pi<10; Pi++) {
+      // Never won any way yet
+      P_[p].winCodesCtr.push_back(0);
+      P_[p].drawCodesCtr.push_back(0);
+    }
   }
+  totHoldsKnown_ = 0;
 
+  
   // Reset the deck to a full deck
   D_.setDeckFull();
   

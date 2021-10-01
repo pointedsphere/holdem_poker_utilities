@@ -125,12 +125,6 @@ private:
   std::vector<int> tTmpVec_;         // A general use temporary vector for use in hand checking
   
 public:
-
-  // MAKE THE FOLLOWING PRIVATE AFTER TESTING
-
-
-
-
   
   // Constructor
   table(int numPlayers) {
