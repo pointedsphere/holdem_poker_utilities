@@ -92,21 +92,21 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
   */
 
   // We cant have more than two hold cards
-  if (P_[playerAdd-1].numHoldKnown>1) return -2;
+  if (P_[playerAdd].numHoldKnown>1) return -2;
 
   // Player must exist at the table
   if (playerAdd>=noPlayers_) return -3;
   
   // Assign the known hold cards
-  P_[playerAdd-1].numHoldKnown++; // Note we now know one more hold card
-  P_[playerAdd-1].numHoldDealt++; // This known card is dealt
+  P_[playerAdd].numHoldKnown++; // Note we now know one more hold card
+  P_[playerAdd].numHoldDealt++; // This known card is dealt
   totHoldsKnown_++;               // Increment the total known holds
 
   // Add the cards to the relevant hold and save as known cards
-  P_[playerAdd-1].holdFace.push_back(holdInF);
-  P_[playerAdd-1].holdSuit.push_back(holdInS);
-  P_[playerAdd-1].holdFaceKnown.push_back(holdInF);
-  P_[playerAdd-1].holdSuitKnown.push_back(holdInS);
+  P_[playerAdd].holdFace.push_back(holdInF);
+  P_[playerAdd].holdSuit.push_back(holdInS);
+  P_[playerAdd].holdFaceKnown.push_back(holdInF);
+  P_[playerAdd].holdSuitKnown.push_back(holdInS);
 
   // Then remove the known hold card from the deck
   D_.remCard(holdInF,holdInS);
