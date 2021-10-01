@@ -283,7 +283,7 @@ int table::setRiver(int riverInF, int riverInS)
 
 
 
-int table::dealFlopTrunRiver()
+int table::dealFlopTurnRiver()
 {
 
   /*
@@ -397,7 +397,7 @@ int table::dealHold(int player)
 
 
 
-int table::dealAllHands()
+int table::dealAll()
 {
 
   /*
@@ -419,7 +419,7 @@ int table::dealAllHands()
   D_.shuffleI();
   
   // Initially check if the flop turn and river are set, if not this routine sets them
-  dStat = dealFlopTrunRiver();
+  dStat = dealFlopTurnRiver();
   
   // Now deal some new cards to the deck deal class vectors, based on the total number of
   // hold cards (noPlayers*2) minus number known hold cards (totHoldsKnown)
@@ -1275,7 +1275,6 @@ int table::resetTable()
   return 0;
   
 };
-
 
 
 

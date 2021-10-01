@@ -169,13 +169,13 @@ public:
   int setRiver(int riverInF, int riverInS);
 
   // Deal random cards to the flop turn and river (if not currently set)
-  int dealFlopTrunRiver();
+  int dealFlopTurnRiver();
 
   // Deal the hold cards
   int dealHold(int player);
   
   // Set the hands arrays by dealing random cards to `fill up' hold cards
-  int dealAllHands();
+  int dealAll();
 
   // Find who won and with what
   int findWinner();
