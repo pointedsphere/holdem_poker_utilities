@@ -4,8 +4,6 @@
 
 #include "table.h"
 #include "hand.h"
-#include "../tools/constants.h"
-
 
 /*
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1225,7 +1223,7 @@ int table::resetTable()
 
 
 
-void table::runMC(int numMC)
+void table::MC(int numMC)
 {
 
   /*
@@ -1234,10 +1232,12 @@ void table::runMC(int numMC)
     This Monte Carlo simulation is ran numMC times.
    */
 
-  for (int mc=0; mc<numMC; mc++) {
-    stat = dealAll();
-    stat = findWinner();
-    stat = resetTableToKnown();
+  int MCstat;
+  
+  for (int Nmc=0; Nmc<numMC; Nmc++) {
+    MCstat = dealAll();
+    MCstat = findWinner();
+    MCstat = resetTableToKnown();
   }
   
 }
@@ -1335,6 +1335,15 @@ std::vector<double> table::getDrawsPPP(int playerWins)
   return getTmp;
   
 };
+int table::getNumCardsLeftInDeck()
+{
+
+  return D_.getNumCards();
+  
+}
+
+
+
 
 
 

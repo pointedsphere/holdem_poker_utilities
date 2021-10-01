@@ -36,7 +36,7 @@ public:
   // Constructor
   player() {
     numHoldKnown = 0; // Initially we do not know any hold cards
-    numHoldKnown = 0; // Nor have we dealt any
+    numHoldDealt = 0; // Nor have we dealt any
     numWins=0;        // Nor have we won (yet...)
     numDraw=0;        // Nor have we drawn (yet...)
     for (int Playeri=0; Playeri<10; Playeri++) {
@@ -189,7 +189,7 @@ public:
   int resetTable();
 
   // Run Monte Carlo
-  void runMC(int numMC);
+  void MC(int numMC);
   
   // Get functions
   std::vector<int>    getWins();
@@ -200,6 +200,8 @@ public:
   std::vector<double> getWinsPPP(int playerWins);
   std::vector<int>    getDrawsPP(int playerWins);
   std::vector<double> getDrawsPPP(int playerWins);
+  int getNumCardsLeftInDeck();
+
   
 };
 
