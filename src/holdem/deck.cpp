@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 #include <algorithm>
 #include <random>
@@ -308,7 +309,11 @@ int deck::dealCards(int numToDeal)
   }
 
   // If the number of cards asked to deal is more than that left in deck return with an error
-  if (numCards_<numToDeal) return -1;
+  if (numCards_<numToDeal) {
+    std::cout << "ERROR : Number of cards to deal using dealCards more than the cards left in the deck.";
+    exit (EXIT_FAILURE);
+  }
+
   
   // Now deal the cards, starting from the end of the shuffled index array
   for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {

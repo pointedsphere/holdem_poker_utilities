@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 #include <algorithm>
 
@@ -241,7 +242,22 @@ int hand::SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector
 
   int tmp_face;
   int tmp_suit;
-    
+  
+  // Error check for the size ofo the input vectors
+  if (hole_F.size()!=2) {
+    std::cout << "ERROR : Vector input hole_F to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (hole_S.size()!=2) {
+    std::cout << "ERROR : Vector input hole_S to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_F.size()!=3) {
+    std::cout << "ERROR : Vector input flop_F to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_S.size()!=3) {
+    std::cout << "ERROR : Vector input flop_S to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  
   // Check each card for errors in face or suit value
   for ( int i=0 ; i<7 ; i++ ) {
 
