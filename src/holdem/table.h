@@ -88,7 +88,11 @@ private:
   int totHoldsKnown_; // Total number of hold cards
 
   int numRuns_;
-  
+
+  deck D_;                // We need a deck on the table
+  std::vector<hand>   H_; // A vector of HANDS
+  std::vector<player> P_; // A vector of PLAYERS
+
   // Shared table cards
   std::vector<int> flopF_;
   std::vector<int> flopS_;
@@ -124,9 +128,7 @@ public:
 
   // MAKE THE FOLLOWING PRIVATE AFTER TESTING
 
-  deck D_; // We need a deck on the table
-  std::vector<hand>   H_; // A vector of HANDS
-  std::vector<player> P_; // A vector of PLAYERS
+
 
 
   
@@ -188,15 +190,18 @@ public:
 
   // Reset the table to just the known cards to allow for re-dealing
   int resetTableToKnown();
+
+  // Reset the table completely
+  int resetTable();
   
   // Get functions
-  std::vector<int> getWins();
+  std::vector<int>    getWins();
   std::vector<double> getWinsP();
-  std::vector<int> getDraws();
+  std::vector<int>    getDraws();
   std::vector<double> getDrawsP();
-  std::vector<int> getWinsPP(int playerWins);
+  std::vector<int>    getWinsPP(int playerWins);
   std::vector<double> getWinsPPP(int playerWins);
-  std::vector<int> getDrawsPP(int playerWins);
+  std::vector<int>    getDrawsPP(int playerWins);
   std::vector<double> getDrawsPPP(int playerWins);
   
 };

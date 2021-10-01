@@ -1173,22 +1173,28 @@ int table::resetTableToKnown()
    
   // Look first at the cards on the table
   if (flopSet_==false) {
-    flopDealt_=false;
-    flopF_.clear();
-    flopS_.clear();
-    D_.itNumCardsInDeck(3);
+    if (flopDealt_==true) {
+      flopDealt_=false;
+      flopF_.clear();
+      flopS_.clear();
+      D_.itNumCardsInDeck(3);
+    }
   }
   if (turnSet_==false) {
-    turnDealt_=false;
-    turnF_=-1;
-    turnS_=-1;
-    D_.itNumCardsInDeck(1);
+    if (turnDealt_==true) {
+      turnDealt_=false;
+      turnF_=-1;
+      turnS_=-1;
+      D_.itNumCardsInDeck(1);
+    }
   }
   if (riverSet_==false) {
-    riverDealt_=false;
-    riverF_=-1;
-    riverS_=-1;
-    D_.itNumCardsInDeck(1);
+    if (riverDealt_==true) {
+      riverDealt_=false;
+      riverF_=-1;
+      riverS_=-1;
+      D_.itNumCardsInDeck(1);
+    }
   }
 
   for (int p=0; p<noPlayers_; p++) {
@@ -1211,6 +1217,65 @@ int table::resetTableToKnown()
   return 0;
   
 };
+
+
+
+int table::resetTable()
+{
+
+  /*
+    
+    Reset the table to only have the known cards, this allows for re-dealing fresh random cards
+    whilst keeping the known cards.
+
+  */
+   
+  // Look first at the cards on the table
+  flopSet_=false;
+  if (flopDealt_==true) {
+    flopDealt_=false;
+    flopF_.clear();
+    flopS_.clear();
+  }
+  
+  turnSet_=false;
+  if (turnDealt_==true) {
+    turnDealt_=false;
+    turnF_=-1;
+    turnS_=-1;
+  }
+    
+  riverSet_=false;
+  if (riverDealt_==true) {
+    riverDealt_=false;
+    riverF_=-1;
+    riverS_=-1;
+  }
+
+  for (int p=0; p<noPlayers_; p++) {
+    // Now loop through and discard all dealt cards (that are not known a priori) from the holds
+    if (P_[p].numHoldKnown==0) {
+      // If there are no known hold cards then clear all the hold arrays
+      P_[p].holdFace.clear();
+      P_[p].holdSuit.clear();
+      P_[p].numHoldDealt=0;
+      D_.itNumCardsInDeck(2);
+    } else if (P_[p].numHoldKnown==1) {
+      // If one card is known then just remove the last dealt card from the hold
+      P_[p].holdFace.pop_back();
+      P_[p].holdSuit.pop_back();
+      P_[p].numHoldDealt--;
+      D_.itNumCardsInDeck(1);
+    } // Don't need to take any action if both hold cards are known for a player
+  }
+
+  // Reset the deck to a full deck
+  D_.setDeckFull();
+  
+  return 0;
+  
+};
+
 
 
 
