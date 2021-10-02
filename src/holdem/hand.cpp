@@ -439,7 +439,6 @@ int hand::getStraight(int S_cards[], int hand_size)
 
 
 
-
 int hand::findBestHand()
 {
 
@@ -453,51 +452,11 @@ int hand::findBestHand()
   
   // NOTE: A -1 as an integer variable means the hand in question has not been found
 
-  
-  
+
   // Routine variables
 
-  // Straight info
-  bool gotStraight=false;   // Do we have a straight
-  int  straightHighCard=-1; // What's the highest card in the straight
-  bool aceInStraight = false;
-  
-  // Flush info
-  bool gotFlush =false; // Do we have a flush
-  int  flushSize=-1; // Number of cards in the flush
-  int  flushSuit=-1; // The suit of the flush
-  // All the cards in the flush, will only contain flushSize non -1 values in the
-  // first flushsize elements
-  int  flushCards[7]={-1,-1,-1,-1,-1,-1,-1};
 
-  // Straight flush info
-  int straightFlushHighCard;
 
-  // Four of a kind values
-  bool gotFourOfAKind  = false;
-  int fourOfAKind4; // The face value of the four of a kind in four of a kind
-
-  // Three of a kind values
-  bool gotThreeOfAKind = false;
-  int threeOfAKindFace;
-  int threeOfAKindSuit[3];
-
-  // Two Pair Values
-  bool gotTwoPair = false;
-  int twoPairLowFace;
-  int twoPairLowSuit[2]={-1,-1};
-  int twoPairHighFace;
-  int twoPairHighSuit[2]={-1,-1};
-
-  // Pair values
-  bool gotPair = false;
-  int pairFace;
-  int pairSuit[2]={-1,-1};
-  
-  // Number of cards of each face value
-  int faceValCount[7];
-
-  
   
   // The first step is to sort the cards in the hand into ascending order
   sortCards();
@@ -513,7 +472,12 @@ int hand::findBestHand()
     if (straightHighCard==5) {
       // If the high card in a straight is a 5 then the low card is an ace
       aceInStraight = true;
+    } else {
+      aceInStraight = false;
     }
+  } else {
+    gotStraight = false;
+    aceInStraight = false;
   }
 
 
@@ -541,6 +505,10 @@ int hand::findBestHand()
 	}
       }
       break; // Can only have one flush, so may as well stop here
+    } else {
+      gotFlush  = false;
+      flushSize = -1;
+      flushSuit = -1;
     }
   }
 
@@ -552,6 +520,7 @@ int hand::findBestHand()
 
   // Only bother checking for this if we have both a straight and a flush
   if (gotStraight==true && gotFlush==true) {
+
     int straightFlush_i=4;
     
     // Check the face values of the cards that are the suit of the flush for a straight
@@ -600,6 +569,10 @@ int hand::findBestHand()
     pair and two pair.
   */
 
+  gotPair = false;
+  gotTwoPair = false;
+  gotThreeOfAKind = false;
+  gotFourOfAKind = false;
   int suit3_i=0;
   for (int i=0; i<7; i++) {
     // Count number of times face value of current card appears in the current hand
@@ -872,8 +845,15 @@ int hand::findBestHand()
   }
   handCode = 1;
   return 0;
+
+
   
 }
+
+
+
+
+
 
 
 

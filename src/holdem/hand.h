@@ -41,6 +41,52 @@ private:
   
   // Have the cards been read or not
   bool isCards_;
+
+  /*
+    Below here are variables used in finding the best hand, this is to allow for running of part
+    of the routine findBesthand to utilise `quick calculation' to just find the best hand on a
+    table to facilitate a quick search for a winner (with no hand analysis other than win/draw/loose)
+  */
+
+  // Straight info
+  bool gotStraight;   // Do we have a straight
+  int  straightHighCard; // What's the highest card in the straight
+  bool aceInStraight;
+  
+  // Flush info
+  bool gotFlush; // Do we have a flush
+  int  flushSize; // Number of cards in the flush
+  int  flushSuit; // The suit of the flush
+  // All the cards in the flush, will only contain flushSize non -1 values in the
+  // first flushsize elements
+  int  flushCards[7];
+
+  // Straight flush info
+  int straightFlushHighCard;
+
+  // Four of a kind values
+  bool gotFourOfAKind;
+  int fourOfAKind4; // The face value of the four of a kind in four of a kind
+
+  // Three of a kind values
+  bool gotThreeOfAKind;
+  int threeOfAKindFace;
+  int threeOfAKindSuit[3];
+
+  // Two Pair Values
+  bool gotTwoPair;
+  int twoPairLowFace;
+  int twoPairLowSuit[2];
+  int twoPairHighFace;
+  int twoPairHighSuit[2];
+
+  // Pair values
+  bool gotPair;
+  int pairFace;
+  int pairSuit[2];
+  
+  // Number of cards of each face value
+  int faceValCount[7];
   
 public:
 
