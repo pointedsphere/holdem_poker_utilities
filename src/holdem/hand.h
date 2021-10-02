@@ -44,6 +44,20 @@ private:
   
 public:
 
+  // Constructor for initial variables
+  // NOTE: Initial values for all face values set to -1 which signifies no hand.
+  hand() {
+    isCards_ = false; // On initialisation we haven't read the cards in
+
+    // Also, on initialisation we do not have a hand
+    handCode = -1;
+
+    for (int i=0; i<5; i++) {
+      bestFace[i] = -1;
+      bestSuit[i] = -1;
+    }
+  }
+  
   /* Hand descriptor where
      -1  ::: No hand, i.e. not yet checked
       1  ::: High card
@@ -111,20 +125,6 @@ public:
   */
   int bestFace[5];
   int bestSuit[5];  
-  
-  // Constructor for initial variables
-  // NOTE: Initial values for all face values set to -1 which signifies no hand.
-  hand() {
-    isCards_ = false; // On initialisation we haven't read the cards in
-
-    // Also, on initialisation we do not have a hand
-    handCode = -1;
-
-    for (int i=0; i<5; i++) {
-      bestFace[i] = -1;
-      bestSuit[i] = -1;
-    }
-  }
 
   /*
     Set the cards in the hand, first using routines faster in pure C++ and secondly
