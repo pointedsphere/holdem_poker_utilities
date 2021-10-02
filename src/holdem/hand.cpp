@@ -464,107 +464,107 @@ int hand::findBestHand(int FBHopt)
   if (FBHopt<1 || FBHopt==9) {
   
   
-  // The first step is to sort the cards in the hand into ascending order
-  sortCards();
+    sortCards(); // The first step is to sort the cards in the hand into ascending order
+    handCode=-1; // Then make sure we don't have a hand code before checking
 
-
-  /*
-    Check for a straight, we retrun to more calcualtions when we have checked more hands
-  */
-  straightHighCard = getStraight(cardsFace_,7);
-  if (straightHighCard>0) {
-    gotStraight = true;
-    if (straightHighCard==5) {
-      // If the high card in a straight is a 5 then the low card is an ace
-      aceInStraight = true;
+    
+    /*
+      Check for a straight, we retrun to more calcualtions when we have checked more hands
+    */
+    straightHighCard = getStraight(cardsFace_,7);
+    if (straightHighCard>0) {
+      gotStraight = true;
+      if (straightHighCard==5) {
+	// If the high card in a straight is a 5 then the low card is an ace
+	aceInStraight = true;
+      } else {
+	aceInStraight = false;
+      }
     } else {
+      gotStraight = false;
       aceInStraight = false;
     }
-  } else {
-    gotStraight = false;
-    aceInStraight = false;
-  }
 
 
 
-  /*
-    Check for a flush, we return to more calcualtions when we have checked higher hands
-    but we need this to check for straight/royal flush
-  */
+    /*
+      Check for a flush, we return to more calcualtions when we have checked higher hands
+      but we need this to check for straight/royal flush
+    */
 
-  int flush_tmp;
-  int flush_i=0;
-  for (int i=1; i<5; i++) {
-    // Count number of cards of the ith suit
-    flush_tmp = std::count(cardsSuit_, cardsSuit_+7, i);
-    if (flush_tmp>4) {
-      // If there are at least 5 of a given suit in a hand we have a flush
-      gotFlush  = true;
-      flushSuit = i;
-      flushSize = flush_tmp;
-      // Record all cards of the suit with the flush
-      for (int j=0; j<7; j++) {
-	if (cardsSuit_[j]==flushSuit) {
-	  flushCards[flush_i] = cardsFace_[j];
-	  flush_i++;
+    int flush_tmp;
+    int flush_i=0;
+    for (int i=1; i<5; i++) {
+      // Count number of cards of the ith suit
+      flush_tmp = std::count(cardsSuit_, cardsSuit_+7, i);
+      if (flush_tmp>4) {
+	// If there are at least 5 of a given suit in a hand we have a flush
+	gotFlush  = true;
+	flushSuit = i;
+	flushSize = flush_tmp;
+	// Record all cards of the suit with the flush
+	for (int j=0; j<7; j++) {
+	  if (cardsSuit_[j]==flushSuit) {
+	    flushCards[flush_i] = cardsFace_[j];
+	    flush_i++;
+	  }
 	}
+	break; // Can only have one flush, so may as well stop here
+      } else {
+	gotFlush  = false;
+	flushSize = -1;
+	flushSuit = -1;
       }
-      break; // Can only have one flush, so may as well stop here
-    } else {
-      gotFlush  = false;
-      flushSize = -1;
-      flushSuit = -1;
     }
-  }
 
 
   
-  /*
-    Check for Straight/Royal flush
-  */
+    /*
+      Check for Straight/Royal flush
+    */
 
-  // Only bother checking for this if we have both a straight and a flush
-  if (gotStraight==true && gotFlush==true) {
+    // Only bother checking for this if we have both a straight and a flush
+    if (gotStraight==true && gotFlush==true) {
 
-    int straightFlush_i=4;
+      int straightFlush_i=4;
     
-    // Check the face values of the cards that are the suit of the flush for a straight
-    straightFlushHighCard = getStraight(flushCards,flushSize);
+      // Check the face values of the cards that are the suit of the flush for a straight
+      straightFlushHighCard = getStraight(flushCards,flushSize);
 
-    // If there is a straight in the flush cards we have a straight flush
-    if (straightFlushHighCard>0) {
+      // If there is a straight in the flush cards we have a straight flush
+      if (straightFlushHighCard>0) {
 
-      if (straightFlushHighCard==14) {
-	// If the high card of the flush straight is an ace we have a royal flush !!!
-	handCode = 10;
+	if (straightFlushHighCard==14) {
+	  // If the high card of the flush straight is an ace we have a royal flush !!!
+	  handCode = 10;
 	
-      } else {
-	// Otherwise we just have a stright flush, still pretty good
-	handCode = 9;
-      }
-
-      // Copy over the cards from the stright to the best face/suit
-      if (aceInStraight==true) {
-	bestFace[0] = 14;
-	bestSuit[0] = cardsSuit_[6];
-      }
-      for (int i=flushSize-1; i>-1; i--) {
-	// Note only copy over elements of the flush that are also in the straight
-	// This accounts for 6 or 7 cards of same suit in hand
-	if (flushCards[i] <= straightFlushHighCard && flushCards[i]>0) {
-	  bestFace[straightFlush_i] = flushCards[i];
-	  bestSuit[straightFlush_i] = flushSuit;
-	  straightFlush_i--;
-	  if (straightFlush_i==-1) break;
-	  if (straightFlush_i==0 && aceInStraight==true) break;
+	} else {
+	  // Otherwise we just have a stright flush, still pretty good
+	  handCode = 9;
 	}
-      }
 
-      return 0; // No point in checking for any lower hands, we have one of the two best hands
+	// Copy over the cards from the stright to the best face/suit
+	if (aceInStraight==true) {
+	  bestFace[0] = 14;
+	  bestSuit[0] = cardsSuit_[6];
+	}
+	for (int i=flushSize-1; i>-1; i--) {
+	  // Note only copy over elements of the flush that are also in the straight
+	  // This accounts for 6 or 7 cards of same suit in hand
+	  if (flushCards[i] <= straightFlushHighCard && flushCards[i]>0) {
+	    bestFace[straightFlush_i] = flushCards[i];
+	    bestSuit[straightFlush_i] = flushSuit;
+	    straightFlush_i--;
+	    if (straightFlush_i==-1) break;
+	    if (straightFlush_i==0 && aceInStraight==true) break;
+	  }
+	}
+
+	return 0; // No point in checking for any lower hands, we have one of the two best hands
       
-    }
+      }
         
-  }
+    }
 
   }
 
@@ -576,79 +576,79 @@ int hand::findBestHand(int FBHopt)
 
   if (FBHopt<1 || FBHopt==8) {
   
-  gotPair = false;
-  gotTwoPair = false;
-  gotThreeOfAKind = false;
-  gotFourOfAKind = false;
-  int suit3_i=0;
-  for (int i=0; i<7; i++) {
-    // Count number of times face value of current card appears in the current hand
-    faceValCount[i] = std::count(cardsFace_, cardsFace_+7, cardsFace_[i]);
-    if (faceValCount[i]==4) {
-      gotFourOfAKind  = true;           // We have 4 of a kind, pretty good!
-      fourOfAKind4    = cardsFace_[i]; // The face value of the four of a kind
-    }
-    if (faceValCount[i]==3) {
-      if (cardsFace_[i]!=threeOfAKindFace) suit3_i=0;
-      gotThreeOfAKind           = true;           // Got three of a kind
-      threeOfAKindFace          = cardsFace_[i]; // Save the face val  of highest 3 of a kind
-      threeOfAKindSuit[suit3_i] = cardsSuit_[i]; // Save the suit vals of highest 3 of a kind
-      suit3_i++;
-    }
-    if (faceValCount[i]==2) {
-      // If we haven't seen a pair before we only have one pair (so far)
-      // if we have we have two pair
+    gotPair = false;
+    gotTwoPair = false;
+    gotThreeOfAKind = false;
+    gotFourOfAKind = false;
+    int suit3_i=0;
+    for (int i=0; i<7; i++) {
+      // Count number of times face value of current card appears in the current hand
+      faceValCount[i] = std::count(cardsFace_, cardsFace_+7, cardsFace_[i]);
+      if (faceValCount[i]==4) {
+	gotFourOfAKind  = true;           // We have 4 of a kind, pretty good!
+	fourOfAKind4    = cardsFace_[i]; // The face value of the four of a kind
+      }
+      if (faceValCount[i]==3) {
+	if (cardsFace_[i]!=threeOfAKindFace) suit3_i=0;
+	gotThreeOfAKind           = true;           // Got three of a kind
+	threeOfAKindFace          = cardsFace_[i]; // Save the face val  of highest 3 of a kind
+	threeOfAKindSuit[suit3_i] = cardsSuit_[i]; // Save the suit vals of highest 3 of a kind
+	suit3_i++;
+      }
+      if (faceValCount[i]==2) {
+	// If we haven't seen a pair before we only have one pair (so far)
+	// if we have we have two pair
 
-      // Note: we use the pair face value check to avoid writing the pair twice, where we
-      //       recall cards are inascending order so pair is ith and i+1th card in hand
+	// Note: we use the pair face value check to avoid writing the pair twice, where we
+	//       recall cards are inascending order so pair is ith and i+1th card in hand
       
-      if (gotPair==false) {
-	// The first time we encounter a pair, just save the one pair
-	gotPair     = true;      
-	pairFace    = cardsFace_[i];
-	pairSuit[0] = cardsSuit_[i];
-	pairSuit[1] = cardsSuit_[i+1];
-      } else if (cardsFace_[i]!=pairFace) {
-	// When we encounter a second pair 
-	gotTwoPair         = true;
-	twoPairLowFace     = pairFace;
-	twoPairLowSuit[0]  = pairSuit[0];
-	twoPairLowSuit[1]  = pairSuit[1];
-	pairFace           = cardsFace_[i];
-	pairSuit[0]        = cardsSuit_[i];
-	pairSuit[1]        = cardsSuit_[i+1];
-	twoPairHighFace    = pairFace;
-	twoPairHighSuit[0] = pairSuit[0];
-	twoPairHighSuit[1] = pairSuit[1];
+	if (gotPair==false) {
+	  // The first time we encounter a pair, just save the one pair
+	  gotPair     = true;      
+	  pairFace    = cardsFace_[i];
+	  pairSuit[0] = cardsSuit_[i];
+	  pairSuit[1] = cardsSuit_[i+1];
+	} else if (cardsFace_[i]!=pairFace) {
+	  // When we encounter a second pair 
+	  gotTwoPair         = true;
+	  twoPairLowFace     = pairFace;
+	  twoPairLowSuit[0]  = pairSuit[0];
+	  twoPairLowSuit[1]  = pairSuit[1];
+	  pairFace           = cardsFace_[i];
+	  pairSuit[0]        = cardsSuit_[i];
+	  pairSuit[1]        = cardsSuit_[i+1];
+	  twoPairHighFace    = pairFace;
+	  twoPairHighSuit[0] = pairSuit[0];
+	  twoPairHighSuit[1] = pairSuit[1];
+	}
       }
     }
-  }
   
 
 
-  /*
-    Four of a kind check
-  */
+    /*
+      Four of a kind check
+    */
 
-  // Find the value of the spare card if we have 4 of a kind
-  if (gotFourOfAKind==true) {
-    // Copy out the four of a kind face values, we must have one of each suit so don't bother checking
-    for (int i=1; i<5; i++) {
-      bestFace[i] = fourOfAKind4;
-      bestSuit[i] = i;
-    }
-    // Go backwards down the array, until we find the highest card that isn't the one
-    // that is part of four of a kind
-    for (int i=0; i<7; i++) {
-      if (cardsFace_[6-i]!=fourOfAKind4) {
-        bestFace[0] = cardsFace_[6-i];
-	bestSuit[0] = cardsSuit_[6-i];
-	break;
+    // Find the value of the spare card if we have 4 of a kind
+    if (gotFourOfAKind==true) {
+      // Copy out the four of a kind face values, we must have one of each suit so don't bother checking
+      for (int i=1; i<5; i++) {
+	bestFace[i] = fourOfAKind4;
+	bestSuit[i] = i;
       }
+      // Go backwards down the array, until we find the highest card that isn't the one
+      // that is part of four of a kind
+      for (int i=0; i<7; i++) {
+	if (cardsFace_[6-i]!=fourOfAKind4) {
+	  bestFace[0] = cardsFace_[6-i];
+	  bestSuit[0] = cardsSuit_[6-i];
+	  break;
+	}
+      }
+      handCode = 8;
+      return 0; // We have 4 of a kind, no need to keep checking
     }
-    handCode = 8;
-    return 0; // We have 4 of a kind, no need to keep checking
-  }
   
   }
 
@@ -658,29 +658,29 @@ int hand::findBestHand(int FBHopt)
 
   if (FBHopt<1 || FBHopt==7) {
   
-  // We can check this from only the three of a kind and two pair
-  if (gotThreeOfAKind==true && gotPair==true) {
-    int fullHouse_i=0;
-    // First copy over the three of a kind to best hand
-    for (int i=0; i<3; i++) {
-      bestFace[i+2] = threeOfAKindFace;
-      bestSuit[i+2] = threeOfAKindSuit[i];
-    }
-
-    // Now copy over the highest pair, note we must search for the suits
-    for (int i=0; i<7; i++) {
-      if (cardsFace_[i]==pairFace) {
-	bestFace[fullHouse_i] = cardsFace_[i];
-	bestSuit[fullHouse_i] = cardsSuit_[i];
-	fullHouse_i++;
-	if (fullHouse_i==2) break;
+    // We can check this from only the three of a kind and two pair
+    if (gotThreeOfAKind==true && gotPair==true) {
+      int fullHouse_i=0;
+      // First copy over the three of a kind to best hand
+      for (int i=0; i<3; i++) {
+	bestFace[i+2] = threeOfAKindFace;
+	bestSuit[i+2] = threeOfAKindSuit[i];
       }
+
+      // Now copy over the highest pair, note we must search for the suits
+      for (int i=0; i<7; i++) {
+	if (cardsFace_[i]==pairFace) {
+	  bestFace[fullHouse_i] = cardsFace_[i];
+	  bestSuit[fullHouse_i] = cardsSuit_[i];
+	  fullHouse_i++;
+	  if (fullHouse_i==2) break;
+	}
+      }
+    
+      handCode = 7;
+      return 0; // Full house, so we can exit now as we've checked for all better hands
+    
     }
-    
-    handCode = 7;
-    return 0; // Full house, so we can exit now as we've checked for all better hands
-    
-  }
   
   }
 
@@ -690,22 +690,22 @@ int hand::findBestHand(int FBHopt)
 
   if (FBHopt<1 || FBHopt==6) {
   
-  // We have previously checked for a flush, but we've now checked all the better hands
-  // so if we have a flush exit with this as the best hand
-  if (gotFlush==true) {
+    // We have previously checked for a flush, but we've now checked all the better hands
+    // so if we have a flush exit with this as the best hand
+    if (gotFlush==true) {
     
-    int flush_tmp=4;
-    for (int i=flushSize-1; i>-1; i--) {
-      bestFace[flush_tmp] = flushCards[i];
-      bestSuit[flush_tmp] = flushSuit;
-      flush_tmp--;
-      if (flush_tmp==-1) break;
-    }
+      int flush_tmp=4;
+      for (int i=flushSize-1; i>-1; i--) {
+	bestFace[flush_tmp] = flushCards[i];
+	bestSuit[flush_tmp] = flushSuit;
+	flush_tmp--;
+	if (flush_tmp==-1) break;
+      }
 
-    handCode = 6;
-    return 0;
+      handCode = 6;
+      return 0;
     
-  }
+    }
 
   }
 
@@ -715,45 +715,45 @@ int hand::findBestHand(int FBHopt)
 
   if (FBHopt<1 || FBHopt==5) {
   
-  // We have previously checked for a flush, and we know we do not have a straight flush
-  // So just copy out the stright cards along with their suits
-  if (gotStraight==true) {
+    // We have previously checked for a flush, and we know we do not have a straight flush
+    // So just copy out the stright cards along with their suits
+    if (gotStraight==true) {
 
-    int straight_i;
-    int str_prev_card=-1;
-    // For brevity seperate out the case of an ace in the stright and no ace in the staight
-    if (aceInStraight==true) {
-      // We know the ace is last in ascending hand (with face value 14) so set that
-      bestFace[0] = 14;
-      bestSuit[0] = cardsSuit_[6];
-      // Now loop backwards adding subsiquent cards based on high card
-      straight_i=4;
-      for (int i=5; i>-1; i--) {
-	if (cardsFace_[i]<straightHighCard+1 && cardsFace_[i]!=str_prev_card) {
-	  bestFace[straight_i] = cardsFace_[i];
-	  bestSuit[straight_i] = cardsSuit_[i];
-	  str_prev_card = cardsFace_[i];
-	  straight_i--;
+      int straight_i;
+      int str_prev_card=-1;
+      // For brevity seperate out the case of an ace in the stright and no ace in the staight
+      if (aceInStraight==true) {
+	// We know the ace is last in ascending hand (with face value 14) so set that
+	bestFace[0] = 14;
+	bestSuit[0] = cardsSuit_[6];
+	// Now loop backwards adding subsiquent cards based on high card
+	straight_i=4;
+	for (int i=5; i>-1; i--) {
+	  if (cardsFace_[i]<straightHighCard+1 && cardsFace_[i]!=str_prev_card) {
+	    bestFace[straight_i] = cardsFace_[i];
+	    bestSuit[straight_i] = cardsSuit_[i];
+	    str_prev_card = cardsFace_[i];
+	    straight_i--;
+	  }
+	  if (straight_i==0) break;
 	}
-	if (straight_i==0) break;
-      }
-    } else {
-      straight_i=4;
-      for (int i=6; i>-1; i--) {
-	if (cardsFace_[i]<straightHighCard+1 && cardsFace_[i]!=str_prev_card) {
-	  bestFace[straight_i] = cardsFace_[i];
-	  bestSuit[straight_i] = cardsSuit_[i];
-	  str_prev_card = cardsFace_[i];
-	  straight_i--;
+      } else {
+	straight_i=4;
+	for (int i=6; i>-1; i--) {
+	  if (cardsFace_[i]<straightHighCard+1 && cardsFace_[i]!=str_prev_card) {
+	    bestFace[straight_i] = cardsFace_[i];
+	    bestSuit[straight_i] = cardsSuit_[i];
+	    str_prev_card = cardsFace_[i];
+	    straight_i--;
+	  }
+	  if (straight_i==-1) break;
 	}
-	if (straight_i==-1) break;
       }
-    }
 
-    handCode = 5;
-    return 0;
+      handCode = 5;
+      return 0;
     
-  }
+    }
 
   }
 
@@ -763,29 +763,29 @@ int hand::findBestHand(int FBHopt)
 
   if (FBHopt<1 || FBHopt==4) {
   
-  if (gotThreeOfAKind==true) {
+    if (gotThreeOfAKind==true) {
 
-    // First copy over the three of a kind as these are known
-    for (int i=2; i<5; i++) {
-      bestFace[i] = threeOfAKindFace;
-      bestSuit[i] = threeOfAKindSuit[i-2];
-    }
-    
-    // Now find the remaining two cards, in ascending order
-    int three_i=1;
-    for (int i=6; i>-1; i--) {
-      if (cardsFace_[i]!=threeOfAKindFace) {
-	bestFace[three_i] = cardsFace_[i];
-	bestSuit[three_i] = cardsSuit_[i];
-	three_i--;
+      // First copy over the three of a kind as these are known
+      for (int i=2; i<5; i++) {
+	bestFace[i] = threeOfAKindFace;
+	bestSuit[i] = threeOfAKindSuit[i-2];
       }
-      if (three_i==-1) break;
-    }
-
-    handCode = 4;
-    return 0;
     
-  }
+      // Now find the remaining two cards, in ascending order
+      int three_i=1;
+      for (int i=6; i>-1; i--) {
+	if (cardsFace_[i]!=threeOfAKindFace) {
+	  bestFace[three_i] = cardsFace_[i];
+	  bestSuit[three_i] = cardsSuit_[i];
+	  three_i--;
+	}
+	if (three_i==-1) break;
+      }
+
+      handCode = 4;
+      return 0;
+    
+    }
   
   }
   
@@ -795,29 +795,29 @@ int hand::findBestHand(int FBHopt)
 
   if (FBHopt<1 || FBHopt==3) {
   
-  if (gotTwoPair==true) {
+    if (gotTwoPair==true) {
 
-    // Copy over the known pair values
-    bestFace[1] = twoPairLowFace;
-    bestFace[2] = twoPairLowFace;
-    bestFace[3] = twoPairHighFace;
-    bestFace[4] = twoPairHighFace;
-    bestSuit[1] = twoPairLowSuit[1];
-    bestSuit[2] = twoPairLowSuit[0];
-    bestSuit[3] = twoPairHighSuit[1];
-    bestSuit[4] = twoPairHighSuit[0];
+      // Copy over the known pair values
+      bestFace[1] = twoPairLowFace;
+      bestFace[2] = twoPairLowFace;
+      bestFace[3] = twoPairHighFace;
+      bestFace[4] = twoPairHighFace;
+      bestSuit[1] = twoPairLowSuit[1];
+      bestSuit[2] = twoPairLowSuit[0];
+      bestSuit[3] = twoPairHighSuit[1];
+      bestSuit[4] = twoPairHighSuit[0];
     
-    // Now look for highest card not in one of the two pairs
-    for (int i=6; i>-1; i--) {
-      if (cardsFace_[i]!=twoPairHighFace && cardsFace_[i]!=twoPairLowFace) {
-	bestFace[0] = cardsFace_[i];
-	bestSuit[0] = cardsSuit_[i];
-	break;
+      // Now look for highest card not in one of the two pairs
+      for (int i=6; i>-1; i--) {
+	if (cardsFace_[i]!=twoPairHighFace && cardsFace_[i]!=twoPairLowFace) {
+	  bestFace[0] = cardsFace_[i];
+	  bestSuit[0] = cardsSuit_[i];
+	  break;
+	}
       }
+      handCode = 3;
+      return 0;
     }
-    handCode = 3;
-    return 0;
-  }
 
   }
 
@@ -827,27 +827,27 @@ int hand::findBestHand(int FBHopt)
 
   if (FBHopt<1 || FBHopt==2) {
   
-  if (gotPair==true) {
+    if (gotPair==true) {
 
-    // First copy over the pair values
-    bestFace[4] = pairFace;
-    bestFace[3] = pairFace;
-    bestSuit[4] = pairSuit[0];
-    bestSuit[3] = pairSuit[1];
+      // First copy over the pair values
+      bestFace[4] = pairFace;
+      bestFace[3] = pairFace;
+      bestSuit[4] = pairSuit[0];
+      bestSuit[3] = pairSuit[1];
 
-    // Now loop through to find the 3 highest cards not in a pair
-    int pair_i=2;
-    for (int i=6; i>-1; i--) {
-      if (cardsFace_[i]!=pairFace) {
-	bestFace[pair_i] = cardsFace_[i];
-	bestSuit[pair_i] = cardsSuit_[i];
-	pair_i--;
-	if (pair_i==-1) break;
+      // Now loop through to find the 3 highest cards not in a pair
+      int pair_i=2;
+      for (int i=6; i>-1; i--) {
+	if (cardsFace_[i]!=pairFace) {
+	  bestFace[pair_i] = cardsFace_[i];
+	  bestSuit[pair_i] = cardsSuit_[i];
+	  pair_i--;
+	  if (pair_i==-1) break;
+	}
       }
+      handCode = 2;
+      return 0;
     }
-    handCode = 2;
-    return 0;
-  }
 
   }
 
@@ -857,15 +857,15 @@ int hand::findBestHand(int FBHopt)
 
   if (FBHopt<1 || FBHopt==1) {
   
-  // Finally just copy over all the highest cards in ascending order, as this is the best we have
-  int high_i=4;
-  for (int i=6; i>1; i--) {
-    bestFace[high_i] = cardsFace_[i];
-    bestSuit[high_i] = cardsSuit_[i];
-    high_i--;
-  }
-  handCode = 1;
-  return 0;
+    // Finally just copy over all the highest cards in ascending order, as this is the best we have
+    int high_i=4;
+    for (int i=6; i>1; i--) {
+      bestFace[high_i] = cardsFace_[i];
+      bestSuit[high_i] = cardsSuit_[i];
+      high_i--;
+    }
+    handCode = 1;
+    return 0;
 
   }
 
