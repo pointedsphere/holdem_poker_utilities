@@ -478,7 +478,7 @@ int table::dealAll()
 
 
 
-int table::findWinner()
+int table::findWinner(bool quickCheck)
 {
 
   /*
@@ -496,14 +496,48 @@ int table::findWinner()
   
   // Can only run if hands have been dealt
   if (handsDealt_==false) return -1;
-  
-  // Find the best hand in each 7 card hand
-  for (int fWi=0; fWi<noPlayers_; fWi++) {
-    fWStat = H_[fWi].findBestHand();
-    handCodeArr_.push_back(H_[fWi].getHandCode());
-    P_[fWi].handFoundCtr[H_[fWi].getHandCode()-1]++;
-  }
 
+  if (quickCheck==false) {
+    // Find the best hand in each 7 card hand
+    for (int fWi=0; fWi<noPlayers_; fWi++) {
+      fWStat = H_[fWi].findBestHand();
+      handCodeArr_.push_back(H_[fWi].getHandCode());
+      P_[fWi].handFoundCtr[H_[fWi].getHandCode()-1]++;
+    }
+  } else {
+
+    int countNumHands = 0;
+    int fWP;
+    int fWO;
+    
+    // Loop over the 9 options, from highest to lowest hand, for findBestHand
+    for (fWO=9; fWO>-1; fWO--) {
+
+      // Then iterate through each player
+      for (fWP=0; fWP<noPlayers_; fWP++) {
+	  
+	// Find if fWO'th hand exists for any players
+	H_[fWP].findBestHand(fWO);
+
+	// If this hand has a handCode a winner will occur for this handCode, so count them
+	if (H_[fWP].handCode>-1) countNumHands++;
+
+      }
+
+      // We stop when we have found any player with some form of hand, so we count the number
+      // of handCodes that have been set over all the players
+      if (countNumHands>0) {
+	for (int fWi=0; fWi<noPlayers_; fWi++) {
+	  handCodeArr_.push_back(H_[fWi].getHandCode());
+	  P_[fWi].handFoundCtr[H_[fWi].getHandCode()-1]++;
+	}
+	break;
+      }
+      
+    }
+    
+  }
+  
   // Iterare the number of runs
   numRuns_++;
   
@@ -1282,6 +1316,28 @@ int table::resetTable()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void table::MC(int numMC)
 {
 
@@ -1296,6 +1352,25 @@ void table::MC(int numMC)
   for (int Nmc=0; Nmc<numMC; Nmc++) {
     MCstat = dealAll();
     MCstat = findWinner();
+    MCstat = resetTableToKnown();
+  }
+  
+}
+
+void table::MCQ(int numMC)
+{
+
+  /*
+    Run a Monte Carlo simulation by taking the known cards, dealing out other cards (from a
+    shuffled deck). Then finding a winner and finally resetting the table to just the known cards.
+    This Monte Carlo simulation is ran numMC times.
+   */
+
+  int MCstat;
+  
+  for (int Nmc=0; Nmc<numMC; Nmc++) {
+    MCstat = dealAll();
+    MCstat = findWinner(true);
     MCstat = resetTableToKnown();
   }
   

@@ -175,8 +175,9 @@ public:
   int dealAll();
 
   // Find who won and with what
-  int findWinner();
-
+  int findWinner(bool quickCheck=false);
+  int findWinnerQ();
+  
   // Find the highest card at a given index over all the best hands in the H_ hands with
   // a given hand code. Also count the number of times this card occurs with the given
   // handCode.
@@ -193,6 +194,7 @@ public:
 
   // Run Monte Carlo
   void MC(int numMC);
+  void MCQ(int numMC);
   
   // Get functions
   std::vector<int>    getPlayerHoldFace(int PlayerPP);
