@@ -397,16 +397,28 @@ int hand::getStraight(int S_cards[], int hand_size)
   int straight_dif;
   bool gotStraight=false;
   int straightHighCard;
+  int Si;
 
-  straight_tmp=0;
+  // If hand_size is 7, i.e. checking all face cards for a straight, do a pre-check to see if
+  // a straight is possible
+  if (hand_size==7) {
+    //    std::cout << ((S_cards[2]-S_cards[3])+(S_cards[3]-S_cards[4])) << std::endl;
+    if (((S_cards[4]-S_cards[3])+(S_cards[3]-S_cards[2]))<0) return -1;
+  }
   
   // If the hand contains an ace and lowest face is a 2 we must also consider a straight 
   // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
-  if ( S_cards[0]==2 && S_cards[hand_size-1]==14 ) straight_tmp=1;
+  if ( S_cards[0]==2 && S_cards[hand_size-1]==14 ) {
+    straight_tmp=1;
+    Si=1;
+  } else {
+    straight_tmp=0;
+    Si=0;
+  }  
   
   // Iterate through the hand checking for a straight of any suit, only check difference between
   // subsiquent cards, >=4 subsiquent pairs means a straight
-  for (int i=0; i<hand_size-1; i++) {
+  for (int i=Si; i<hand_size-1; i++) {
     
     // Check difference between adjacent cards sorted by face value
     straight_dif = S_cards[i+1] - S_cards[i];
@@ -501,7 +513,6 @@ int hand::findBestHand()
   
   // The first step is to sort the cards in the hand into ascending order
   sortCards();
-
 
 
   /*
@@ -602,44 +613,63 @@ int hand::findBestHand()
 
   int suit3_i=0;
   for (int i=0; i<7; i++) {
-    // Count number of times face value of current card appears in the current hand
-    faceValCount[i] = std::count(cardsFace_, cardsFace_+7, cardsFace_[i]);
-    if (faceValCount[i]==4) {
-      gotFourOfAKind  = true;           // We have 4 of a kind, pretty good!
-      fourOfAKind4    = cardsFace_[i]; // The face value of the four of a kind
-    }
-    if (faceValCount[i]==3) {
-      if (cardsFace_[i]!=threeOfAKindFace) suit3_i=0;
-      gotThreeOfAKind           = true;           // Got three of a kind
-      threeOfAKindFace          = cardsFace_[i]; // Save the face val  of highest 3 of a kind
-      threeOfAKindSuit[suit3_i] = cardsSuit_[i]; // Save the suit vals of highest 3 of a kind
-      suit3_i++;
-    }
-    if (faceValCount[i]==2) {
-      // If we haven't seen a pair before we only have one pair (so far)
-      // if we have we have two pair
 
-      // Note: we use the pair face value check to avoid writing the pair twice, where we
-      //       recall cards are inascending order so pair is ith and i+1th card in hand
+    // Count number of times face value of current card appears in the current hand
+    // For cost reasons trying to reduce the number of calls to std::count
+    // if (i==1) {
+    //   // On the first card we must count the number of cards in the face
+    //   faceValCount[i] = std::count(cardsFace_, cardsFace_+7, cardsFace_[i]);
+    // } else if (cardsFace_[i]==cardsFace_[i-1]) {
+    //   // If the current card face is the same as the last then just copy the count over
+    //   faceValCount[i]=faceValCount[i-1];
+    // } else {
+    //   // Otherwise we have a new face value and must count again
+    //   faceValCount[i] = std::count(cardsFace_, cardsFace_+7, cardsFace_[i]);
+    // }
+
+    // Quicker to run std::count on all face values rather than copying identical values
+    faceValCount[i] = std::count(cardsFace_, cardsFace_+7, cardsFace_[i]);
+    
+    if (i==0 || cardsFace_[i-1]!=cardsFace_[i]) {
+      // Only consider the first face value where there are multiple of the same face value
       
-      if (gotPair==false) {
-	// The first time we encounter a pair, just save the one pair
-	gotPair     = true;      
-	pairFace    = cardsFace_[i];
-	pairSuit[0] = cardsSuit_[i];
-	pairSuit[1] = cardsSuit_[i+1];
-      } else if (cardsFace_[i]!=pairFace) {
-	// When we encounter a second pair 
-	gotTwoPair         = true;
-	twoPairLowFace     = pairFace;
-	twoPairLowSuit[0]  = pairSuit[0];
-	twoPairLowSuit[1]  = pairSuit[1];
-	pairFace           = cardsFace_[i];
-	pairSuit[0]        = cardsSuit_[i];
-	pairSuit[1]        = cardsSuit_[i+1];
-	twoPairHighFace    = pairFace;
-	twoPairHighSuit[0] = pairSuit[0];
-	twoPairHighSuit[1] = pairSuit[1];
+      if (faceValCount[i]==4) {
+	gotFourOfAKind  = true;           // We have 4 of a kind, pretty good!
+	fourOfAKind4    = cardsFace_[i]; // The face value of the four of a kind
+      }
+      if (faceValCount[i]==3) {
+	if (cardsFace_[i]!=threeOfAKindFace) suit3_i=0;
+	gotThreeOfAKind           = true;           // Got three of a kind
+	threeOfAKindFace          = cardsFace_[i]; // Save the face val  of highest 3 of a kind
+	threeOfAKindSuit[suit3_i] = cardsSuit_[i]; // Save the suit vals of highest 3 of a kind
+	suit3_i++;
+      }
+      if (faceValCount[i]==2) {
+	// If we haven't seen a pair before we only have one pair (so far)
+	// if we have we have two pair
+
+	// Note: we use the pair face value check to avoid writing the pair twice, where we
+	//       recall cards are inascending order so pair is ith and i+1th card in hand
+      
+	if (gotPair==false) {
+	  // The first time we encounter a pair, just save the one pair
+	  gotPair     = true;      
+	  pairFace    = cardsFace_[i];
+	  pairSuit[0] = cardsSuit_[i];
+	  pairSuit[1] = cardsSuit_[i+1];
+	} else if (cardsFace_[i]!=pairFace) {
+	  // When we encounter a second pair 
+	  gotTwoPair         = true;
+	  twoPairLowFace     = pairFace;
+	  twoPairLowSuit[0]  = pairSuit[0];
+	  twoPairLowSuit[1]  = pairSuit[1];
+	  pairFace           = cardsFace_[i];
+	  pairSuit[0]        = cardsSuit_[i];
+	  pairSuit[1]        = cardsSuit_[i+1];
+	  twoPairHighFace    = pairFace;
+	  twoPairHighSuit[0] = pairSuit[0];
+	  twoPairHighSuit[1] = pairSuit[1];
+	}
       }
     }
   }
