@@ -493,7 +493,9 @@ int table::findWinner(bool quickCheck)
   */
 
   int fWStat;
-  
+  int hcStart; // The hand to start checking at
+  hcStart=10;
+    
   // Can only run if hands have been dealt
   if (handsDealt_==false) return -1;
 
@@ -511,8 +513,9 @@ int table::findWinner(bool quickCheck)
     int fWO;
     
     // Loop over the 9 options, from highest to lowest hand, for findBestHand
+    // NOTE: Royal flush and straight flush are both checked with option 9
     for (fWO=9; fWO>-1; fWO--) {
-
+      
       // Then iterate through each player
       for (fWP=0; fWP<noPlayers_; fWP++) {
 	  
@@ -531,6 +534,13 @@ int table::findWinner(bool quickCheck)
 	  handCodeArr_.push_back(H_[fWi].getHandCode());
 	  P_[fWi].handFoundCtr[H_[fWi].getHandCode()-1]++;
 	}
+
+	if (fWO==9) {
+	  hcStart=10;
+	} else {
+	  hcStart=fWO;
+	}
+	
 	break;
       }
       
@@ -542,8 +552,8 @@ int table::findWinner(bool quickCheck)
   numRuns_++;
   
   // Check for the best hand at the table
-  for (int hc=10; hc>0; hc--) {
-
+  for (int hc=hcStart; hc>0; hc--) {
+    
     // First see how many times the current hand code occurs at the table
     numOccurances_ = count(handCodeArr_.begin(), handCodeArr_.end(), hc);
 
