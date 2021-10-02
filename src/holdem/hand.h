@@ -188,7 +188,7 @@ public:
 		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
   
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
-  int findBestHand();
+  int findBestHand(int FBHopt=-1);
 
   // Sort the cardsFace_ and cardsSuit_ arrays such cardsFace_ is in ascending order
   void sortCards();

@@ -439,7 +439,7 @@ int hand::getStraight(int S_cards[], int hand_size)
 
 
 
-int hand::findBestHand()
+int hand::findBestHand(int FBHopt)
 {
 
   /* 
@@ -448,6 +448,11 @@ int hand::findBestHand()
      Also set the bestFace and bestSuit class variables with the face and suit values of the 
      cards that create the best hand (where each ith element is the face and corredsponding suit).
 
+     INPUTS
+     ======
+         FBHopt :: Default -1, the Find Best Hand option, which part of this routine to run.
+	           -1 runs all part of this routine
+     
    */ 
   
   // NOTE: A -1 as an integer variable means the hand in question has not been found
@@ -456,11 +461,11 @@ int hand::findBestHand()
   // Routine variables
 
 
-
+  if (FBHopt<1 || FBHopt==9) {
+  
   
   // The first step is to sort the cards in the hand into ascending order
   sortCards();
-
 
 
   /*
@@ -561,7 +566,7 @@ int hand::findBestHand()
         
   }
 
-
+  }
 
   /*
     Count the number of occurences of each face value in hand
@@ -569,6 +574,8 @@ int hand::findBestHand()
     pair and two pair.
   */
 
+  if (FBHopt<1 || FBHopt==8) {
+  
   gotPair = false;
   gotTwoPair = false;
   gotThreeOfAKind = false;
@@ -643,12 +650,14 @@ int hand::findBestHand()
     return 0; // We have 4 of a kind, no need to keep checking
   }
   
-
+  }
 
   /*
     Full house check
   */
 
+  if (FBHopt<1 || FBHopt==7) {
+  
   // We can check this from only the three of a kind and two pair
   if (gotThreeOfAKind==true && gotPair==true) {
     int fullHouse_i=0;
@@ -673,12 +682,14 @@ int hand::findBestHand()
     
   }
   
-
+  }
 
   /*
     Flush check
   */
 
+  if (FBHopt<1 || FBHopt==6) {
+  
   // We have previously checked for a flush, but we've now checked all the better hands
   // so if we have a flush exit with this as the best hand
   if (gotFlush==true) {
@@ -696,12 +707,14 @@ int hand::findBestHand()
     
   }
 
-
+  }
 
   /*
     Straight check
   */
 
+  if (FBHopt<1 || FBHopt==5) {
+  
   // We have previously checked for a flush, and we know we do not have a straight flush
   // So just copy out the stright cards along with their suits
   if (gotStraight==true) {
@@ -742,12 +755,14 @@ int hand::findBestHand()
     
   }
 
-
+  }
 
   /*
     Three of a kind check
   */
 
+  if (FBHopt<1 || FBHopt==4) {
+  
   if (gotThreeOfAKind==true) {
 
     // First copy over the three of a kind as these are known
@@ -772,12 +787,14 @@ int hand::findBestHand()
     
   }
   
-
+  }
   
   /*
     Two pair
   */
 
+  if (FBHopt<1 || FBHopt==3) {
+  
   if (gotTwoPair==true) {
 
     // Copy over the known pair values
@@ -802,12 +819,14 @@ int hand::findBestHand()
     return 0;
   }
 
-
+  }
 
   /*
     Pair
   */
 
+  if (FBHopt<1 || FBHopt==2) {
+  
   if (gotPair==true) {
 
     // First copy over the pair values
@@ -830,12 +849,14 @@ int hand::findBestHand()
     return 0;
   }
 
-
+  }
 
   /*
     High Card
   */
 
+  if (FBHopt<1 || FBHopt==1) {
+  
   // Finally just copy over all the highest cards in ascending order, as this is the best we have
   int high_i=4;
   for (int i=6; i>1; i--) {
@@ -846,7 +867,9 @@ int hand::findBestHand()
   handCode = 1;
   return 0;
 
+  }
 
+  return 0;
   
 }
 
