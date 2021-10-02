@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 #include <algorithm>
 
@@ -94,7 +95,19 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
 
   // Player must exist at the table
   if (playerAdd>=noPlayers_) return -3;
-  
+
+  // Check if face and suit are valid values
+  if (holdInF<1 || holdInF>14) {
+    std::cout << "ERROR : In setHoldCard the face value of the card is outside the valid range [1,14]"
+	      << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  if (holdInS<1 || holdInS>4) {
+    std::cout << "ERROR : In setHoldCard the suit value of the card is outside the valid range [1,4]"
+	      << std::endl;
+    exit (EXIT_FAILURE);
+  }
+
   // Assign the known hold cards
   P_[playerAdd].numHoldKnown++; // Note we now know one more hold card
   P_[playerAdd].numHoldDealt++; // This known card is dealt
@@ -105,7 +118,7 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
   P_[playerAdd].holdSuit.push_back(holdInS);
   P_[playerAdd].holdFaceKnown.push_back(holdInF);
   P_[playerAdd].holdSuitKnown.push_back(holdInS);
-
+  
   // Then remove the known hold card from the deck
   D_.remCard(holdInF,holdInS);
   
@@ -144,6 +157,17 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
   P_[playerAdd].numHoldDealt += holdInF.size(); // Note the number of hold cards dealt to the player
   totHoldsKnown_ += holdInF.size();  // Add the current number of hold cards to the total known
   for (int i=0; i<P_[playerAdd].numHoldKnown; i++) {
+    // Check that the input cards are valid face and sut values
+    if (holdInF[i]<1 || holdInF[i]>14) {
+      std::cout << "ERROR : In setHoldCards a face value of a card is outside the valid range [1,14]"
+		<< std::endl;
+      exit (EXIT_FAILURE);
+    }
+    if (holdInS[i]<1 || holdInS[i]>4) {
+      std::cout << "ERROR : In setHoldCards a suit value of a card is outside the valid range [1,4]"
+		<< std::endl;
+      exit (EXIT_FAILURE);
+    }
     // Add the cards to the relevant hold and to save the hold cards
     P_[playerAdd].holdFace.push_back(holdInF[i]);
     P_[playerAdd].holdSuit.push_back(holdInS[i]);
@@ -179,6 +203,19 @@ int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
   if (flopInF.size()!=3) return -1;
   if (flopInS.size()!=3) return -2;
   if (flopSet_==true)    return -4;
+  for (int erri=0; erri<3; erri++) {
+    // Check that the input cards are valid face and sut values
+    if (flopInF[erri]<1 || flopInF[erri]>14) {
+      std::cout << "ERROR : In setFlop a face value of a card is outside the valid range [1,14]"
+		<< std::endl;
+      exit (EXIT_FAILURE);
+    }
+    if (flopInS[erri]<1 || flopInS[erri]>4) {
+      std::cout << "ERROR : In setFlop a suit value of a card is outside the valid range [1,4]"
+		<< std::endl;
+      exit (EXIT_FAILURE);
+    }
+  }
   
   // Set the class variables
   flopF_ = flopInF;
@@ -212,7 +249,17 @@ int table::setTurn(int turnInF, int turnInS)
 
   // Error checks
   if (turnSet_==true) return -4;
-
+  if (turnInF<1 || turnInF>14) {
+    std::cout << "ERROR : In setTurn the face value of the card is outside the valid range [1,14]"
+	      << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  if (turnInS<1 || turnInS>4) {
+    std::cout << "ERROR : In setTurn the suit value of the card is outside the valid range [1,4]"
+	      << std::endl;
+    exit (EXIT_FAILURE);
+  }
+    
   // Set the class variables
   turnF_ = turnInF;
   turnS_ = turnInS;
@@ -245,6 +292,16 @@ int table::setRiver(int riverInF, int riverInS)
 
   // Error checks
   if (riverSet_==true) return -4;  
+  if (riverInF<1 || riverInF>14) {
+    std::cout << "ERROR : In setRiver ther face value of the card is outside the valid range [1,14]"
+	      << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  if (riverInS<1 || riverInS>4) {
+    std::cout << "ERROR : In setRiver the suit value of the card is outside the valid range [1,4]"
+	      << std::endl;
+    exit (EXIT_FAILURE);
+  }
   
   // Set the class variables
   riverF_ = riverInF;
