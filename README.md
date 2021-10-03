@@ -4,21 +4,93 @@ A C++ library of utilities for calculations involving Texas HoldEm poker.
 
 **NOTE: This library is under very active development.**
 
+Currently a naive implementation has been written to `brute force' hand calculation has been written. We will use this to build a hand analysis routine that uses a lookup table (or tables) to drastically increase efficiency.
+
+The naive implementation, though slow, is easy to read and modify. Furthermore, it runs at O(10^5) Monte Carlo calculations per second for 6 players and though slow is usable.
+
+
+
 
 
 ## General use and compilation
 
-This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis that can also be compiled for use as a Python module.
+This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis that can be compiled for use as a Python module.
 
 In order to compile for C++ one may run ``make`` and to compile as the python library ``holdEm`` one should run ``make python``.
 
-**Note:** as this library is under very active development compilation has not been checking in many different environments yet.
+**Note:** as this library is under active development compilation has not been checking in many different environments yet.
 
 ### General Notes
 
 - As the exact suit doesn't matter in HoldEm suits are referred to by integers [1,4], which suit is which is of no consequence as long as each suit is consistently referred to by the same integer throughout.
 - Each face value card is referred to by an integer, with [2,10] being self explanatory. 11, 12 and 13 refer to Jack, Queen and King respectively. An Ace is given the value 14.
 - For brevity throughout we let S=Spades, D=Diamonds, H=Hearts and C=Clubs and refer to cards by number and letter, e.g. 5H is the 5 of hearts and AS is the ace of spades.
+
+### General use
+
+Consider the state of the table with 3 players after the flop, where our hand is Ks Kd, (for some reason) we know another players hold is Qh Qd and the flop is 5H, 6s, 10d. We then wish to fun a Monte Carlo sim over 10^6 iterations to see what happens here, this can be done in Python (after compiling the module with ``make python``) with:
+
+```
+import holdEm
+
+Np  = 3       # Number of players
+Nmc = 1000000 # Numer of monte carlo loops
+
+# Initialise table class, with N players
+T = holdEm.table(Np)
+
+# Set player one hold to As Kc
+stat = T.setHoldCards(0,(13,13),(1,2))
+
+# Set player two hold to Ah Qd
+stat = T.setHoldCards(1,(12,12),(3,4))
+
+# Set the flop to 5h, 6s, 10d
+stat = T.setFlop((5,6,10),(3,1,4))
+
+# Run a Monte Carlo simulation
+T.MC(Nmc)
+
+# Get data from the Monte Carlo simulator
+wins  = T.getWins()
+winsP = T.getWinsP()
+draw  = T.getDraws()
+drawP = T.getDrawsP()
+
+# Print the array of the win probabilities
+print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+for p in range(Np):
+    print("player ", p, " | Win count : ", "{:9}".format(wins[p]), " | Win prob : ", "{:2.4f}".format(winsP[p]), \
+        " | Draw count : ", "{:9}".format(draw[p]), " | Draw prob : ", "{:2.4f}".format(drawP[p]))
+    
+# Print the hands for each player
+for p in range(Np):
+    print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+    winsPP  = T.getWinsPP(p)
+    winsPPp = T.getWinsPPp(p)
+    drawPP  = T.getDrawsPP(p)
+    drawPPp = T.getDrawsPPp(p)
+    handPP  = T.getHandsPP(p)
+    handPPp = T.getHandsPPp(p)
+    for h in range(10):
+        print("player ", p, " | hand code : ", "{:2}".format(h+1), \
+              " | win count : ",   "{:9}".format(winsPP[h]), " | win prob : ",   "{:2.4f}".format(winsPPp[h]), \
+              " | draw count : ",  "{:9}".format(drawPP[h]), " | draw prob : ",  "{:2.4f}".format(drawPPp[h]), \
+              " | occur count : ", "{:9}".format(handPP[h]), " | occur prob : ", "{:2.4f}".format(handPPp[h]))
+print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+```
+
+Where this script can be found in ``examples/MC_example.py``.
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -406,6 +478,181 @@ int main() {
 
 
 
+
+
+### ``table`` Class
+
+A class that contains everything we would find at a table (excluding bets), with players (numbered from 0), a deck and table cards. It is within this class we can deal cards from a deck to multiple players holds and to the table cards. Furthermore we can assess the winner at the table (either with perfect information or by dealing from a shuffled deck) and run a Monte Carlo simulation.
+
+In general we use this routine by setting any known cards, then dealing random cards to fill up any unknown cards, then we find the winner from all cards and record.
+
+#### Class fn : ``int->int`` : ``setNoPlayers``
+
+Set the number of players at the table, minimum 2 players. No hard coded maximum but eventually we will run out of cards to deal which will cause an exit with an error.
+
+Return ``-1`` if input is less than 2 and ``0`` on successful completion.
+
+#### Class fn : ``int,vector<int>,vector<int>->int`` : ``setHoldCards``
+
+Set the hold cards of a given player.
+
+Inputs:
+1. Integer, the players number (where players are indexed from 0) for whom to set the hold cards.
+2. Integer, vector, the face values of the hold cards for the player.
+3. Integer, vector, the suit values of the hold cards for the player.
+
+The input indexes must be of length 3.
+
+Return ``0`` on success, ``-1`` if input vectors are of differing lengths, ``-2`` if input vectors have more than 2 elements and ``-3`` if the input player does not exist at the table.
+
+Note: All cards set are removed from the deck.
+
+#### Class fn : ``int,int,int->int`` : ``setHoldCard``
+
+The same as ``setHoldCards``, but this routine sets a single card in the players hold (adding it a known hold card if present).
+
+Note: All cards set are removed from the deck.
+
+#### Class fn : ``vector<int>,vector<int>->int`` : ``setFlop``
+
+Similar to ``setHoldCards``, this sets the flop values on the table for all players with two input vectors being face then suit values of the flop cards.
+
+Note: All cards set are removed from the deck.
+
+#### Class fn : ``int,int->int`` : ``setTurn``
+
+Similar to ``setHoldCard``, this sets the turn values on the table for all players with two input integers being face then suit values of the turn card.
+
+Note: All cards set are removed from the deck.
+
+#### Class fn : ``int,int->int`` : ``setTurn``
+
+Similar to ``setHoldCard``, this sets the river values on the table for all players with two input integers being face then suit values of the river card.
+
+Note: All cards set are removed from the deck.
+
+#### Class fn : ``void`` : ``shuffleDeckIndex``
+
+Shuffle the index values for the cards left in the deck.
+
+#### Class fn : ``void->int`` : ``dealFlopTurnRiver``
+
+Deal cards to the flop turn and river from the deck. This is done by shuffling an array of indexes pointing to each remaining card in the deck (if not already shuffled), then using this to deal cards to the flopTurnRiver. This adds to the cards that may have been set by earlier routines.
+
+Note: Once a routine has been used that involves shuffling the index array (like this one) do not use any of the set routines. Nor should the deck index be shuffled again.
+
+Return ``0`` on success or ``1`` if the flop, turn & river have all been set.
+
+#### Class fn : ``int->int`` : ``dealHold``
+
+Deal hold cards to the player given by input integer (player indexing starts at 0). This will deal the hold up to 2 cards, or do nothing if the player has 2 cards set in their hold. This adds to the cards that may have been set by earlier routines.
+
+Returns ``0`` on success, ``1`` if there are already 2 cards in the players hold or ``-1`` if the player given by input integer is not at the table.
+
+#### Class fn : ``void->int`` : ``dealAll``
+
+Deal the flop, turn and river (by filling up any space where cards have not been set). Then deal the hold cards (that have not been set) to all players at the table.
+
+Return ``0`` on success.
+
+#### Class fn : ``void->int`` : ``findWinner``
+
+Find a winner from all hands at the table. Return ``0`` if it is a draw with a return of ``>0`` is player who won. Wins/losses/draws/hands are recorded internally and can be recovered with get functions (see below).
+
+Return ``>0`` on success and ``-1`` if required cards (i.e. all holds and flop, turn & river) have not been either set or dealt.
+
+#### Class fn : ``void->int`` : ``resetTableToKnown``
+
+Reset the table to the state where only cards that have been specifically set are left on the table. I.e. return any cards that have been dealt back to the deck.
+
+#### Class fn : ``void->int`` : ``resetTable``
+
+Completely reset the table to its initial state, destroying all data.
+
+#### Class fn : ``int->void`` : ``MC``
+
+Run a Monte Carlo simulation, this can be done after setting any cards one wishes (which remain constant over all Monte Carlo sims). This is done for a number of loops specified with the input integer.
+
+#### Class fn : ``void->int`` : ``getNumRuns``
+
+Find the number of Monte Carlo runs that have been carried out. I.e. the number of times the routine ``findWinner`` has been successfully called.
+
+#### Class fn : ``void->vector<int>`` : ``getWins``
+
+Return an array of the number of times each player has won, where each ith element refers to player i.
+
+#### Class fn : ``void->vector<double>`` : ``getWinsP``
+
+Return an array of the number of times each player has won divided by total number of runs, where each ith element refers to player i.
+
+#### Class fn : ``void->vector<int>`` : ``getDraws``
+
+Return an array of the number of times each player has drawn, where each ith element refers to player i.
+
+#### Class fn : ``void->vector<double>`` : ``getDrawsP``
+
+Return an array of the number of times each player has drawn divided by total number of runs, where each ith element refers to player i.
+
+#### Class fn : ``int->vector<int>`` : ``getWinsPP``
+
+Return an array of the number of times the player given by the input integer has won with each of the 10 hand types. Let the return array be given by ``A=getWinsPP(1)`` then ``A.size()==10`` and:
+
+- ``A(0)`` : Num high card wins.
+- ``A(1)`` : Num one pair wins.
+- ``A(2)`` : Num two pair wins.
+- ``A(3)`` : Num three of a kind wins.
+- ``A(4)`` : Num straight wins.
+- ``A(5)`` : Num flush wins.
+- ``A(6)`` : Num full house wins.
+- ``A(7)`` : Num four of a kind wins.
+- ``A(8)`` : Num straight flush wins.
+- ``A(9)`` : Num royal flush wins.
+
+#### Class fn : ``int->vector<double>`` : ``getWinsPPp``
+
+Return an array of the number of times the player given by the input integer has won with each of the 10 hand types divided by the total number of runs (see ``getWinsPP``).
+
+#### Class fn : ``int->vector<int>`` : ``getDrawsPP``
+
+Return an array of the number of times the player given by the input integer has tied with each of the 10 hand types. Let the return array be given by ``A=getWinsPP(1)`` then ``A.size()==10`` and:
+
+- ``A(0)`` : Num high card wins.
+- ``A(1)`` : Num one pair wins.
+- ``A(2)`` : Num two pair wins.
+- ``A(3)`` : Num three of a kind wins.
+- ``A(4)`` : Num straight wins.
+- ``A(5)`` : Num flush wins.
+- ``A(6)`` : Num full house wins.
+- ``A(7)`` : Num four of a kind wins.
+- ``A(8)`` : Num straight flush wins.
+- ``A(9)`` : Num royal flush wins.
+
+#### Class fn : ``int->vector<double>`` : ``getDrawsPPp``
+
+Return an array of the number of times the player given by the input integer has tied with each of the 10 hand types divided by the total number of runs (see ``getDrawsPP``).
+
+#### Class fn : ``int->vector<int>`` : ``getHandsPP``
+
+Return an array of the number of times the player given by the input integer has finished a game with each of the 10 hand types. Let the return array be given by ``A=getWinsPP(1)`` then ``A.size()==10`` and
+
+- ``A(0)`` : Num high card wins.
+- ``A(1)`` : Num one pair wins.
+- ``A(2)`` : Num two pair wins.
+- ``A(3)`` : Num three of a kind wins.
+- ``A(4)`` : Num straight wins.
+- ``A(5)`` : Num flush wins.
+- ``A(6)`` : Num full house wins.
+- ``A(7)`` : Num four of a kind wins.
+- ``A(8)`` : Num straight flush wins.
+- ``A(9)`` : Num royal flush wins.
+
+#### Class fn : ``int->vector<double>`` : ``getHandsPPp``
+
+Return an array of the number of times the player given by the input integer has finished a game with each of the 10 hand types divided by the total number of runs (see ``getHandsPP``).
+
+#### Class fn : ``void->int`` : ``getNumCardsInDeck``
+
+Return the number of cards `left in the deck', i.e. 52 minus the number of set cards minus the number of dealt cards.
 
 
 
