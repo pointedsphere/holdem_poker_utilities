@@ -337,6 +337,15 @@ int table::setRiver(int riverInF, int riverInS)
 
 
 
+void table::shuffleDeckIndex()
+{
+
+  D_.shuffleI();
+  
+}
+
+
+
 
 int table::dealFlopTurnRiver()
 {
@@ -354,6 +363,9 @@ int table::dealFlopTurnRiver()
   
   // If the flop, turn and river are set, then there is nothing left to do, so stop here
   if (flopDealt_==true && turnDealt_==true && riverDealt_==true) return 1;
+
+  // If cards not shuffled, then shuffle
+  if (D_.getDeckShuffled()==false) D_.shuffleI();
   
   // Then find the number of cards we need to add, and deal these out to the deck class arrays
   // dealFace_ and dealSuit_
@@ -406,13 +418,20 @@ int table::dealHold(int player)
 
     RETURNS
     =======
-        0 :: Success!
-	1 :: Nothing to do, the turn, flop and river are set. So sort of success...
+        0  :: Success!
+	1  :: Nothing to do, the turn, flop and river are set. So sort of success...
+	-1 :: 
 
   */
 
   // If we have 2 cards in the hold then exit, we can't deal any more
   if (P_[player].numHoldDealt==2) return 1;
+
+  // Check desired player is at the table
+  if (player>=noPlayers_) return -1;
+  
+  // If cards not shuffled, then shuffle
+  if (D_.getDeckShuffled()==false) D_.shuffleI();
   
   // Then find the number of cards we need to add, and deal these out to the deck class arrays
   // dealFace_ and dealSuit_
@@ -1431,7 +1450,12 @@ int table::getNumCardsInDeck()
   return D_.getNumCards();
   
 }
+int table::getNumRuns()
+{
 
+  return numRuns_;
+  
+}
 
 
 

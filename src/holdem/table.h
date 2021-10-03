@@ -62,10 +62,10 @@ public:
   int numWins;
   int numDraw;
   
-  // each ith element corresponds to winCode handCode-1
-  std::vector<int> winCodesCtr;
-  std::vector<int> drawCodesCtr;
-  std::vector<int> handFoundCtr;
+  // each ith element corresponds handCode-1
+  std::vector<int> winCodesCtr;  // Number of times this player won with the given hand
+  std::vector<int> drawCodesCtr; // Number of times this player drawn with given hand
+  std::vector<int> handFoundCtr; // Number of times the given hand has occured for this player
   
 };
 
@@ -165,6 +165,9 @@ public:
   int setTurn(int turnInF, int turnInS);
   int setRiver(int riverInF, int riverInS);
 
+  // Shuffle the deck on the table
+  void shuffleDeckIndex();
+  
   // Deal random cards to the flop turn and river (if not currently set)
   int dealFlopTurnRiver();
 
@@ -197,7 +200,7 @@ public:
   // Get functions
   std::vector<int>    getPlayerHoldFace(int PlayerPP);
   std::vector<int>    getPlayerHoldSuit(int PlayerPP);
-  
+  int                 getNumRuns();
   std::vector<int>    getWins();
   std::vector<double> getWinsP();
   std::vector<int>    getDraws();
