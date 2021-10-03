@@ -1059,7 +1059,7 @@ int table::findWinner()
   
   return -10; // We shouldn't get to here, so return -10 for major error
   
-};
+}
 
 
 
@@ -1171,7 +1171,7 @@ int table::searchForHighCard(int HC)
 
   return -1000; // Should not reach here
   
-};
+}
 
 
 
@@ -1234,7 +1234,7 @@ int table::resetTableToKnown()
   
   return 0;
   
-};
+}
 
 
 
@@ -1297,7 +1297,7 @@ int table::resetTable()
   
   return 0;
   
-};
+}
 
 
 
@@ -1337,13 +1337,13 @@ std::vector<int> table::getPlayerHoldFace(int playerPP)
 
   return P_[playerPP].holdFace;
   
-};
+}
 std::vector<int> table::getPlayerHoldSuit(int playerPP)
 {
 
   return P_[playerPP].holdSuit;
   
-};
+}
 std::vector<int> table::getWins()
 {
 
@@ -1353,7 +1353,7 @@ std::vector<int> table::getWins()
   }
   return getTmp;
   
-};
+}
 std::vector<double> table::getWinsP()
 {
 
@@ -1363,7 +1363,7 @@ std::vector<double> table::getWinsP()
   }
   return getTmp;
   
-};
+}
 std::vector<int> table::getDraws()
 {
 
@@ -1373,7 +1373,7 @@ std::vector<int> table::getDraws()
   }
   return getTmp;
   
-};
+}
 std::vector<double> table::getDrawsP()
 {
 
@@ -1383,7 +1383,7 @@ std::vector<double> table::getDrawsP()
   }
   return getTmp;
   
-};
+}
 std::vector<int> table::getWinsPP(int playerPP)
 {
 
@@ -1393,7 +1393,7 @@ std::vector<int> table::getWinsPP(int playerPP)
   }
   return getTmp;
   
-};
+}
 std::vector<double> table::getWinsPPp(int playerPP)
 {
 
@@ -1403,7 +1403,7 @@ std::vector<double> table::getWinsPPp(int playerPP)
   }
   return getTmp;
   
-};
+}
 std::vector<int> table::getDrawsPP(int playerPP)
 {
 
@@ -1413,7 +1413,7 @@ std::vector<int> table::getDrawsPP(int playerPP)
   }
   return getTmp;
   
-};
+}
 std::vector<double> table::getDrawsPPp(int playerPP)
 {
 
@@ -1423,7 +1423,7 @@ std::vector<double> table::getDrawsPPp(int playerPP)
   }
   return getTmp;
   
-};
+}
 std::vector<int> table::getHandsPP(int playerPP)
 {
 
@@ -1433,7 +1433,7 @@ std::vector<int> table::getHandsPP(int playerPP)
   }
   return getTmp;
   
-};
+}
 std::vector<double> table::getHandsPPp(int playerPP)
 {
 
@@ -1443,7 +1443,7 @@ std::vector<double> table::getHandsPPp(int playerPP)
   }
   return getTmp;
   
-};
+}
 int table::getNumCardsInDeck()
 {
 

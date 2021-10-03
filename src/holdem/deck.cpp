@@ -48,7 +48,7 @@ void deck::setDeckFull()
   
   deckSet_ = true;
   
-};
+}
 
 
 
@@ -116,7 +116,7 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
   deckSet_ = true;
   return 0; // Success
   
-};
+}
 
 
 
@@ -143,7 +143,7 @@ void deck::setDeckIndex(int maxIndex)
   deckShuffled_ = false; // No longer got the shuffled indexes
   indexSet_     = true;  // The indes is however now set
   
-};
+}
 
 
 
@@ -197,7 +197,7 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
   
   return 0; // Success!
   
-};
+}
 
 
 
@@ -235,7 +235,7 @@ int deck::remCard(int remFace, int remSuit)
   
   return 0; // Success!
   
-};
+}
 
 
 
@@ -250,7 +250,7 @@ void deck::itNumCardsInDeck(int deckIter)
 
   numCards_+=deckIter;
   
-};
+}
 
 
 
@@ -262,35 +262,35 @@ void deck::itNumCardsInDeck(int deckIter)
 bool deck::getDeckSet()
 {
   return deckSet_;
-};
+}
 bool deck::getDeckShuffled()
 {
   return deckShuffled_;
-};
+}
 std::vector<int> deck::getDeckFace()
 {
   return deckFace_;
-};
+}
 std::vector<int> deck::getDeckSuit()
 {
   return deckSuit_;
-};
+}
 std::vector<int> deck::getDeckIndex()
 {
   return deckIndex_;
-};
+}
 int deck::getNumCards()
 {
   return numCards_;
-};
+}
 std::vector<int> deck::getDealFace()
 {
   return dealFace_;
-};
+}
 std::vector<int> deck::getDealSuit()
 {
   return dealSuit_;
-};
+}
 
 
 
@@ -315,7 +315,7 @@ void deck::shuffleI()
   shuffle(deckIndex_.begin(), deckIndex_.end(), std::default_random_engine(seed));
   deckShuffled_ = true;
   
-};
+}
 
 
 
