@@ -313,7 +313,8 @@ void deck::shuffleI()
   
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   shuffle(deckIndex_.begin(), deckIndex_.end(), std::default_random_engine(seed));
-
+  deckShuffled_ = true;
+  
 };
 
 
