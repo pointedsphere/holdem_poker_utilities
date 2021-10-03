@@ -17,6 +17,11 @@ private:
   std::vector<int> deckFace_;
   std::vector<int> deckSuit_;
 
+  // Deck variables for the prime representation
+  std::vector<int> deckFaceP_;
+  std::vector<int> deckSuitP_;
+  std::vector<int> deckFullP_;
+  
   // The index array, used for dealing/shuffling cards
   bool indexSet_;
   std::vector<int> deckIndex_;
@@ -30,9 +35,8 @@ public:
   // Constructor
   deck() {
     
-    // We start with 52 cards
-    numCards_ = 52;
-    deckSet_ = false;
+    // We start with a full deck
+    setDeckFull();
     
     // Set the array of indexes of the deck, for use with shuffling
     indexSet_ = false;
