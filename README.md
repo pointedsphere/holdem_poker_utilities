@@ -2,9 +2,9 @@
 
 A C++ library of utilities for calculations involving Texas HoldEm poker.
 
-**NOTE: This library is under very active development.**
+**NOTE: This library is under very active development, as such this documentation is very rough.**
 
-Currently a naive implementation has been written to `brute force' hand calculation has been written. We will use this to build a hand analysis routine that uses a lookup table (or tables) to drastically increase efficiency.
+Currently a naive implementation has been written to `brute force' hand calculation. We will use this to build a hand analysis routine that uses a lookup table (or tables) to drastically increase efficiency.
 
 The naive implementation, though slow, is easy to read and modify. Furthermore, it runs at O(10^5) Monte Carlo calculations per second for 6 players and though slow is usable.
 
@@ -14,11 +14,11 @@ The naive implementation, though slow, is easy to read and modify. Furthermore, 
 
 ## General use and compilation
 
-This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis that can be compiled for use as a Python module.
+This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis and to be compiled for use as a Python module.
 
-In order to compile for C++ one may run ``make`` and to compile as the python library ``holdEm`` one should run ``make python``.
+In order to compile for C++ one should run ``make``. To compile as the python library ``holdEm`` one should run ``make python``.
 
-**Note:** as this library is under active development compilation has not been checking in many different environments yet.
+**Note:** as this library is under active development compilation has not been tested in many different environments (yet).
 
 ### General Notes
 
@@ -28,7 +28,7 @@ In order to compile for C++ one may run ``make`` and to compile as the python li
 
 ### General use
 
-Consider the state of the table with 3 players after the flop, where our hand is Ks Kd, (for some reason) we know another players hold is Qh Qd and the flop is 5H, 6s, 10d. We then wish to fun a Monte Carlo sim over 10^6 iterations to see what happens here, this can be done in Python (after compiling the module with ``make python``) with:
+Consider the state of the table with 3 players after the flop, where our hand is KS KD, (for some reason) we know another players hold is QH QD and the flop is 5H, 6S, 10D. We then wish to fun a Monte Carlo sim over 10^6 iterations to see what happens here, this can be done in Python (after compiling the module with ``make python``) with:
 
 ```
 import holdEm
