@@ -16,7 +16,9 @@ The naive implementation, though slow, is easy to read and modify. Furthermore, 
 
 This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis and to be compiled for use as a Python module.
 
-In order to compile for C++ one should run ``make``. To compile as the python library ``holdEm`` one should run ``make python``.
+In order to compile for C++ one should run ``make``.
+
+To compile as the python library ``holdEm`` the pybind11 module is required. This can be installed following [the installation instructions here][https://pybind11.readthedocs.io/en/stable/installing.html] (concicely running ``pip install pybind11`` or ``pip3 install pybind11`` with pip  or ``brew install pybind11`` for a global brew install). One pybind11 is installed simply run ``make python`` and the module file will be compiled, which can then be imported to any python script.
 
 **Note:** as this library is under active development compilation has not been tested in many different environments (yet).
 
