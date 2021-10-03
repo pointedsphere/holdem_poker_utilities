@@ -20,19 +20,13 @@ g++ -O3 -Wall -shared -std=c++11 -undefined dynamic_lookup $(python3 -m pybind11
 
 namespace py = pybind11;
 
-int add(int i, int j) {
-    return i + j;
-}
-
 PYBIND11_MODULE(holdEm, m) {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
-    m.def("add", &add, "A function which adds two numbers");
-
     py::class_<hand>(m, "hand")
       .def(py::init<>())
-      .def("SetCards",     &hand::SetCards)
-      .def("SetCardsFull", &hand::SetCardsFull)
+      .def("SetCards",      &hand::SetCards)
+      .def("SetCardsFull",  &hand::SetCardsFull)
       .def("findBestHand",  &hand::findBestHand)
       .def("getCardsFace",  &hand::getCardsFace)
       .def("getCardsSuit",  &hand::getCardsSuit)
