@@ -153,7 +153,7 @@ int main() {
     // Write the output hand codes and prime products
     
     for (int o=0; o<arrSize; o++) {
-      outfile << outHandCode[o] << " , " << outPrimeProduct[o] << "\n";
+      outfile << outPrimeProduct[o] << " , " << outHandCode[o] << "\n";
     }
     // Written this data so clear arrays before next `a' loop
     outHandCode.clear();
