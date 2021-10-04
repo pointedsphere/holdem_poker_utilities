@@ -80,6 +80,9 @@ public:
   int  numDealt_;
   std::vector<int> dealFace_;
   std::vector<int> dealSuit_;
+  std::vector<int> dealFaceP_;
+  std::vector<int> dealSuitP_;
+  std::vector<int> dealFullP_;
   
   // C++ get functions
   bool getDeckSet();

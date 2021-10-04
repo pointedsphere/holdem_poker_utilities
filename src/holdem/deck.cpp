@@ -27,6 +27,11 @@ void deck::setDeckFull()
 
   // Check if the deck has been set, if it has discard the old deck before populating
   if (deckSet_==true) deckIndex_.clear();
+  if (deckSet_==true) deckFace_.clear();
+  if (deckSet_==true) deckSuit_.clear();
+  if (deckSet_==true) deckFaceP_.clear();
+  if (deckSet_==true) deckSuitP_.clear();
+  if (deckSet_==true) deckFullP_.clear();
   
   // Do for the 4 suits
   for (int s=1; s<5; s++) {
@@ -38,6 +43,68 @@ void deck::setDeckFull()
     }
   }
 
+  // Now explicitly set the prime versions of the deck
+  deckFullP_.push_back(2);
+  deckFullP_.push_back(3);
+  deckFullP_.push_back(5);
+  deckFullP_.push_back(7);
+  deckFullP_.push_back(11);
+  deckFullP_.push_back(13);
+  deckFullP_.push_back(17);
+  deckFullP_.push_back(19);
+  deckFullP_.push_back(23);
+  deckFullP_.push_back(29);
+  deckFullP_.push_back(31);
+  deckFullP_.push_back(37);
+  deckFullP_.push_back(41);
+  deckFullP_.push_back(43);
+  deckFullP_.push_back(47);
+  deckFullP_.push_back(53);
+  deckFullP_.push_back(59);
+  deckFullP_.push_back(61);
+  deckFullP_.push_back(67);
+  deckFullP_.push_back(71);
+  deckFullP_.push_back(73);
+  deckFullP_.push_back(79);
+  deckFullP_.push_back(83);
+  deckFullP_.push_back(89);
+  deckFullP_.push_back(97);
+  deckFullP_.push_back(101);
+  deckFullP_.push_back(103);
+  deckFullP_.push_back(107);
+  deckFullP_.push_back(109);
+  deckFullP_.push_back(113);
+  deckFullP_.push_back(127);
+  deckFullP_.push_back(131);
+  deckFullP_.push_back(137);
+  deckFullP_.push_back(139);
+  deckFullP_.push_back(149);
+  deckFullP_.push_back(151);
+  deckFullP_.push_back(157);
+  deckFullP_.push_back(163);
+  deckFullP_.push_back(167);
+  deckFullP_.push_back(173);
+  deckFullP_.push_back(179);
+  deckFullP_.push_back(181);
+  deckFullP_.push_back(191);
+  deckFullP_.push_back(193);
+  deckFullP_.push_back(197);
+  deckFullP_.push_back(199);
+  deckFullP_.push_back(211);
+  deckFullP_.push_back(223);
+  deckFullP_.push_back(227);
+  deckFullP_.push_back(229);
+  deckFullP_.push_back(233);
+  deckFullP_.push_back(239);
+  
+  // Now set the prime deck face and suit values based on the first 13 and 4 prime numbers respectivley
+  for (int i=0; i<4; i++) {
+    for (int j=0; j<13; j++) {
+      deckFaceP_.push_back(deckFullP_[j]);
+      deckSuitP_.push_back(deckFullP_[i]);
+    }
+  }
+  
   // Set number of cards to 52 for the full deck
   numCards_     = 52;
   indexSet_     = false;
@@ -45,7 +112,8 @@ void deck::setDeckFull()
   deckShuffled_ = false;
   dealDone_     = false;
   numDealt_     = 0;
-  
+
+  // And now the deck is set
   deckSet_ = true;
   
 }
@@ -74,9 +142,6 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
 
   int deckPartialSize;
   
-  // Check if the deck has been set, if it has discard the old deck before populating
-  if (deckSet_==true) deckIndex_.clear();
-  
   // Check that the input arrays are the same size
   if (igFace.size()!=igSuit.size()) {
     return -1; // Return error
@@ -92,28 +157,12 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
   for (int i=0; i<deckPartialSize; i++) {
     if (igFace[i]==1) igFace[i]=14;
   }
-  
-  // Do for the 4 suits
-  for (int s=1; s<5; s++) {
-    // Do for each card in the current suit
-    for (int f=2; f<15; f++) {
-      // Check each of the ignore vector elements to see if the current card to be added should
-      // be ignored or not
-      deckPartialSize=igFace.size();
-      for (int i=0; i<deckPartialSize; i++) {
-	if (igFace[i]==f && igSuit[i]==s) {
-	  numCards_--;
-	  break;
-	} else if (i==deckPartialSize-1) {
-	  deckFace_.push_back(f);
-	  deckSuit_.push_back(s);
-	  break;
-	}
-      }
-    }
-  }
 
-  deckSet_ = true;
+  // Create a full deck
+  setDeckFull();
+  
+  remCards(igFace, igSuit);
+
   return 0; // Success
   
 }
@@ -185,6 +234,10 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 	// then delete and break to the next card to remove
 	deckFace_.erase(deckFace_.begin()+j);
 	deckSuit_.erase(deckSuit_.begin()+j);
+	// Also delete from the prime representations
+	deckFaceP_.erase(deckFaceP_.begin()+j);	
+	deckSuitP_.erase(deckSuitP_.begin()+j);
+	deckFullP_.erase(deckFullP_.begin()+j);
 	numCards_=numCards_-1;
 	break;
       }
@@ -224,6 +277,10 @@ int deck::remCard(int remFace, int remSuit)
       // then delete and break to the next card to remove
       deckFace_.erase(deckFace_.begin()+j);
       deckSuit_.erase(deckSuit_.begin()+j);
+      // Also delete from the prime representations
+      deckFaceP_.erase(deckFaceP_.begin()+j);	
+      deckSuitP_.erase(deckSuitP_.begin()+j);
+      deckFullP_.erase(deckFullP_.begin()+j);
       numCards_=numCards_-1;
       break;
     }
@@ -349,6 +406,9 @@ int deck::dealCards(int numToDeal)
   if (dealDone_==true) {
     dealFace_.clear();
     dealSuit_.clear();
+    dealFaceP_.clear();
+    dealSuitP_.clear();
+    dealFullP_.clear();
   }
 
   // If the number of cards asked to deal is more than that left in deck return with an error
@@ -362,6 +422,9 @@ int deck::dealCards(int numToDeal)
   for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {
     dealFace_.push_back(deckFace_[deckIndex_[i]]);
     dealSuit_.push_back(deckSuit_[deckIndex_[i]]);
+    dealFaceP_.push_back(deckFaceP_[deckIndex_[i]]);
+    dealSuitP_.push_back(deckSuitP_[deckIndex_[i]]);
+    dealFullP_.push_back(deckFullP_[deckIndex_[i]]);
   }
 
   // Update general and return success
@@ -385,7 +448,7 @@ void deck::remDealtCards()
    */
   
   remCards(dealFace_,dealSuit_);
-  numCards_=numCards_+dealSuit_.size();
+  numCards_=numCards_-dealSuit_.size();
   
 }
 
