@@ -6,10 +6,10 @@ Nmc = 1000000 # Numer of monte carlo loops
 # Initialise table class, with N players
 T = holdEm.table(Np)
 
-# Set player one hold to As Kc
+# Set player one hold to Ks Kc
 stat = T.setHoldCards(0,(13,13),(1,2))
 
-# Set player two hold to Ah Qd
+# Set player two hold to Qh Qd
 stat = T.setHoldCards(1,(12,12),(3,4))
 
 # Set the flop to 5h, 6s, 10d
