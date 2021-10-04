@@ -47,6 +47,13 @@ int main() {
   // Temporary integer for calcualtion of prime product
   long long int tmp;
 
+  // Temporary values for checking if a flush exists
+  std::vector<int> tmpArr;
+  int count2;
+  int count3;
+  int count5;
+  int count7;
+  
   // Temporary values of the card face and suit values
   std::vector<int> faceTmp;
   std::vector<int> suitTmp;
@@ -67,7 +74,6 @@ int main() {
   
   // Allow for opening of output file
   std::ofstream outfile;
-  outfile.open ("straightRoyalFlush.dat");
   
   for (int a=aCont; a<numCards; a++) {
 
@@ -110,40 +116,60 @@ int main() {
 			      // Append current prime product to the array of considered prime product
 			      primeProd.push_back(tmp);
 
-			      // Set the temp arrays of face and suit values
-			      faceTmp.push_back(cardFace[a]);
-  			      faceTmp.push_back(cardFace[b]);
-			      faceTmp.push_back(cardFace[c]);
-			      faceTmp.push_back(cardFace[d]);
-			      faceTmp.push_back(cardFace[e]);
-			      faceTmp.push_back(cardFace[f]);
-			      faceTmp.push_back(cardFace[g]);
-			      suitTmp.push_back(cardSuit[a]);
-  			      suitTmp.push_back(cardSuit[b]);
-			      suitTmp.push_back(cardSuit[c]);
-			      suitTmp.push_back(cardSuit[d]);
-			      suitTmp.push_back(cardSuit[e]);
-			      suitTmp.push_back(cardSuit[f]);
-			      suitTmp.push_back(cardSuit[g]);
+			      // We first check if there is a flush, if there is we then check the hand
 			      
-			      // Then set the cards in the hand class and find the best hand
-			      H.SetCardsFull(faceTmp,suitTmp);
-			      H.findBestHand();
-			      HC = H.handCode;
+			      // Count the number of suits that are 2,3,5 and 7 by first constructing a vector
+			      tmpArr.push_back(primeSuit[a]);
+			      tmpArr.push_back(primeSuit[b]);
+			      tmpArr.push_back(primeSuit[c]);
+			      tmpArr.push_back(primeSuit[d]);
+			      tmpArr.push_back(primeSuit[e]);
+			      tmpArr.push_back(primeSuit[f]);
+			      tmpArr.push_back(primeSuit[g]);
 
-			      /* Then we only record for :
-				     Straight flush === 9
-				     Royal flush ====== 10 
-			      */
-			      if (HC==9 || HC==10) {
-				outHandCode.push_back(HC);      // Copy the hand code
-				outPrimeProduct.push_back(tmp); // Prime product that gives flush
-				arrSize++;                      // And keep track of size of arrays
-			      }
+			      count2 = std::count(tmpArr.begin(), tmpArr.end(), 2);
+			      count3 = std::count(tmpArr.begin(), tmpArr.end(), 3);
+			      count5 = std::count(tmpArr.begin(), tmpArr.end(), 5);
+			      count7 = std::count(tmpArr.begin(), tmpArr.end(), 7);
+
+			      if (count2>4 || count3>4 || count5>4 || count7>4) {
 			      
-			      // Empty out that old tmp arrays
-			      faceTmp.clear();
-			      suitTmp.clear();
+				// Set the temp arrays of face and suit values
+				faceTmp.push_back(cardFace[a]);
+				faceTmp.push_back(cardFace[b]);
+				faceTmp.push_back(cardFace[c]);
+				faceTmp.push_back(cardFace[d]);
+				faceTmp.push_back(cardFace[e]);
+				faceTmp.push_back(cardFace[f]);
+				faceTmp.push_back(cardFace[g]);
+				suitTmp.push_back(cardSuit[a]);
+				suitTmp.push_back(cardSuit[b]);
+				suitTmp.push_back(cardSuit[c]);
+				suitTmp.push_back(cardSuit[d]);
+				suitTmp.push_back(cardSuit[e]);
+				suitTmp.push_back(cardSuit[f]);
+				suitTmp.push_back(cardSuit[g]);
+			      
+				// Then set the cards in the hand class and find the best hand
+				H.SetCardsFull(faceTmp,suitTmp);
+				H.findBestHand();
+				HC = H.handCode;
+
+				/* Then we only record for :
+				   Straight flush === 9
+				   Royal flush ====== 10 
+				*/
+				if (HC==9 || HC==10) {
+				  outHandCode.push_back(HC);      // Copy the hand code
+				  outPrimeProduct.push_back(tmp); // Prime product that gives flush
+				  arrSize++;                      // And keep track of size of arrays
+				}
+			      
+				// Empty out that old tmp arrays
+				faceTmp.clear();
+				suitTmp.clear();
+
+			      }
 			      
 			    }
 
@@ -161,7 +187,7 @@ int main() {
     }
 
     // Write the output hand codes and prime products
-    
+    outfile.open ("straightRoyalFlush.dat",std::ios_base::app); // first we need the file open for appending
     for (int o=0; o<arrSize; o++) {
       outfile <<  outPrimeProduct[o] << " , " << outHandCode[o] << "\n";
     }
@@ -169,9 +195,14 @@ int main() {
     outHandCode.clear();
     outPrimeProduct.clear();
     arrSize=0;
+    // Write a checkpoint
+    outfile << "//++//++// CHECKPOINT a == " << a+1 << " //++//++//\n";
+    // and close
+    outfile.close();
+    
   }
 
-  outfile.close();
+
   
   return 0;
   

@@ -67,7 +67,6 @@ int main() {
   
   // Allow for opening of output file
   std::ofstream outfile;
-  outfile.open ("faceHands.dat");
   
   for (int a=aCont; a<numCards; a++) {
 
@@ -111,6 +110,7 @@ int main() {
 			      primeProd.push_back(tmp);
 
 			      // Set the temp arrays of face and suit values
+			      // Note: We arbitrerally omit the flushes by hard coding off suits
 			      faceTmp.push_back(cardFace[a]);
   			      faceTmp.push_back(cardFace[b]);
 			      faceTmp.push_back(cardFace[c]);
@@ -118,19 +118,19 @@ int main() {
 			      faceTmp.push_back(cardFace[e]);
 			      faceTmp.push_back(cardFace[f]);
 			      faceTmp.push_back(cardFace[g]);
-			      suitTmp.push_back(cardSuit[a]);
-  			      suitTmp.push_back(cardSuit[b]);
-			      suitTmp.push_back(cardSuit[c]);
-			      suitTmp.push_back(cardSuit[d]);
-			      suitTmp.push_back(cardSuit[e]);
-			      suitTmp.push_back(cardSuit[f]);
-			      suitTmp.push_back(cardSuit[g]);
+			      suitTmp.push_back(1);
+  			      suitTmp.push_back(2);
+			      suitTmp.push_back(3);
+			      suitTmp.push_back(4);
+			      suitTmp.push_back(1);
+			      suitTmp.push_back(2);
+			      suitTmp.push_back(3);
 			      
 			      // Then set the cards in the hand class and find the best hand
 			      H.SetCardsFull(faceTmp,suitTmp);
 			      H.findBestHand();
 			      HC = H.handCode;
-
+			      
 			      /* Then we only record for :
 				     Pair ============= 2
 				     Two Pair ========= 3
@@ -165,7 +165,7 @@ int main() {
     }
 
     // Write the output hand codes and prime products
-    
+    outfile.open ("faceHands.dat",std::ios_base::app); // first we need the file open (for appending)
     for (int o=0; o<arrSize; o++) {
       outfile <<  outPrimeProduct[o] << " , " << outHandCode[o] << "\n";
     }
@@ -173,9 +173,12 @@ int main() {
     outHandCode.clear();
     outPrimeProduct.clear();
     arrSize=0;
-  }
+    // Write a checkpoint
+    outfile << "//++//++// CHECKPOINT a == " << a+1 << " //++//++//\n";
+    // and close
+    outfile.close();
 
-  outfile.close();
+  }
   
   return 0;
   
