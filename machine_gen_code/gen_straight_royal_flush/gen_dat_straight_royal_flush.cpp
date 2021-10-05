@@ -132,6 +132,9 @@ int main() {
 			      count5 = std::count(tmpArr.begin(), tmpArr.end(), 5);
 			      count7 = std::count(tmpArr.begin(), tmpArr.end(), 7);
 
+			      // And we no longer need that temp array
+			      tmpArr.clear();
+			      
 			      if (count2>4 || count3>4 || count5>4 || count7>4) {
 			      
 				// Set the temp arrays of face and suit values
