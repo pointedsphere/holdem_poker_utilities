@@ -759,7 +759,7 @@ import holdEm
 
 H = holdEm.hand()
 
-stat = H.pSetCardsFull((1,2,4,6,8,14,6),(1,2,3,4,2,4,3))
+stat = H.SetCardsFull((1,2,4,6,8,14,6),(1,2,3,4,2,4,3))
 print("Stat: ", stat)
 print("All cards face vals: ", H.getCardsFace())
 print("All cards suit vals: ", H.getCardsSuit())
@@ -770,7 +770,7 @@ print("Best hand code: ", H.getHandCode())
 print("Best hand face: ", H.getBestFace())
 print("Best hand suit: ", H.getBestSuit())
 ```
-
+where this script can be found in ``examples/hand_example.py``.
 
 
 
@@ -888,14 +888,15 @@ faces = D.getDeckFace()
 suits = D.getDeckSuit()
 
 print("\nNum cards in deck ", len(faces), "\n")
+print("Initial deck (without removed cards):")
 for i in range(len(faces)):
-    print("Card ", i, " : ", faces[i], "     ", suits[i])
+    print("    Card ", "{0:2}".format(i), " : ", "{0:2}".format(faces[i]), "     ", "{0:2}".format(suits[i]))
 
 # Shuffle the cards
 D.shuffleI()
     
 # Deal one hand
-stat = D.dealCards(40)
+stat = D.dealCards(30)
 print("\nCurrent status ", stat ,"\n")
 hand1Face = D.getDealFace()
 hand1Suit = D.getDealSuit()
@@ -909,12 +910,14 @@ hand2Suit = D.getDealSuit()
 # Print both hands
 print("\n\n\nHand 1:\n")
 for i in range(len(hand1Face)):
-    print("Card ", i+1, " : ", hand1Face[i], "     ", hand1Suit[i])
+    print("Card ", "{0:2}".format(i+1), " : ", "{0:2}".format(hand1Face[i]), "     ", "{0:2}".format(hand1Suit[i]))
 
 # Print both hands
 print("\n\n\nHand 2:\n")
 for i in range(len(hand2Face)):
-    print("Card ", i+1, " : ", hand2Face[i], "     ", hand2Suit[i])
+    print("Card ", "{0:2}".format(i+1), " : ", "{0:2}".format(hand2Face[i]), "     ", "{0:2}".format(hand2Suit[i]))
+
+    
 ```
 
 
