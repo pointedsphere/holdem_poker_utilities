@@ -60,6 +60,7 @@ int main() {
   int HC;
   
   // A start for checkpoint continuation, 0 to start from scratch
+  // NOTE: the continuatin requires loading from file, but this routine is quick enough to not really need this
   int aCont = 0;
 
   // The array of checked prime products
@@ -106,37 +107,38 @@ int main() {
 
 			  if (g<f) {
 
-			    // Calcualte the product of the prime values from full card primes
-			    tmp = primes[a] * primes[b] * primes[c] * primes[d] \
-			      * primes[e] * primes[f] * primes[g];
-
-			    // Only consider further if we have not considred this prome product
-			    if (std::find(primeProd.begin(), primeProd.end(), tmp) == primeProd.end()) {
-
-			      // Append current prime product to the array of considered prime product
-			      primeProd.push_back(tmp);
-
-			      // We first check if there is a flush, if there is we then check the hand
+			    // We first check if there is a flush, if there is we then check the hand
 			      
-			      // Count the number of suits that are 2,3,5 and 7 by first constructing a vector
-			      tmpArr.push_back(primeSuit[a]);
-			      tmpArr.push_back(primeSuit[b]);
-			      tmpArr.push_back(primeSuit[c]);
-			      tmpArr.push_back(primeSuit[d]);
-			      tmpArr.push_back(primeSuit[e]);
-			      tmpArr.push_back(primeSuit[f]);
-			      tmpArr.push_back(primeSuit[g]);
+			    // Count the number of suits that are 2,3,5 and 7 by first constructing a vector
+			    tmpArr.push_back(primeSuit[a]);
+			    tmpArr.push_back(primeSuit[b]);
+			    tmpArr.push_back(primeSuit[c]);
+			    tmpArr.push_back(primeSuit[d]);
+			    tmpArr.push_back(primeSuit[e]);
+			    tmpArr.push_back(primeSuit[f]);
+			    tmpArr.push_back(primeSuit[g]);
 
-			      count2 = std::count(tmpArr.begin(), tmpArr.end(), 2);
-			      count3 = std::count(tmpArr.begin(), tmpArr.end(), 3);
-			      count5 = std::count(tmpArr.begin(), tmpArr.end(), 5);
-			      count7 = std::count(tmpArr.begin(), tmpArr.end(), 7);
+			    count2 = std::count(tmpArr.begin(), tmpArr.end(), 2);
+			    count3 = std::count(tmpArr.begin(), tmpArr.end(), 3);
+			    count5 = std::count(tmpArr.begin(), tmpArr.end(), 5);
+			    count7 = std::count(tmpArr.begin(), tmpArr.end(), 7);
 
-			      // And we no longer need that temp array
-			      tmpArr.clear();
+			    // And we no longer need that temp array
+			    tmpArr.clear();
 			      
-			      if (count2>4 || count3>4 || count5>4 || count7>4) {
-			      
+			    if (count2>4 || count3>4 || count5>4 || count7>4) {
+
+			      // Calcualte the product of the prime values from full card primes
+			      tmp = primes[a] * primes[b] * primes[c] * primes[d] \
+				* primes[e] * primes[f] * primes[g];
+				
+			      // Only consider further if we have not considred this prime product
+			      if (std::find(primeProd.begin(), primeProd.end(), tmp) == primeProd.end()) {
+
+				// Append current prime product to the array of considered prime product
+				primeProd.push_back(tmp);
+
+				
 				// Set the temp arrays of face and suit values
 				faceTmp.push_back(cardFace[a]);
 				faceTmp.push_back(cardFace[b]);
