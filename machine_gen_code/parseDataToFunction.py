@@ -22,6 +22,7 @@ with open(outFile, "a") as f:
     f.write("      AS == 41\n")
     f.write("      2C == 43\n")
     f.write("      3C == 47\n")
+    f.write("      ...\n")
     f.write("    and so on for all cards in the deck\n\n")
     f.write("    Face value inputs {FP1,...,FP7} must be the prime face values, the same regardless\n")
     f.write("    of suit value (prime val == face val):\n")
@@ -55,9 +56,9 @@ with open(outFile, "a") as f:
     #
 
     f.write("  /*\n")
-    f.write("  // We first check for a flush as thsi requires a trivial amount of switch cases and will allow\n")
-    f.write("  // us to skip the check for straight and royal flush if we dont have any form of flush.\n")
-    f.write("  // this reuires the product of the prime suit values.\n")
+    f.write("    We first check for a flush as thsi requires a trivial amount of switch cases and will allow\n")
+    f.write("    us to skip the check for straight and royal flush if we dont have any form of flush.\n")
+    f.write("    this reuires the product of the prime suit values.\n")
     f.write("  */\n\n")
     
     # Initial switch declaration
@@ -83,7 +84,7 @@ with open(outFile, "a") as f:
 
     # Write the switch cases first for full houses, all in this file are flushes
     for i in range(len(SuitArr)):
-        f.write("  case ")
+        f.write("    case ")
         f.write(str(SuitArr[i][0]))
         f.write(" : gotFlush = true;\n")
 
@@ -108,7 +109,7 @@ with open(outFile, "a") as f:
     f.write("  */\n\n")
 
     f.write("  // Only check for a striaght/royal flush if we have a flush of some sort.\n")
-    f.write("  if (gotFlush==true) {\n")
+    f.write("  if (gotFlush==true) {\n\n")
     # Initial switch declaration
     f.write("    // Calculate the product value required for the Royal and Straight Flush hands,\n")
     f.write("    // I.e. product of card values from the ``all prime'' deck.\n")
@@ -178,14 +179,14 @@ with open(outFile, "a") as f:
     # Write the switch cases first for full houses
     for i in range(len(FaceArr)):
         if (FaceArr[i][1]==7):
-            f.write("  case ")
+            f.write("    case ")
             f.write(str(FaceArr[i][0]))
             f.write(" : return 7;\n")
 
     # And then check for 4 of a kind hands
     for i in range(len(FaceArr)):
         if (FaceArr[i][1]==8):
-            f.write("  case ")
+            f.write("    case ")
             f.write(str(FaceArr[i][0]))
             f.write(" : return 8;\n")
 
@@ -238,28 +239,28 @@ with open(outFile, "a") as f:
     # Write the pair case
     for i in range(len(FaceArr)):
         if (FaceArr[i][1]==2):
-            f.write("  case ")
+            f.write("    case ")
             f.write(str(FaceArr[i][0]))
             f.write(" : return 2;\n")
 
     # Then check for two pair
     for i in range(len(FaceArr)):
         if (FaceArr[i][1]==3):
-            f.write("  case ")
+            f.write("    case ")
             f.write(str(FaceArr[i][0]))
             f.write(" : return 3;\n")
 
     # Then check for three of a kind
     for i in range(len(FaceArr)):
         if (FaceArr[i][1]==4):
-            f.write("  case ")
+            f.write("    case ")
             f.write(str(FaceArr[i][0]))
             f.write(" : return 4;\n")
 
     # And finally for a straight
     for i in range(len(FaceArr)):
         if (FaceArr[i][1]==5):
-            f.write("  case ")
+            f.write("    case ")
             f.write(str(FaceArr[i][0]))
             f.write(" : return 5;\n")
 
