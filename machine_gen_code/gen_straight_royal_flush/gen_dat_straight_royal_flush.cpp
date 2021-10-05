@@ -137,7 +137,6 @@ int main() {
 
 				// Append current prime product to the array of considered prime product
 				primeProd.push_back(tmp);
-
 				
 				// Set the temp arrays of face and suit values
 				faceTmp.push_back(cardFace[a]);
