@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 
+#include "deck.h"
 #include "hand.h"
 
 
@@ -95,6 +96,9 @@ int hand::SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
         -1 ::: Invalid card face value outside range of [1,14] given as an input.
         -2 ::: Invalid card suit value outside range of [1,4] given as an input.
   */
+
+  // Temporary vector for setting the prime values
+  std::vector<int> setTmp;
   
   // Check each card for errors in face or suit value
   for ( int i=0 ; i<7 ; i++ ) {
@@ -127,9 +131,15 @@ int hand::SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
     } else {
       cardsSuit_[i] = suit_in[i];
     }
+
+    // Get the prime values of the current card
+    setTmp = card2prime(cardsFace_[i],cardsSuit_[i]);
+    cardsFaceP_[i] = setTmp[0];
+    cardsSuitP_[i] = setTmp[0];
+    cardsFullP_[i] = setTmp[0];
     
   }
-
+  
   // We have now read the cards in
   isCards_ = true;
   
@@ -240,6 +250,8 @@ int hand::SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector
         -2 ::: Invalid card suit value outside range of [1,4] given as an input.
   */
 
+  // Temporary vector for setting the prime values
+  std::vector<int> setTmp;
   int tmp_face;
   int tmp_suit;
   
@@ -300,6 +312,12 @@ int hand::SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector
     } else {
       cardsSuit_[i] = tmp_suit;
     }
+
+    // Get the prime values of the current card
+    setTmp = card2prime(cardsFace_[i],cardsSuit_[i]);
+    cardsFaceP_[i] = setTmp[0];
+    cardsSuitP_[i] = setTmp[0];
+    cardsFullP_[i] = setTmp[0];
     
   }
 
