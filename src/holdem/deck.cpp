@@ -512,9 +512,6 @@ std::vector<int> card2prime(int inFace,int inSuit)
   }
 
   // Now set the prime based on this value from the full deck
-
-  std::cout << primI << std::endl;
-  
   primed.push_back(primeFace[primI]);
   primed.push_back(primeSuit[primI]);
   primed.push_back(primes[primI]);
