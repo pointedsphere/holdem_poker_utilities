@@ -452,9 +452,38 @@ void deck::remDealtCards()
   
 }
 
+// Standard face values
+int cardFace[52] = {2,3,4,5,6,7,8,9,10,11,12,13,14,2,3,4,5,6,7,8,9,10,11,12,13,14,\
+  2,3,4,5,6,7,8,9,10,11,12,13,14,2,3,4,5,6,7,8,9,10,11,12,13,14};
 
+// Standard suit values
+int cardSuit[52] = {\
+  1,1,1,1,1,1,1,1,1,1,1,1,1,\
+  2,2,2,2,2,2,2,2,2,2,2,2,2,\
+  3,3,3,3,3,3,3,3,3,3,3,3,3,\
+  4,4,4,4,4,4,4,4,4,4,4,4,4};
 
-std::vector<int> deck::card2prime(int inFace,int inSuit)
+// Prime suit values
+int primeSuit[52] = { \
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
+  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, \
+  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, \
+  7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7 };
+
+// Prime face values
+int primeFace[52] = { \
+  2,3,5,7,11,13,17,19,23,29,31,37,41,	\
+  2,3,5,7,11,13,17,19,23,29,31,37,41,	\
+  2,3,5,7,11,13,17,19,23,29,31,37,41,	\
+  2,3,5,7,11,13,17,19,23,29,31,37,41 };
+
+// Lowest 52 primes
+int primes[52] = { \
+  2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,	\
+  109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227, \
+  229,233,239 };
+
+std::vector<int> card2prime(int inFace,int inSuit)
 {
 
   /*
@@ -476,16 +505,19 @@ std::vector<int> deck::card2prime(int inFace,int inSuit)
 
   // Find the index corresponding to the current card
   for (int jk=0; jk<52; jk++) {
-    if (deckFace_[jk]==inFace && deckSuit_[jk]==inSuit) {
+    if (cardFace[jk]==inFace && cardSuit[jk]==inSuit) {
       primI = jk;
       break;
     }
   }
 
   // Now set the prime based on this value from the full deck
-  primed.push_back(deckFaceP_[primI]);
-  primed.push_back(deckSuitP_[primI]);
-  primed.push_back(deckFullP_[primI]);
+
+  std::cout << primI << std::endl;
+  
+  primed.push_back(primeFace[primI]);
+  primed.push_back(primeSuit[primI]);
+  primed.push_back(primes[primI]);
 
   return primed;
   
