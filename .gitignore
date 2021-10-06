@@ -39,5 +39,6 @@ notes
 
 # Tests
 test.py
+test.cpp
 machine_gen_code/test/*
 
