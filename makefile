@@ -18,12 +18,12 @@ OBJ_DIR   := obj
 # $(wildcard *.cpp) 
 SRC_FILES := mainfile.cpp \
              $(wildcard $(SRC_DIR)/tools/*.cpp) \
-             $(wildcard $(SRC_DIR)/holdem/*.cpp) \
-             $(wildcard $(SRC_DIR)/test/*.cpp)
+             $(wildcard $(SRC_DIR)/holdem/*.cpp)
+
 SRC_FILES_PY := wrapper.cpp \
              $(wildcard $(SRC_DIR)/tools/*.cpp) \
-             $(wildcard $(SRC_DIR)/holdem/*.cpp) \
-             $(wildcard $(SRC_DIR)/test/*.cpp)
+             $(wildcard $(SRC_DIR)/holdem/*.cpp)
+
 OBJ = $(SRC_FILES:.cpp=.o)
 
 opt: $(OBJ)
