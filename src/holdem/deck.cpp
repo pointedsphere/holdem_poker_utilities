@@ -435,7 +435,7 @@ int deck::dealCards(int numToDeal)
   
 }
 
-
+ 
 
 void deck::remDealtCards()
 {
@@ -454,6 +454,42 @@ void deck::remDealtCards()
 
 
 
+std::vector<int> deck::card2prime(int inFace,int inSuit)
+{
+
+  /*
+    
+    Convert the input face and suit values of a card from the standard face and suit values to the
+    prime values for face, suit and card.
+
+    RETURNS
+    =======
+    Vector of length 3, where indexes correspond to:
+      0 :: The prime value of the face of the card.
+      1 :: The prime value of the suit of the card.
+      2 :: The full prime value of the card.
+
+   */
+  
+  std::vector<int> primed;
+  int primI=0;
+
+  // Find the index corresponding to the current card
+  for (int jk=0; jk<52; jk++) {
+    if (deckFace_[jk]==inFace && deckSuit_[jk]==inSuit) {
+      primI = jk;
+      break;
+    }
+  }
+
+  // Now set the prime based on this value from the full deck
+  primed.push_back(deckFaceP_[primI]);
+  primed.push_back(deckSuitP_[primI]);
+  primed.push_back(deckFullP_[primI]);
+
+  return primed;
+  
+}
 
 
 

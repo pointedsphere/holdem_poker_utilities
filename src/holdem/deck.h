@@ -74,6 +74,9 @@ public:
 
   // Iterate the number of cards in the deck (used for resets)
   void itNumCardsInDeck(int deckIter);
+
+  // Convert the input card to it's requisite prime values
+  std::vector<int> card2prime(int inFace,int inSuit);
   
   // Class values for dealing the cards
   bool dealDone_;
