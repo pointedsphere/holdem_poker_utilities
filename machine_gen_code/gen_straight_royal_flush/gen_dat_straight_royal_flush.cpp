@@ -57,6 +57,7 @@ int main() {
   // Temporary values of the card face and suit values
   std::vector<int> faceTmp;
   std::vector<int> suitTmp;
+  std::vector<int> handTmp;
   int HC;
   
   // A start for checkpoint continuation, 0 to start from scratch
@@ -69,6 +70,7 @@ int main() {
   // The output arrays
   std::vector<int>           outHandCode;
   std::vector<long long int> outPrimeProduct;
+  std::vector<long long int> outMFVP;
 
   // Keep track of array size
   int arrSize = 0;
@@ -164,6 +166,9 @@ int main() {
 				   Royal flush ====== 10 
 				*/
 				if (HC==9 || HC==10) {
+				  // But first get the hand (face values
+				  handTmp = H.getBestFace();
+				  outMFVP.push_back(handTmp[4]);  // Copy highest value in straight
 				  outHandCode.push_back(HC);      // Copy the hand code
 				  outPrimeProduct.push_back(tmp); // Prime product that gives flush
 				  arrSize++;                      // And keep track of size of arrays
@@ -172,6 +177,7 @@ int main() {
 				// Empty out that old tmp arrays
 				faceTmp.clear();
 				suitTmp.clear();
+				handTmp.clear();
 
 			      }
 			      
@@ -193,11 +199,12 @@ int main() {
     // Write the output hand codes and prime products
     outfile.open ("straightRoyalFlush.dat",std::ios_base::app); // first we need the file open for appending
     for (int o=0; o<arrSize; o++) {
-      outfile <<  outPrimeProduct[o] << " , " << outHandCode[o] << "\n";
+      outfile <<  outPrimeProduct[o] << " , " << outMFVP[o] << " , " << outHandCode[o] << "\n";
     }
     // Written this data so clear arrays before next `a' loop
     outHandCode.clear();
     outPrimeProduct.clear();
+    outMFVP.clear();
     arrSize=0;
     // Write a checkpoint
     outfile << "//++//++// CHECKPOINT a == " << a+1 << " //++//++//\n";

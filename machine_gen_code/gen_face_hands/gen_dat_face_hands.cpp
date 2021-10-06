@@ -2,8 +2,24 @@
 #include  <fstream>
 #include   <vector>
 #include<algorithm>
+#include <stdlib.h>
 
 #include "../../src/holdem/hand.h"
+
+// Simple integer power function
+int intPow(int x, int power)
+{
+    int result;
+    switch (power) {
+    case 0 : return 1;
+    default :
+      result =1;
+      for (int i=1; i<power+1; i++) {
+	  result = result*x;
+	}
+      return(result);
+    }
+}
 
 int main() {
 
@@ -50,6 +66,7 @@ int main() {
   // Temporary values of the card face and suit values
   std::vector<int> faceTmp;
   std::vector<int> suitTmp;
+  std::vector<int> handTmp;
   int HC;
   
   // A start for checkpoint continuation, 0 to start from scratch
@@ -61,7 +78,8 @@ int main() {
   // The output arrays
   std::vector<int>           outHandCode;
   std::vector<long long int> outPrimeProduct;
-
+  std::vector<long long int> outMFVP;
+  
   // Keep track of array size
   int arrSize = 0;
   
@@ -132,6 +150,7 @@ int main() {
 			      HC = H.handCode;
 			      
 			      /* Then we only record for :
+				     High Card ======== 1
 				     Pair ============= 2
 				     Two Pair ========= 3
 				     Three of a kind == 4
@@ -139,15 +158,49 @@ int main() {
 				     Full house ======= 7
 				     Four of a kind === 8
 			      */
-			      if (HC==2 || HC==3 || HC==4 || HC==5 || HC==7 || HC==8) {
+			      // But first get the hand (face values
+			      handTmp = H.getBestFace();
+			      if (HC==8 || HC==7) {
+				outMFVP.push_back(\
+			            intPow(2,handTmp[4]+11) \
+				    + intPow(2,handTmp[0]-2) );
+			      } else if (HC==5) {
+				outMFVP.push_back(handTmp[4]);
+			      } else if (HC==4) {
+				outMFVP.push_back(\
+			            intPow(2,handTmp[4]+11)  \
+				    + intPow(2,handTmp[1]-2) \
+				    + intPow(2,handTmp[0]-2) );
+			      } else if (HC==3) {
+				outMFVP.push_back(\
+			            intPow(2,handTmp[4]+24)   \
+				    + intPow(2,handTmp[2]+11) \
+				    + intPow(2,handTmp[0]-2) );
+			      } else if (HC==2) {
+				outMFVP.push_back(\
+			            intPow(2,handTmp[4]+11)  \
+				    + intPow(2,handTmp[2]-2) \
+				    + intPow(2,handTmp[1]-2) \
+				    + intPow(2,handTmp[0]-2) );
+			      } else if (HC==1) {
+				outMFVP.push_back(	     \
+			            intPow(2,handTmp[4]-2)  \
+				    + intPow(2,handTmp[3]-2) \
+				    + intPow(2,handTmp[2]-2) \
+				    + intPow(2,handTmp[1]-2)	\
+				    + intPow(2,handTmp[0]-2) );
+			      }				
+			      
+			      if (HC == 1 || HC==2 || HC==3 || HC==4 || HC==5 || HC==7 || HC==8) {
 				outHandCode.push_back(HC);      // Copy the hand code
-				outPrimeProduct.push_back(tmp); // Prime product that gives flush
+				outPrimeProduct.push_back(tmp); // Prime face product that gives hand
 				arrSize++;                      // And keep track of size of arrays
 			      }
 			      
 			      // Empty out that old tmp arrays
 			      faceTmp.clear();
 			      suitTmp.clear();
+			      handTmp.clear();
 			      
 			    }
 
@@ -167,11 +220,12 @@ int main() {
     // Write the output hand codes and prime products
     outfile.open ("faceHands.dat",std::ios_base::app); // first we need the file open (for appending)
     for (int o=0; o<arrSize; o++) {
-      outfile <<  outPrimeProduct[o] << " , " << outHandCode[o] << "\n";
+      outfile <<  outPrimeProduct[o] << " , " << outMFVP[o] << " , " << outHandCode[o] << "\n";
     }
     // Written this data so clear arrays before next `a' loop
     outHandCode.clear();
     outPrimeProduct.clear();
+    outMFVP.clear();
     arrSize=0;
     // Write a checkpoint
     outfile << "//++//++// CHECKPOINT a == " << a+1 << " //++//++//\n";

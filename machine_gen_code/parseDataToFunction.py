@@ -1,13 +1,18 @@
 import sys
 import csv
 
-outFile = "checkHandPrime.cpp"
+outFile = "findBestHandPrimes.cpp"
 
 # Function header
 with open(outFile, "a") as f:
-    f.write("int findHCPrime(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
-    f.write("                int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
-    f.write("               int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) \n{\n\n")
+
+    f.write("#include <vector>\n")
+    f.write("#include <iostream>\n")
+    f.write("#include <stdlib.h>\n\n")
+    
+    f.write("std::vector<int> findBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
+    f.write("                                    int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
+    f.write("                                   int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) \n{\n\n")
     f.write("  /*\n")
     f.write("    Return the integer Hand Code value from the input face and suit card values\n")
     f.write("    Prime values for all calrds {AP1,...,AP7} take a sequential form from 2 to ace\n")
@@ -52,6 +57,15 @@ with open(outFile, "a") as f:
 
 
     #
+    # Vector for output values
+    #    Element 0 is hand code
+    #    Element 1 is comparison product
+    #
+    f.write("  std::vector<int> HCvec;\n\n")
+    
+    
+
+    #
     # Flush
     #
 
@@ -64,9 +78,11 @@ with open(outFile, "a") as f:
     # Initial switch declaration
     f.write("  // Boolean to note if we have a flush or not.\n")
     f.write("  bool gotFlush;\n\n")
+    
     f.write("  // Calculate the product value required for the flush hands from suit primes,\n")
     f.write("  // I.e. product of card values from the ``suit prime'' deck.\n")
     f.write("  const long long int SuitProd = SP1 * SP2 * SP3 * SP4 * SP5 * SP6 * SP7;\n\n")
+    
     f.write("  // Then use a swich statement over all the possible full houses and 4 of a kinds.\n")
     f.write("  // Note: If we find one the function exits in this switch.\n")
     f.write("  // Note: Start with full house checks as they are more likely.\n")
@@ -74,7 +90,7 @@ with open(outFile, "a") as f:
 
     # Load the data from the data file for the suit only hands
     SuitArr = []
-    with open("./gen_flush/flush.dat", "r") as fIn:
+    with open("./gen_flush/flush_suit.dat", "r") as fIn:
         for l in fIn:
             if not l.startswith("//"):
                 l = l.split(",")
@@ -110,10 +126,11 @@ with open(outFile, "a") as f:
 
     f.write("  // Only check for a striaght/royal flush if we have a flush of some sort.\n")
     f.write("  if (gotFlush==true) {\n\n")
-    # Initial switch declaration
+    
     f.write("    // Calculate the product value required for the Royal and Straight Flush hands,\n")
     f.write("    // I.e. product of card values from the ``all prime'' deck.\n")
     f.write("    const long long int AllProd = AP1 * AP2 * AP3 * AP4 * AP5 * AP6 * AP7;\n\n")
+    
     f.write("    // Then use a swich statement over all the possible straight and royal flushes.\n")
     f.write("    // Note: If we find one the function exits in this switch.\n")
     f.write("    // Note: Start with straight flush checks as they are slightly more likely.\n")
@@ -125,24 +142,32 @@ with open(outFile, "a") as f:
         for l in fIn:
             if not l.startswith("//"):
                 l = l.split(",")
-                SRFarr.append((int(l[0]),int(l[1])))
+                SRFarr.append((int(l[0]),int(l[1]),int(l[2])))
                 
     SRFarr = sorted(SRFarr, key=lambda tup: tup[0])
 
     # Print the switch cases first for the straight flushes
     for i in range(len(SRFarr)):
-        if (SRFarr[i][1]==9):
+        if (SRFarr[i][2]==9):
             f.write("    case ")
             f.write(str(SRFarr[i][0]))
-            f.write(" : return 9;\n")
+            f.write(" : HCvec.push_back(")
+            f.write(str(SRFarr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(SRFarr[i][1]))
+            f.write("); return HCvec;\n")
 
     # And then for the royal flushes
     for i in range(len(SRFarr)):
-        if (SRFarr[i][1]==10):
+        if (SRFarr[i][2]==10):
             f.write("    case ")
             f.write(str(SRFarr[i][0]))
-            f.write(" : return 10;\n")
-
+            f.write(" : HCvec.push_back(")
+            f.write(str(SRFarr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(SRFarr[i][1]))
+            f.write("); return HCvec;\n")
+            
     # Now close that switch and if
     f.write("    }\n\n")
     f.write("  }\n")
@@ -172,23 +197,31 @@ with open(outFile, "a") as f:
         for l in fIn:
             if not l.startswith("//"):
                 l = l.split(",")
-                FaceArr.append((int(l[0]),int(l[1])))
+                FaceArr.append((int(l[0]),int(l[1]),int(l[2])))
                 
     FaceArr = sorted(FaceArr, key=lambda tup: tup[0])
 
     # Write the switch cases first for full houses
     for i in range(len(FaceArr)):
-        if (FaceArr[i][1]==7):
+        if (FaceArr[i][2]==7):
             f.write("    case ")
             f.write(str(FaceArr[i][0]))
-            f.write(" : return 7;\n")
+            f.write(" : HCvec.push_back(")
+            f.write(str(FaceArr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(FaceArr[i][1]))
+            f.write("); return HCvec;\n")
 
     # And then check for 4 of a kind hands
     for i in range(len(FaceArr)):
-        if (FaceArr[i][1]==8):
+        if (FaceArr[i][2]==8):
             f.write("    case ")
             f.write(str(FaceArr[i][0]))
-            f.write(" : return 8;\n")
+            f.write(" : HCvec.push_back(")
+            f.write(str(FaceArr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(FaceArr[i][1]))
+            f.write("); return HCvec;\n")
 
     # Now close that switch 
     f.write("  }")
@@ -202,20 +235,33 @@ with open(outFile, "a") as f:
     f.write("  \n\n\n\n\n  /*\n")
     f.write("    We now check for a flush, using boolean from previous check.\n")
     f.write("  */\n\n")
-    
-    # # Initial switch declaration
-    # f.write("  // Calculate the product value required for the flush hands from suit primes,\n")
-    # f.write("  // I.e. product of card values from the ``suit prime'' deck.\n")
-    # f.write("  const long long int SuitProd = SP1 * SP2 * SP3 * SP4 * SP5 * SP6 * SP7;\n\n")
-    # f.write("  // Then use a swich statement over all the possible full houses and 4 of a kinds.\n")
-    # f.write("  // Note: If we find one the function exits in this switch.\n")
-    # f.write("  // Note: Start with full house checks as they are more likely.\n")
-    # f.write("  switch(SuitProd) {\n")
 
+    # Load the data from the data file for the face only hands
+    FlushFaceArr = []
+    with open("./gen_flush/flush_face.dat", "r") as fIn:
+        for l in fIn:
+            if not l.startswith("//"):
+                l = l.split(",")
+                FlushFaceArr.append((int(l[0]),int(l[1]),int(l[2])))
+                
+    FlushFaceArr = sorted(FlushFaceArr, key=lambda tup: tup[0])
+
+    # Only check if we have a flush
     f.write("  if (gotFlush==true) {\n")
-    f.write("    return 6;\n")
-    # Now close that switch 
-    f.write("  }")
+    f.write("    switch(FaceProd) {\n")
+    
+    for i in range(len(FlushFaceArr)):
+        if (FlushFaceArr[i][2]==6):
+            f.write("      case ")
+            f.write(str(FlushFaceArr[i][0]))
+            f.write(" : HCvec.push_back(")
+            f.write(str(FlushFaceArr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(FlushFaceArr[i][1]))
+            f.write("); return HCvec;\n")
+    # Now close that switch
+    f.write("    }\n")
+    f.write("  }\n")
 
 
 
@@ -238,32 +284,59 @@ with open(outFile, "a") as f:
     
     # Write the pair case
     for i in range(len(FaceArr)):
-        if (FaceArr[i][1]==2):
+        if (FaceArr[i][2]==2):
             f.write("    case ")
             f.write(str(FaceArr[i][0]))
-            f.write(" : return 2;\n")
+            f.write(" : HCvec.push_back(")
+            f.write(str(FaceArr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(FaceArr[i][1]))
+            f.write("); return HCvec;\n")
 
     # Then check for two pair
     for i in range(len(FaceArr)):
-        if (FaceArr[i][1]==3):
+        if (FaceArr[i][2]==3):
             f.write("    case ")
             f.write(str(FaceArr[i][0]))
-            f.write(" : return 3;\n")
+            f.write(" : HCvec.push_back(")
+            f.write(str(FaceArr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(FaceArr[i][1]))
+            f.write("); return HCvec;\n")
 
     # Then check for three of a kind
     for i in range(len(FaceArr)):
-        if (FaceArr[i][1]==4):
+        if (FaceArr[i][2]==4):
             f.write("    case ")
             f.write(str(FaceArr[i][0]))
-            f.write(" : return 4;\n")
+            f.write(" : HCvec.push_back(")
+            f.write(str(FaceArr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(FaceArr[i][1]))
+            f.write("); return HCvec;\n")
 
-    # And finally for a straight
+    # And then for a straight
     for i in range(len(FaceArr)):
-        if (FaceArr[i][1]==5):
+        if (FaceArr[i][2]==5):
             f.write("    case ")
             f.write(str(FaceArr[i][0]))
-            f.write(" : return 5;\n")
+            f.write(" : HCvec.push_back(")
+            f.write(str(FaceArr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(FaceArr[i][1]))
+            f.write("); return HCvec;\n")
 
+    # And finally for a high card
+    for i in range(len(FaceArr)):
+        if (FaceArr[i][2]==1):
+            f.write("    case ")
+            f.write(str(FaceArr[i][0]))
+            f.write(" : HCvec.push_back(")
+            f.write(str(FaceArr[i][2]))
+            f.write("); HCvec.push_back(")
+            f.write(str(FaceArr[i][1]))
+            f.write("); return HCvec;\n")
+            
     # Now close that switch 
     f.write("  }")  
 
@@ -275,10 +348,13 @@ with open(outFile, "a") as f:
     #
     
     f.write("  \n\n\n\n\n  /*\n")
-    f.write("    If we have made it this far the only option left is a high card.\n")
+    f.write("    If we have made it this far the only option left is that we have failed.\n")
     f.write("  */\n\n")
+
+    f.write("  std::cout << \"ERROR : Unable to find a hand from given cards\" << std::endl;\n")
+    f.write("  exit (EXIT_FAILURE);\n\n")
     
-    f.write("  return 1;\n\n")
+    f.write("  return HCvec;\n\n")
 
     # End of the function
     f.write("}\n\n\n\n")
