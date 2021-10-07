@@ -119112,7 +119112,8 @@ std::vector<int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP
 
   // Calculate the product value required for the flush hands from suit primes,
   // I.e. product of card values from the ``suit prime'' deck.
-  long long int SuitProd = SP1 * SP2 * SP3 * SP4 * SP5 * SP6 * SP7;
+  long int SuitProd = (long)SP1 * (long)SP2 * (long)SP3  \
+    * (long)SP4 * (long)SP5 * (long)SP6 * (long)SP7;
 
   // Then use a swich statement over all the possible full houses and 4 of a kinds.
   // Note: If we find one the function exits in this switch.
@@ -119174,12 +119175,13 @@ std::vector<int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP
     NOTE: we only check if there is some form of flush.
   */
 
+  // Calculate the product value required for the Royal and Straight Flush hands,
+  // I.e. product of card values from the ``all prime'' deck.
+  long long int AllProd = (long long)AP1 * (long long)AP2 * (long long)AP3\
+    * (long long)AP4 * (long long)AP5 * (long long)AP6 * (long long)AP7;
+
   // Only check for a striaght/royal flush if we have a flush of some sort.
   if (gotFlush==true) {
-
-    // Calculate the product value required for the Royal and Straight Flush hands,
-    // I.e. product of card values from the ``all prime'' deck.
-    long long int AllProd = AP1 * AP2 * AP3 * AP4 * AP5 * AP6 * AP7;
 
     // Note: If we find one the function exits after searching for the straight royal flush.
 
@@ -119209,7 +119211,8 @@ std::vector<int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP
 
   // Calculate the product value required for the four of a kind and full house hands,
   // I.e. product of card values from the ``face prime'' deck.
-  long long int FaceProd = FP1 * FP2 * FP3 * FP4 * FP5 * FP6 * FP7;
+  long long int FaceProd = (long long)FP1 * (long long)FP2 * (long long)FP3\
+    * (long long)FP4 * (long long)FP5 * (long long)FP6 * (long long)FP7;
 
   // Then search the unordered list FKFH for any four of a kind or full houses.
   // Note: If we find one the function exits here.
@@ -119289,6 +119292,19 @@ std::vector<int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP
   */
 
   std::cout << "ERROR : Unable to find a hand from given cards" << std::endl;
+  std::cout << "        Current product values are:" << std::endl;
+  std::cout << "          Face product : " << FaceProd << std::endl;
+  std::cout << "          Suit product : " << SuitProd << std::endl;
+  std::cout << "          Full product : " <<  AllProd << std::endl;
+
+  std::cout << "        Current card prime values are:" << std::endl;
+    std::cout << "        Face prime: " << FP1              << "        Suit prime: " << SP1              << "        Full prime: " << AP1              << std::endl;
+    std::cout << "        Face prime: " << FP2              << "        Suit prime: " << SP2              << "        Full prime: " << AP2              << std::endl;
+    std::cout << "        Face prime: " << FP3              << "        Suit prime: " << SP3              << "        Full prime: " << AP3              << std::endl;
+    std::cout << "        Face prime: " << FP4              << "        Suit prime: " << SP4              << "        Full prime: " << AP4              << std::endl;
+    std::cout << "        Face prime: " << FP5              << "        Suit prime: " << SP5              << "        Full prime: " << AP5              << std::endl;
+    std::cout << "        Face prime: " << FP6              << "        Suit prime: " << SP6              << "        Full prime: " << AP6              << std::endl;
+    std::cout << "        Face prime: " << FP7              << "        Suit prime: " << SP7              << "        Full prime: " << AP7              << std::endl;
   exit (EXIT_FAILURE);
 
   return HCvec;

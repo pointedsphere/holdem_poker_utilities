@@ -327,7 +327,8 @@ with open(outFile, "a") as f:
     
     f.write("  // Calculate the product value required for the flush hands from suit primes,\n")
     f.write("  // I.e. product of card values from the ``suit prime'' deck.\n")
-    f.write("  long long int SuitProd = SP1 * SP2 * SP3 * SP4 * SP5 * SP6 * SP7;\n\n")
+    f.write("  long int SuitProd = (long)SP1 * (long)SP2 * (long)SP3  \\\n")
+    f.write("    * (long)SP4 * (long)SP5 * (long)SP6 * (long)SP7;\n\n")
     
     f.write("  // Then use a swich statement over all the possible full houses and 4 of a kinds.\n")
     f.write("  // Note: If we find one the function exits in this switch.\n")
@@ -370,12 +371,13 @@ with open(outFile, "a") as f:
     f.write("    NOTE: we only check if there is some form of flush.\n")
     f.write("  */\n\n")
 
+    f.write("  // Calculate the product value required for the Royal and Straight Flush hands,\n")
+    f.write("  // I.e. product of card values from the ``all prime'' deck.\n")
+    f.write("  long long int AllProd = (long long)AP1 * (long long)AP2 * (long long)AP3\\\n")
+    f.write("    * (long long)AP4 * (long long)AP5 * (long long)AP6 * (long long)AP7;\n\n")
+    
     f.write("  // Only check for a striaght/royal flush if we have a flush of some sort.\n")
     f.write("  if (gotFlush==true) {\n\n")
-    
-    f.write("    // Calculate the product value required for the Royal and Straight Flush hands,\n")
-    f.write("    // I.e. product of card values from the ``all prime'' deck.\n")
-    f.write("    long long int AllProd = AP1 * AP2 * AP3 * AP4 * AP5 * AP6 * AP7;\n\n")
     
     f.write("    // Note: If we find one the function exits after searching for the straight royal flush.\n\n")
 
@@ -407,7 +409,8 @@ with open(outFile, "a") as f:
     # Initial switch declaration
     f.write("  // Calculate the product value required for the four of a kind and full house hands,\n")
     f.write("  // I.e. product of card values from the ``face prime'' deck.\n")
-    f.write("  long long int FaceProd = FP1 * FP2 * FP3 * FP4 * FP5 * FP6 * FP7;\n\n")
+    f.write("  long long int FaceProd = (long long)FP1 * (long long)FP2 * (long long)FP3\\\n")
+    f.write("    * (long long)FP4 * (long long)FP5 * (long long)FP6 * (long long)FP7;\n\n")
     
     f.write("  // Then search the unordered list FKFH for any four of a kind or full houses.\n")
     f.write("  // Note: If we find one the function exits here.\n")
@@ -491,6 +494,39 @@ with open(outFile, "a") as f:
     f.write("  */\n\n")
 
     f.write("  std::cout << \"ERROR : Unable to find a hand from given cards\" << std::endl;\n")
+    f.write("  std::cout << \"        Current product values are:\" << std::endl;\n")
+    f.write("  std::cout << \"          Face product : \" << FaceProd << std::endl;\n")
+    f.write("  std::cout << \"          Suit product : \" << SuitProd << std::endl;\n")
+    f.write("  std::cout << \"          Full product : \" <<  AllProd << std::endl;\n\n")
+    f.write("  std::cout << \"        Current card prime values are:\" << std::endl;\n")
+    f.write("    std::cout << \"        Face prime: \" << FP1")
+    f.write("              << \"        Suit prime: \" << SP1")
+    f.write("              << \"        Full prime: \" << AP1")
+    f.write("              << std::endl;\n")
+    f.write("    std::cout << \"        Face prime: \" << FP2")
+    f.write("              << \"        Suit prime: \" << SP2")
+    f.write("              << \"        Full prime: \" << AP2")
+    f.write("              << std::endl;\n")
+    f.write("    std::cout << \"        Face prime: \" << FP3")
+    f.write("              << \"        Suit prime: \" << SP3")
+    f.write("              << \"        Full prime: \" << AP3")
+    f.write("              << std::endl;\n")
+    f.write("    std::cout << \"        Face prime: \" << FP4")
+    f.write("              << \"        Suit prime: \" << SP4")
+    f.write("              << \"        Full prime: \" << AP4")
+    f.write("              << std::endl;\n")
+    f.write("    std::cout << \"        Face prime: \" << FP5")
+    f.write("              << \"        Suit prime: \" << SP5")
+    f.write("              << \"        Full prime: \" << AP5")
+    f.write("              << std::endl;\n")
+    f.write("    std::cout << \"        Face prime: \" << FP6")
+    f.write("              << \"        Suit prime: \" << SP6")
+    f.write("              << \"        Full prime: \" << AP6")
+    f.write("              << std::endl;\n")
+    f.write("    std::cout << \"        Face prime: \" << FP7")
+    f.write("              << \"        Suit prime: \" << SP7")
+    f.write("              << \"        Full prime: \" << AP7")
+    f.write("              << std::endl;\n")
     f.write("  exit (EXIT_FAILURE);\n\n")
     
     f.write("  return HCvec;\n\n")
