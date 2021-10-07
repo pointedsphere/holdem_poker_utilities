@@ -1,6 +1,6 @@
 
-#ifndef FINDBESTHANDPRIMES_H_
-#define FINDBESTHANDPRIMES_H_
+#ifndef LOOKUPBESTHANDPRIMES_H_
+#define LOOKUPBESTHANDPRIMES_H_
 
 #include <vector>
 

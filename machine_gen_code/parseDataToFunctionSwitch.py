@@ -104,6 +104,7 @@ with open(outFile, "a") as f:
         f.write("    case ")
         f.write(str(SuitArr[i][0]))
         f.write(" : gotFlush = true;\n")
+    f.write("    default : gotFlush = false;\n")
 
     # Now close that switch 
     f.write("  }\n\n\n\n")    

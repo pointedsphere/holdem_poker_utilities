@@ -349,7 +349,7 @@ with open(outFile, "a") as f:
         f.write("    case ")
         f.write(str(SuitArr[i][0]))
         f.write(" : gotFlush = true;\n")
-
+    f.write("    default : gotFlush = false;\n")
     # Now close that switch 
     f.write("  }\n\n\n\n")    
 
@@ -432,17 +432,23 @@ with open(outFile, "a") as f:
     
     f.write("  \n\n\n\n\n  /*\n")
     f.write("    We now check for a flush, using boolean from previous check.\n")
+    f.write("    I.e. only run this check if we have a flush.\n")
     f.write("  */\n\n")
 
-    f.write("  // Serch the flush unordered_map\n")
-    f.write("  it = Fl.find(FaceProd);\n\n")
+    f.write("  // Check if there is a flush in the hand\n")
+    f.write("  if (gotFlush==true) {\n\n")
+    
+    f.write("    // Serch the flush unordered_map\n")
+    f.write("    it = Fl.find(FaceProd);\n\n")
 
-    f.write("  // Then record and return the two values if we find them, if not keep checking\n")
-    f.write("  if (it != Fl.end()) {\n")
-    f.write("    HCvec.push_back(it->second.HC);\n")
-    f.write("    HCvec.push_back(it->second.MFVP);\n")
-    f.write("    return HCvec;\n")
+    f.write("    // Then record and return the two values if we find them, if not keep checking\n")
+    f.write("    if (it != Fl.end()) {\n")
+    f.write("      HCvec.push_back(it->second.HC);\n")
+    f.write("      HCvec.push_back(it->second.MFVP);\n")
+    f.write("      return HCvec;\n")
+    f.write("    }\n")
     f.write("  }\n\n\n\n\n")
+
 
 
 

@@ -119158,6 +119158,7 @@ std::vector<int> findBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5,
     case 420175 : gotFlush = true;
     case 588245 : gotFlush = true;
     case 823543 : gotFlush = true;
+    default : gotFlush = false;
   }
 
 
@@ -119232,16 +119233,21 @@ std::vector<int> findBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5,
 
   /*
     We now check for a flush, using boolean from previous check.
+    I.e. only run this check if we have a flush.
   */
 
-  // Serch the flush unordered_map
-  it = Fl.find(FaceProd);
+  // Check if there is a flush in the hand
+  if (gotFlush==true) {
 
-  // Then record and return the two values if we find them, if not keep checking
-  if (it != Fl.end()) {
-    HCvec.push_back(it->second.HC);
-    HCvec.push_back(it->second.MFVP);
-    return HCvec;
+    // Serch the flush unordered_map
+    it = Fl.find(FaceProd);
+
+    // Then record and return the two values if we find them, if not keep checking
+    if (it != Fl.end()) {
+      HCvec.push_back(it->second.HC);
+      HCvec.push_back(it->second.MFVP);
+      return HCvec;
+    }
   }
 
 
