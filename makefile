@@ -18,11 +18,13 @@ OBJ_DIR   := obj
 # $(wildcard *.cpp) 
 SRC_FILES := mainfile.cpp \
              $(wildcard $(SRC_DIR)/tools/*.cpp) \
-             $(wildcard $(SRC_DIR)/holdem/*.cpp)
+             $(wildcard $(SRC_DIR)/holdem/*.cpp) \
+             $(wildcard ./machine_gen_code/*.cpp)
 
 SRC_FILES_PY := wrapper.cpp \
              $(wildcard $(SRC_DIR)/tools/*.cpp) \
-             $(wildcard $(SRC_DIR)/holdem/*.cpp)
+             $(wildcard $(SRC_DIR)/holdem/*.cpp) \
+             $(wildcard ./machine_gen_code/*.cpp)
 
 OBJ = $(SRC_FILES:.cpp=.o)
 
@@ -41,5 +43,5 @@ clean:
 	rm *.o 2> /dev/null || true
 	rm $(SRC_DIR)/tools/*.o 2> /dev/null || true
 	rm $(SRC_DIR)/holdem/*.o 2> /dev/null || true
-	rm $(SRC_DIR)/test/*.o 2> /dev/null || true
+
 
