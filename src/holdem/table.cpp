@@ -5,6 +5,7 @@
 
 #include "table.h"
 #include "hand.h"
+#include "deck.h"
 
 /*
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -80,6 +81,7 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
 {
 
   /*
+
     Add a hold card to the ``playerAdd'' players hold.
 
     RETURNS
@@ -90,6 +92,8 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
 
   */
 
+  std::vector<int> holdCardPrimes;
+  
   // We cant have more than two hold cards
   if (P_[playerAdd].numHoldKnown>1) return -2;
 
@@ -111,13 +115,22 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
   // Assign the known hold cards
   P_[playerAdd].numHoldKnown++; // Note we now know one more hold card
   P_[playerAdd].numHoldDealt++; // This known card is dealt
-  totHoldsKnown_++;               // Increment the total known holds
+  totHoldsKnown_++;             // Increment the total known holds
 
   // Add the cards to the relevant hold and save as known cards
   P_[playerAdd].holdFace.push_back(holdInF);
   P_[playerAdd].holdSuit.push_back(holdInS);
   P_[playerAdd].holdFaceKnown.push_back(holdInF);
   P_[playerAdd].holdSuitKnown.push_back(holdInS);
+
+  // Add the prime card values
+  holdCardPrimes = card2prime(holdInF,holdInS);
+  P_[playerAdd].holdFaceP.push_back(holdCardPrimes[0]);
+  P_[playerAdd].holdSuitP.push_back(holdCardPrimes[1]);
+  P_[playerAdd].holdFullP.push_back(holdCardPrimes[2]);
+  P_[playerAdd].holdFaceKnownP.push_back(holdCardPrimes[0]);
+  P_[playerAdd].holdSuitKnownP.push_back(holdCardPrimes[1]);
+  P_[playerAdd].holdFullKnownP.push_back(holdCardPrimes[2]);
   
   // Then remove the known hold card from the deck
   D_.remCard(holdInF,holdInS);
@@ -132,6 +145,7 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
 {
 
   /*
+
     Set the hold card for the current class (player), and the number of hold cards known.
 
     RETURNS
@@ -142,6 +156,8 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
 	-3 :: playerAdd exceeds number of players at table.
 
   */
+
+  std::vector<int> holdCardPrimes;
   
   // Check input arrays, they need to be the same size
   if (holdInF.size()!=holdInS.size()) return -1;
@@ -168,11 +184,22 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
 		<< std::endl;
       exit (EXIT_FAILURE);
     }
+    
     // Add the cards to the relevant hold and to save the hold cards
     P_[playerAdd].holdFace.push_back(holdInF[i]);
     P_[playerAdd].holdSuit.push_back(holdInS[i]);
     P_[playerAdd].holdFaceKnown.push_back(holdInF[i]);
     P_[playerAdd].holdSuitKnown.push_back(holdInS[i]);
+
+    // Add the prime card values
+    holdCardPrimes = card2prime(holdInF[i],holdInS[i]);
+    P_[playerAdd].holdFaceP.push_back(holdCardPrimes[0]);
+    P_[playerAdd].holdSuitP.push_back(holdCardPrimes[1]);
+    P_[playerAdd].holdFullP.push_back(holdCardPrimes[2]);
+    P_[playerAdd].holdFaceKnownP.push_back(holdCardPrimes[0]);
+    P_[playerAdd].holdSuitKnownP.push_back(holdCardPrimes[1]);
+    P_[playerAdd].holdFullKnownP.push_back(holdCardPrimes[2]);
+    
   }
 
   // Then remove the known hold cards from the deck
@@ -188,6 +215,7 @@ int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
 {
 
   /*
+
     Set the flop array for the table, removing the cards from the deck once set.
 
     RETURNS
@@ -197,7 +225,10 @@ int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
 	-2 :: flopInS wrong size (/=3)
 	-3 :: Error removing cards from the deck, possibly not currently in deck
 	-4 :: Flop already set
+
   */
+
+  std::vector<int> holdCardPrimes;
   
   // Error checks
   if (flopInF.size()!=3) return -1;
@@ -221,6 +252,14 @@ int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
   flopF_ = flopInF;
   flopS_ = flopInS;
 
+  for (int i=0; i<3; i++) {
+    // Add the prime card values
+    holdCardPrimes = card2prime(flopInF[i],flopInS[i]);
+    flopFP_.push_back(holdCardPrimes[0]);
+    flopSP_.push_back(holdCardPrimes[1]);
+    flopAP_.push_back(holdCardPrimes[2]);
+  }
+    
   // Remove the cards from array
   int D_stat;
   D_stat = D_.remCards(flopF_,flopS_);
@@ -247,6 +286,8 @@ int table::setTurn(int turnInF, int turnInS)
 	-4 :: Trun already set
   */
 
+  std::vector<int> holdCardPrimes;
+  
   // Error checks
   if (turnSet_==true) return -4;
   if (turnInF<1 || turnInF>14) {
@@ -264,6 +305,12 @@ int table::setTurn(int turnInF, int turnInS)
   turnF_ = turnInF;
   turnS_ = turnInS;
 
+  // Add the prime card value
+  holdCardPrimes = card2prime(turnInF,turnInS);
+  flopFP_.push_back(holdCardPrimes[0]);
+  flopSP_.push_back(holdCardPrimes[1]);
+  flopAP_.push_back(holdCardPrimes[2]);
+  
   // Remove the cards from array
   int D_stat;
   D_stat = D_.remCard(turnF_,turnS_);
@@ -281,6 +328,7 @@ int table::setRiver(int riverInF, int riverInS)
 {
 
   /*
+
     Set the turn card for the table, removing the cards from the deck once set.
 
     RETURNS
@@ -288,8 +336,11 @@ int table::setRiver(int riverInF, int riverInS)
         0  :: Success!
 	-3 :: Error removing cards from the deck, possibly not currently in deck
 	-4 :: River already set
+
   */
 
+  std::vector<int> holdCardPrimes;
+  
   // Error checks
   if (riverSet_==true) return -4;  
   if (riverInF<1 || riverInF>14) {
@@ -307,6 +358,12 @@ int table::setRiver(int riverInF, int riverInS)
   riverF_ = riverInF;
   riverS_ = riverInS;
 
+  // Add the prime card value
+  holdCardPrimes = card2prime(riverInF,riverInS);
+  flopFP_.push_back(holdCardPrimes[0]);
+  flopSP_.push_back(holdCardPrimes[1]);
+  flopAP_.push_back(holdCardPrimes[2]);
+  
   // Remove the cards from array
   int D_stat;
   D_stat = D_.remCard(riverF_,riverS_);
@@ -374,7 +431,7 @@ int table::dealFlopTurnRiver()
   if (turnDealt_==false)  numToDeal++;
   if (riverDealt_==false) numToDeal++;
 
-  // Now deal out the number of required cards to the dealFace_ and dealSuit_ arrays
+  // Now deal out the number of required cards to the dealFace_ and dealSuit_ and respective prime arrays
   D_.dealCards(numToDeal);
   
   // Set the cards from the single dealt array of numToDeal cards
@@ -384,6 +441,9 @@ int table::dealFlopTurnRiver()
     for (int FTRi=0; FTRi<3; FTRi++) {      
       flopF_.push_back(D_.dealFace_[FTRiter]);
       flopS_.push_back(D_.dealSuit_[FTRiter]);
+      flopFP_.push_back(D_.dealFaceP_[FTRiter]);
+      flopSP_.push_back(D_.dealSuitP_[FTRiter]);
+      flopAP_.push_back(D_.dealFullP_[FTRiter]);
       FTRiter++;
     }
     flopDealt_=true;
@@ -392,6 +452,9 @@ int table::dealFlopTurnRiver()
   if (turnDealt_==false) {
     turnF_   = D_.dealFace_[FTRiter];
     turnS_   = D_.dealSuit_[FTRiter];
+    flopFP_.push_back(D_.dealFaceP_[FTRiter]);
+    flopSP_.push_back(D_.dealSuitP_[FTRiter]);
+    flopAP_.push_back(D_.dealFullP_[FTRiter]);
     turnDealt_ = true;
     FTRiter++;
   }
@@ -399,6 +462,9 @@ int table::dealFlopTurnRiver()
   if (riverDealt_==false) {
     riverF_   = D_.dealFace_[FTRiter];
     riverS_   = D_.dealSuit_[FTRiter];
+    flopFP_.push_back(D_.dealFaceP_[FTRiter]);
+    flopSP_.push_back(D_.dealSuitP_[FTRiter]);
+    flopAP_.push_back(D_.dealFullP_[FTRiter]);
     riverDealt_ = true;
   }
   
@@ -420,7 +486,7 @@ int table::dealHold(int player)
     =======
         0  :: Success!
 	1  :: Nothing to do, the turn, flop and river are set. So sort of success...
-	-1 :: 
+	-1 :: Player to deal hold to not at table
 
   */
 
@@ -446,6 +512,9 @@ int table::dealHold(int player)
   for (int np=P_[player].numHoldDealt; np<2; np++) {
     P_[player].holdFace.push_back(D_.dealFace_[dealIter]);
     P_[player].holdSuit.push_back(D_.dealSuit_[dealIter]);
+    P_[player].holdFaceP.push_back(D_.dealFaceP_[dealIter]);
+    P_[player].holdSuitP.push_back(D_.dealSuitP_[dealIter]);
+    P_[player].holdFullP.push_back(D_.dealFullP_[dealIter]);
     P_[player].numHoldDealt++;
     dealIter++;
   }
@@ -1065,6 +1134,119 @@ int table::findWinner()
 
 
 
+
+int table::findWinnerP()
+{
+
+  /*
+    Find the winner at the table, add this to the player object win counter and win hand type
+    counter variables. Also return an integer of the winning player
+
+    RETURNS
+    =======
+        >0 :: Success, return the player that has won or 0 if more than one has drawn
+	-1 :: Hands have not been dealt, so no one can win (yet)
+
+  */
+
+  int fWStat;
+  int fWInt;
+  std::vector<int> tmpPlayer;
+  std::vector<int> tmpRank;
+  std::vector<int>::iterator Iter;
+  
+  // Can only run if hands have been dealt
+  if (handsDealt_==false) return -1;
+  
+  // Find the best hand in each 7 card hand
+  for (int fWi=0; fWi<noPlayers_; fWi++) {
+    fWStat = H_[fWi].findBestHandP();
+    handCodeArr_.push_back(H_[fWi].getHandCode());
+    P_[fWi].handFoundCtr[H_[fWi].getHandCode()-1]++;
+  }
+
+  // Iterare the number of runs
+  numRuns_++;
+  
+  // Check for the best hand at the table
+  for (int hc=10; hc>0; hc--) {
+
+    // First see how many times the current hand code occurs at the table
+    numOccurances_ = count(handCodeArr_.begin(), handCodeArr_.end(), hc);
+
+    if (numOccurances_==0) {
+      
+      // There are no occurences of this hand code, so check the next one down
+      continue;
+
+    } else if (numOccurances_==1) {
+
+      // We only have one card with this hand cose, so this hand has won
+      drawIntTmp_ = std::distance(handCodeArr_.begin(), std::find(handCodeArr_.begin(),handCodeArr_.end(),hc));
+      // Then note the in in the for the player
+      P_[drawIntTmp_].numWins++;           // Increment players win counter
+      P_[drawIntTmp_].winCodesCtr[hc-1]++; // Increment iterator of win codes
+
+      handCodeArr_.clear(); // Release un-needed memory
+      return drawIntTmp_;   // We are now done, we've found a winner!
+      
+    } else {
+
+      // If two or more players have the same hand code then compare the handPrimeRank
+
+      // First record each prime rank and the player index for those with the same hand code
+      for (int drawI=0; drawI<noPlayers_; drawI++) {
+	if (handCodeArr_[drawI]==hc) {
+	  tmpPlayer.push_back(drawI);
+	  tmpRank.push_back(H_[drawI].handPrimeRank);
+	}
+      }
+
+      // Find the largest element in the array
+      Iter        = std::max_element(tmpRank.begin(),tmpRank.end());
+      fWStat      = std::distance(tmpRank.begin(), Iter);
+      drawIntTmp_ = std::distance(tmpRank.begin(), std::find(tmpRank.begin(),tmpRank.end(),fWStat));
+
+      // Count the number of the times this top Prime hand rank occurs
+      if (count(tmpRank.begin(), tmpRank.end(), fWStat)==1) {
+	
+	// If there is only one of this prime hand rank then this one has won
+	P_[tmpPlayer[drawIntTmp_]].numWins++;           // Increment players win counter
+	P_[tmpPlayer[drawIntTmp_]].winCodesCtr[hc-1]++; // Increment iterator of win codes
+	handCodeArr_.clear();                           // Release un-needed memory
+	return tmpPlayer[drawIntTmp_];                  // We are now done, we've found a Winner
+ 
+      } else {
+
+	fWInt = tmpPlayer.size();
+	for (int drawJ=0; drawJ>fWInt; drawJ++) {
+	  if (tmpRank[drawJ]==fWStat) {
+	    // Otherwise loop thorugh and add all those with the same prime rank as a draw
+	    P_[tmpPlayer[drawJ]].numDraw++;            // Iterate number of draws
+	    P_[tmpPlayer[drawJ]].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	  }
+	}
+
+	handCodeArr_.clear(); // Release un-needed memory
+	return 0;             // We are now done, we've found a Draw!
+	    
+      }
+
+     
+    }
+
+  }
+  
+  return -10; // We shouldn't get to here, so return -10 for major error
+  
+}
+
+
+
+
+
+
+
 void table::cntHCforHC(int index, int HC) {
 
   /*
@@ -1221,12 +1403,18 @@ int table::resetTableToKnown()
       // If there are no known hold cards then clear all the hold arrays
       P_[p].holdFace.clear();
       P_[p].holdSuit.clear();
+      P_[p].holdFaceP.clear();
+      P_[p].holdSuitP.clear();
+      P_[p].holdFullP.clear();
       P_[p].numHoldDealt=0;
       D_.itNumCardsInDeck(2);
     } else if (P_[p].numHoldKnown==1) {
       // If one card is known then just remove the last dealt card from the hold
       P_[p].holdFace.pop_back();
       P_[p].holdSuit.pop_back();
+      P_[p].holdFaceP.pop_back();
+      P_[p].holdSuitP.pop_back();
+      P_[p].holdFullP.pop_back();
       P_[p].numHoldDealt--;
       D_.itNumCardsInDeck(1);
     } // Don't need to take any action if both hold cards are known for a player
@@ -1280,6 +1468,12 @@ int table::resetTable()
     P_[p].holdSuit.clear();
     P_[p].holdFaceKnown.clear();
     P_[p].holdSuitKnown.clear();
+    P_[p].holdFaceP.clear();
+    P_[p].holdSuitP.clear();
+    P_[p].holdFullP.clear();
+    P_[p].holdFaceKnownP.clear();
+    P_[p].holdSuitKnownP.clear();
+    P_[p].holdFullKnownP.clear();
     P_[p].winCodesCtr.clear();
     P_[p].drawCodesCtr.clear();
     P_[p].handFoundCtr.clear();
@@ -1319,6 +1513,30 @@ void table::MC(int numMC)
   }
   
 }
+
+
+
+
+
+void table::MCP(int numMC)
+{
+
+  /*
+    Run a Monte Carlo simulation by taking the known cards, dealing out other cards (from a
+    shuffled deck). Then finding a winner and finally resetting the table to just the known cards.
+    This Monte Carlo simulation is ran numMC times.
+   */
+
+  int MCstat;
+  
+  for (int Nmc=0; Nmc<numMC; Nmc++) {
+    MCstat = dealAll();
+    MCstat = findWinnerP();
+    MCstat = resetTableToKnown();
+  }
+  
+}
+
 
 
 
