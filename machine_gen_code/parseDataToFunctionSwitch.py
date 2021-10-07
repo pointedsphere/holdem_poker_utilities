@@ -9,6 +9,7 @@ with open(outFile, "a") as f:
     f.write("#include <vector>\n")
     f.write("#include <iostream>\n")
     f.write("#include <stdlib.h>\n\n")
+    f.write("#include \"findBestHandPrimes.h\"\n\n")
     
     f.write("std::vector<int> findBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
     f.write("                                    int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
