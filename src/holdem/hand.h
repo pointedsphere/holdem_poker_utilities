@@ -38,6 +38,9 @@ private:
   // The cards to use in the hand
   int cardsFace_[7];
   int cardsSuit_[7];
+  int cardsFaceP_[7];
+  int cardsSuitP_[7];
+  int cardsFullP_[7];
   
   // Have the cards been read or not
   bool isCards_;
@@ -75,7 +78,7 @@ public:
      8 - Four of a Kind:
          Last 4 elements of array are the 4 of a kind cards and first is the odd one
 	 e.g. face values in order { 3, 6, 6, 6, 6 }
-
+p
      7 - Full House:
          The three of a kind elemnts are the last in the array
 	 e.g. face values in order { 3, 3, 6, 6, 6 }
@@ -110,7 +113,8 @@ public:
 
   */
   int bestFace[5];
-  int bestSuit[5];  
+  int bestSuit[5];
+  long long int handPrimeRank; // Prime product of 5 card hand
   
   // Constructor for initial variables
   // NOTE: Initial values for all face values set to -1 which signifies no hand.
@@ -119,6 +123,7 @@ public:
 
     // Also, on initialisation we do not have a hand
     handCode = -1;
+    handPrimeRank = -1;
 
     for (int i=0; i<5; i++) {
       bestFace[i] = -1;
@@ -142,7 +147,8 @@ public:
 		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
   
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
-  int findBestHand();
+  int findBestHand();  // Find and populate the best hand and populate bestFace_ and bestSuit_
+  int findBestHandP(); // Find best hand code using the prime method
 
   // Sort the cardsFace_ and cardsSuit_ arrays such cardsFace_ is in ascending order
   void sortCards();
@@ -153,9 +159,13 @@ public:
   // Get variables from the class
   std::vector<int> getCardsFace();
   std::vector<int> getCardsSuit();
+  std::vector<int> getCardsFaceP();
+  std::vector<int> getCardsSuitP();
+  std::vector<int> getCardsFullP();
   std::vector<int> getBestFace();
   std::vector<int> getBestSuit();
   int getHandCode();
+  int getHandPrimeRank();
   
 };
 

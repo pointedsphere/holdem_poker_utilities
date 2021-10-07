@@ -5,7 +5,8 @@
 
 #include "deck.h"
 #include "hand.h"
-
+#include "../../machine_gen_code/lookupBestHandPrimes.h"
+#include "../../machine_gen_code/switchBestHandPrimes.h"
 
 
 
@@ -135,8 +136,8 @@ int hand::SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
     // Get the prime values of the current card
     setTmp = card2prime(cardsFace_[i],cardsSuit_[i]);
     cardsFaceP_[i] = setTmp[0];
-    cardsSuitP_[i] = setTmp[0];
-    cardsFullP_[i] = setTmp[0];
+    cardsSuitP_[i] = setTmp[1];
+    cardsFullP_[i] = setTmp[2];
     
   }
   
@@ -316,8 +317,8 @@ int hand::SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector
     // Get the prime values of the current card
     setTmp = card2prime(cardsFace_[i],cardsSuit_[i]);
     cardsFaceP_[i] = setTmp[0];
-    cardsSuitP_[i] = setTmp[0];
-    cardsFullP_[i] = setTmp[0];
+    cardsSuitP_[i] = setTmp[1];
+    cardsFullP_[i] = setTmp[2];
     
   }
 
@@ -355,6 +356,30 @@ std::vector<int> hand::getCardsSuit()
   }
   return getCS; 
 }
+std::vector<int> hand::getCardsFaceP()
+{
+  std::vector<int> getCF(7);
+  for (int i=0; i<7; i++) {
+    getCF[i] = cardsFaceP_[i];
+  }
+  return getCF; 
+}
+std::vector<int> hand::getCardsSuitP()
+{
+  std::vector<int> getCS(7);
+  for (int i=0; i<7; i++) {
+    getCS[i] = cardsSuitP_[i];
+  }
+  return getCS; 
+}
+std::vector<int> hand::getCardsFullP()
+{
+  std::vector<int> getCS(7);
+  for (int i=0; i<7; i++) {
+    getCS[i] = cardsFullP_[i];
+  }
+  return getCS; 
+}
 std::vector<int> hand::getBestFace()
 {
   std::vector<int> getBF(5);
@@ -375,6 +400,10 @@ int hand::getHandCode()
 {
   return handCode;
 }
+int hand::getHandPrimeRank()
+{
+  return handPrimeRank;
+}
 
 
 
@@ -390,7 +419,7 @@ int hand::getHandCode()
 // ith element of cardsSuit_ is the suit of the ith card in cardsFace_
 void hand::sortCards()
 {
-
+  
   std::pair<int, int> cardsFace_suit[7];
   for (int i = 0; i < 7; i++) {
     cardsFace_suit[i].first  = cardsFace_[i];
@@ -428,7 +457,7 @@ int hand::getStraight(int S_cards[], int hand_size)
   // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
   if ( S_cards[0]==2 && S_cards[hand_size-1]==14 ) {
     straight_tmp=1;
-    Si=1;
+    Si=0;
   } else {
     straight_tmp=0;
     Si=0;
@@ -440,6 +469,7 @@ int hand::getStraight(int S_cards[], int hand_size)
     
     // Check difference between adjacent cards sorted by face value
     straight_dif = S_cards[i+1] - S_cards[i];
+
     // If straight_diff==0 then face values are the same, so ignore
     // If straight_diff==1 then we have two subsiquent face values so iterate
     // If straight_diff>1 then non subsiquent face values so reset
@@ -448,7 +478,7 @@ int hand::getStraight(int S_cards[], int hand_size)
     } else if (straight_dif>1) {
       straight_tmp=0;
     }
-
+    
     // If straight_tmp>=4 we have a stright!
     if (straight_tmp>3) {
       gotStraight = true;
@@ -544,8 +574,6 @@ int hand::findBestHand()
       aceInStraight = true;
     }
   }
-
-
 
   /*
     Check for a flush, we return to more calcualtions when we have checked higher hands
@@ -924,4 +952,28 @@ int hand::findBestHand()
 }
 
 
+
+
+
+/*
+  Find the hand code with the prime method
+*/
+
+int hand::findBestHandP()
+{
+  
+  // Find the vector containing hand code and prime product/sum rank from the lookup table
+  std::vector<int> tmpHC;
+  tmpHC = switchBestHandPrimes(\
+      cardsFullP_[0],cardsFullP_[1],cardsFullP_[2],cardsFullP_[3],cardsFullP_[4],cardsFullP_[5],cardsFullP_[6],
+      cardsFaceP_[0],cardsFaceP_[1],cardsFaceP_[2],cardsFaceP_[3],cardsFaceP_[4],cardsFaceP_[5],cardsFaceP_[6],
+      cardsSuitP_[0],cardsSuitP_[1],cardsSuitP_[2],cardsSuitP_[3],cardsSuitP_[4],cardsSuitP_[5],cardsSuitP_[6]);
+
+  // Set hand code and prime rank
+  handCode = tmpHC[0];
+  handPrimeRank = tmpHC[1];
+
+  return 0;
+  
+}
 
