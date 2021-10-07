@@ -1,7 +1,7 @@
 import sys
 import csv
 
-outFile = "findBestHandPrimes.cpp"
+outFile = "switchBestHandPrimes.cpp"
 
 # Function header
 with open(outFile, "a") as f:
@@ -9,11 +9,11 @@ with open(outFile, "a") as f:
     f.write("#include <vector>\n")
     f.write("#include <iostream>\n")
     f.write("#include <stdlib.h>\n\n")
-    f.write("#include \"findBestHandPrimes.h\"\n\n")
+    f.write("#include \"switchBestHandPrimes.h\"\n\n")
     
-    f.write("std::vector<int> findBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
-    f.write("                                    int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
-    f.write("                                   int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) \n{\n\n")
+    f.write("std::vector<int> switchBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
+    f.write("                                      int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
+    f.write("                                     int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) \n{\n\n")
     f.write("  /*\n")
     f.write("    Return the integer Hand Code value from the input face and suit card values\n")
     f.write("    Prime values for all calrds {AP1,...,AP7} take a sequential form from 2 to ace\n")
@@ -282,7 +282,7 @@ with open(outFile, "a") as f:
     f.write("  // Then use a swich statement over all the possible straight 2 of a kind and pairs hands.\n")
     f.write("  // Note: If we find one the function exits in this switch.\n")
     f.write("  // Note: Start with pair and work towards better hands.\n")
-    f.write("  switch(SuitProd) {\n")
+    f.write("  switch(FaceProd) {\n")
     
     # Write the pair case
     for i in range(len(FaceArr)):

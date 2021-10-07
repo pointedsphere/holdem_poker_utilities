@@ -252,9 +252,9 @@ with open(outFile, "a") as f:
     # Lookup function
     #
     
-    f.write("std::vector<int> findBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
-    f.write("                                    int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
-    f.write("                                   int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) \n{\n\n")
+    f.write("std::vector<int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
+    f.write("                                      int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
+    f.write("                                     int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) \n{\n\n")
     f.write("  /*\n")
     f.write("    Return the integer Hand Code value from the input face and suit card values\n")
     f.write("    Prime values for all calrds {AP1,...,AP7} take a sequential form from 2 to ace\n")
