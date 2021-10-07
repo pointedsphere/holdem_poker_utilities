@@ -410,7 +410,7 @@ int hand::getStraight(int S_cards[], int hand_size)
   // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
   if ( S_cards[0]==2 && S_cards[hand_size-1]==14 ) {
     straight_tmp=1;
-    Si=1;
+    Si=0;
   } else {
     straight_tmp=0;
     Si=0;
