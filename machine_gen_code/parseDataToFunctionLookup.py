@@ -350,8 +350,8 @@ with open(outFile, "a") as f:
     for i in range(len(SuitArr)):
         f.write("    case ")
         f.write(str(SuitArr[i][0]))
-        f.write(" : gotFlush = true;\n")
-    f.write("    default : gotFlush = false;\n")
+        f.write(" : gotFlush = true; break;\n")
+    f.write("    default : gotFlush = false; break;\n")
     # Now close that switch 
     f.write("  }\n\n\n\n")    
 
