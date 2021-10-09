@@ -17,7 +17,7 @@ with open(outFile, "a") as f:
     f.write("// An structure to store the two lookup values of interest\n")
     f.write("struct handDat {\n")
     f.write("  int HC;\n")
-    f.write("  int MFVP;\n")
+    f.write("  long long int MFVP;\n")
     f.write("};\n\n\n\n\n")
 
     #
@@ -93,7 +93,7 @@ with open(outFile, "a") as f:
 
     f.write("// An unordered map containing the four of a kind and full house data\n")
     f.write("// (this uses only the face values)\n")
-    f.write("std::unordered_map< long long int, handDat > FKFH =\n")
+    f.write("std::unordered_map< long int, handDat > FKFH =\n")
     f.write("{\n")
     # Write the cases first for full houses
     for i in range(len(FaceArr)):
@@ -143,7 +143,7 @@ with open(outFile, "a") as f:
 
     f.write("// An unordered map containing just the flush data\n")
     f.write("// (this uses only the face values)\n")
-    f.write("std::unordered_map< long long int, handDat > Fl =\n")
+    f.write("std::unordered_map< long int, handDat > Fl =\n")
     f.write("{\n")
     
     for i in range(len(FlushFaceArr)):
@@ -174,7 +174,7 @@ with open(outFile, "a") as f:
 
     f.write("// An unordered map containing just the flush data\n")
     f.write("// (this uses only the face values)\n")
-    f.write("std::unordered_map< long long int, handDat > RemHands =\n")
+    f.write("std::unordered_map< long int, handDat > RemHands =\n")
     f.write("{\n")
     # Write the pair case
     for i in range(len(FaceArr)):
@@ -252,9 +252,9 @@ with open(outFile, "a") as f:
     # Lookup function
     #
     
-    f.write("std::vector<int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
-    f.write("                                      int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
-    f.write("                                     int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) \n{\n\n")
+    f.write("std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\\\n")
+    f.write("                                                int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\\\n ")
+    f.write("                                               int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) \n{\n\n")
     f.write("  /*\n")
     f.write("    Return the integer Hand Code value from the input face and suit card values\n")
     f.write("    Prime values for all calrds {AP1,...,AP7} take a sequential form from 2 to ace\n")
@@ -303,12 +303,13 @@ with open(outFile, "a") as f:
     #    Element 0 is hand code
     #    Element 1 is comparison product
     #
-    f.write("  std::vector<int> HCvec;\n\n")
+    f.write("  std::vector<long long int> HCvec;\n\n")
 
     #
-    # Iterator for searching the unordered lists
+    # Iterators for searching the unordered lists
     #
-    f.write("  std::unordered_map<long long int, handDat >::iterator it;\n\n")
+    f.write("  std::unordered_map<long long int, handDat >::iterator itll;\n\n")
+    f.write("  std::unordered_map<long int, handDat >::iterator itl;\n\n")
     
 
     #
@@ -327,8 +328,8 @@ with open(outFile, "a") as f:
     
     f.write("  // Calculate the product value required for the flush hands from suit primes,\n")
     f.write("  // I.e. product of card values from the ``suit prime'' deck.\n")
-    f.write("  long int SuitProd = (long)SP1 * (long)SP2 * (long)SP3  \\\n")
-    f.write("    * (long)SP4 * (long)SP5 * (long)SP6 * (long)SP7;\n\n")
+    f.write("  int SuitProd = SP1 * SP2 * SP3  \\\n")
+    f.write("    * SP4 * SP5 * SP6 * SP7;\n\n")
     
     f.write("  // Then use a swich statement over all the possible full houses and 4 of a kinds.\n")
     f.write("  // Note: If we find one the function exits in this switch.\n")
@@ -370,24 +371,24 @@ with open(outFile, "a") as f:
     f.write("    we need 64 bit long long integers.\n")
     f.write("    NOTE: we only check if there is some form of flush.\n")
     f.write("  */\n\n")
-
-    f.write("  // Calculate the product value required for the Royal and Straight Flush hands,\n")
-    f.write("  // I.e. product of card values from the ``all prime'' deck.\n")
-    f.write("  long long int AllProd = (long long)AP1 * (long long)AP2 * (long long)AP3\\\n")
-    f.write("    * (long long)AP4 * (long long)AP5 * (long long)AP6 * (long long)AP7;\n\n")
     
     f.write("  // Only check for a striaght/royal flush if we have a flush of some sort.\n")
     f.write("  if (gotFlush==true) {\n\n")
+
+    f.write("    // Calculate the product value required for the Royal and Straight Flush hands,\n")
+    f.write("    // I.e. product of card values from the ``all prime'' deck.\n")
+    f.write("    long long int AllProd = (long long)AP1 * (long long)AP2 * (long long)AP3\\\n")
+    f.write("      * (long long)AP4 * (long long)AP5 * (long long)AP6 * (long long)AP7;\n\n")
     
     f.write("    // Note: If we find one the function exits after searching for the straight royal flush.\n\n")
 
     f.write("    // Serch the royal and straight flush unordered_map\n")
-    f.write("    it = RSF.find(AllProd);\n\n")
+    f.write("    itll = RSF.find(AllProd);\n\n")
 
     f.write("    // Then record and return the two values if we find them, if not keep checking\n")
-    f.write("    if (it != RSF.end()) {\n")
-    f.write("      HCvec.push_back(it->second.HC);\n")
-    f.write("      HCvec.push_back(it->second.MFVP);\n")
+    f.write("    if (itll != RSF.end()) {\n")
+    f.write("      HCvec.push_back(itll->second.HC);\n")
+    f.write("      HCvec.push_back(itll->second.MFVP);\n")
     f.write("      return HCvec;\n")
     f.write("    }\n")
     f.write("  }\n\n\n\n\n")
@@ -409,19 +410,19 @@ with open(outFile, "a") as f:
     # Initial switch declaration
     f.write("  // Calculate the product value required for the four of a kind and full house hands,\n")
     f.write("  // I.e. product of card values from the ``face prime'' deck.\n")
-    f.write("  long long int FaceProd = (long long)FP1 * (long long)FP2 * (long long)FP3\\\n")
-    f.write("    * (long long)FP4 * (long long)FP5 * (long long)FP6 * (long long)FP7;\n\n")
+    f.write("  long int FaceProd = (long)FP1 * (long)FP2 * (long)FP3\\\n")
+    f.write("    * (long)FP4 * (long)FP5 * (long)FP6 * (long)FP7;\n\n")
     
     f.write("  // Then search the unordered list FKFH for any four of a kind or full houses.\n")
     f.write("  // Note: If we find one the function exits here.\n")
     
     f.write("  // Serch the four of kind and full house unordered_map\n")
-    f.write("  it = FKFH.find(FaceProd);\n\n")
+    f.write("  itl = FKFH.find(FaceProd);\n\n")
 
     f.write("  // Then record and return the two values if we find them, if not keep checking\n")
-    f.write("  if (it != FKFH.end()) {\n")
-    f.write("    HCvec.push_back(it->second.HC);\n")
-    f.write("    HCvec.push_back(it->second.MFVP);\n")
+    f.write("  if (itl != FKFH.end()) {\n")
+    f.write("    HCvec.push_back(itl->second.HC);\n")
+    f.write("    HCvec.push_back(itl->second.MFVP);\n")
     f.write("    return HCvec;\n")
     f.write("  }\n\n\n\n\n")
     
@@ -442,12 +443,12 @@ with open(outFile, "a") as f:
     f.write("  if (gotFlush==true) {\n\n")
     
     f.write("    // Serch the flush unordered_map\n")
-    f.write("    it = Fl.find(FaceProd);\n\n")
+    f.write("    itl = Fl.find(FaceProd);\n\n")
 
     f.write("    // Then record and return the two values if we find them, if not keep checking\n")
-    f.write("    if (it != Fl.end()) {\n")
-    f.write("      HCvec.push_back(it->second.HC);\n")
-    f.write("      HCvec.push_back(it->second.MFVP);\n")
+    f.write("    if (itl != Fl.end()) {\n")
+    f.write("      HCvec.push_back(itl->second.HC);\n")
+    f.write("      HCvec.push_back(itl->second.MFVP);\n")
     f.write("      return HCvec;\n")
     f.write("    }\n")
     f.write("  }\n\n\n\n\n")
@@ -471,12 +472,12 @@ with open(outFile, "a") as f:
     f.write("  // Note: If we find one the function exits here.\n")
 
     f.write("  // Serch the remaining hands unordered_map\n")
-    f.write("  it = RemHands.find(FaceProd);\n\n")
+    f.write("  itl = RemHands.find(FaceProd);\n\n")
 
     f.write("  // Then record and return the two values if we find them, if not keep checking\n")
-    f.write("  if (it != RemHands.end()) {\n")
-    f.write("    HCvec.push_back(it->second.HC);\n")
-    f.write("    HCvec.push_back(it->second.MFVP);\n")
+    f.write("  if (itl != RemHands.end()) {\n")
+    f.write("    HCvec.push_back(itl->second.HC);\n")
+    f.write("    HCvec.push_back(itl->second.MFVP);\n")
     f.write("    return HCvec;\n")
     f.write("  }\n\n\n\n\n")
 
@@ -493,11 +494,14 @@ with open(outFile, "a") as f:
     f.write("    If we have made it this far the only option left is that we have failed.\n")
     f.write("  */\n\n")
 
+    f.write("  long long int AllProdErr = (long long)AP1 * (long long)AP2 * (long long)AP3\\\n")
+    f.write("    * (long long)AP4 * (long long)AP5 * (long long)AP6 * (long long)AP7;\n\n")
+    
     f.write("  std::cout << \"ERROR : Unable to find a hand from given cards\" << std::endl;\n")
     f.write("  std::cout << \"        Current product values are:\" << std::endl;\n")
-    f.write("  std::cout << \"          Face product : \" << FaceProd << std::endl;\n")
-    f.write("  std::cout << \"          Suit product : \" << SuitProd << std::endl;\n")
-    f.write("  std::cout << \"          Full product : \" <<  AllProd << std::endl;\n\n")
+    f.write("  std::cout << \"          Face product : \" << FaceProd    << std::endl;\n")
+    f.write("  std::cout << \"          Suit product : \" << SuitProd    << std::endl;\n")
+    f.write("  std::cout << \"          Full product : \" <<  AllProdErr << std::endl;\n\n")
     f.write("  std::cout << \"        Current card prime values are:\" << std::endl;\n")
     f.write("    std::cout << \"        Face prime: \" << FP1")
     f.write("              << \"        Suit prime: \" << SP1")

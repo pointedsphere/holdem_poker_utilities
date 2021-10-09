@@ -7,18 +7,18 @@
 #include "../../src/holdem/hand.h"
 
 // Simple integer power function
-int intPow(int x, int power)
+long long int intPow(int x, int power)
 {
-    int result;
-    switch (power) {
-    case 0 : return 1;
-    default :
-      result =1;
-      for (int i=1; i<power+1; i++) {
-	  result = result*x;
-	}
-      return(result);
+  long long int result;
+  switch (power) {
+  case 0 : return 1;
+  default :
+    result = (long long)1;
+    for (long long int i=1; i<(long long)power+1; i++) {
+      result = result*(long long)x;
     }
+    return(result);
+  }
 }
 
 int main() {
@@ -76,7 +76,7 @@ int main() {
   std::vector<long long int> primeProd;
 
   // The output arrays
-  std::vector<int>           outHandCode;
+  std::vector<int>      outHandCode;
   std::vector<long long int> outPrimeProduct;
   std::vector<long long int> outMFVP;
   
@@ -118,8 +118,9 @@ int main() {
 			  if (g<f) {
 
 			    // Calcualte the product of the prime face values from primeFace
-			    tmp = primeFace[a] * primeFace[b] * primeFace[c] * primeFace[d] \
-			      * primeFace[e] * primeFace[f] * primeFace[g];
+			    tmp = (long)primeFace[a] * (long)primeFace[b] * (long)primeFace[c] \
+			      * (long)primeFace[d] * (long)primeFace[e] * (long)primeFace[f] \
+			      * (long)primeFace[g];
 
 			    // Only consider further if we have not considred this prome product
 			    if (std::find(primeProd.begin(), primeProd.end(), tmp) == primeProd.end()) {
@@ -150,45 +151,45 @@ int main() {
 			      HC = H.handCode;
 			      
 			      /* Then we only record for :
-				     High Card ======== 1
-				     Pair ============= 2
-				     Two Pair ========= 3
-				     Three of a kind == 4
-				     Straight ========= 5
-				     Full house ======= 7
-				     Four of a kind === 8
+				 High Card ======== 1
+				 Pair ============= 2
+				 Two Pair ========= 3
+				 Three of a kind == 4
+				 Straight ========= 5
+				 Full house ======= 7
+				 Four of a kind === 8
 			      */
 			      // But first get the hand (face values
 			      handTmp = H.getBestFace();
 			      if (HC==8 || HC==7) {
 				outMFVP.push_back(\
-			            intPow(2,handTmp[4]+11) \
-				    + intPow(2,handTmp[0]-2) );
+						  (long long)intPow(2,handTmp[4]+11) \
+						  + (long long)intPow(2,handTmp[0]-2) );
 			      } else if (HC==5) {
-				outMFVP.push_back(handTmp[4]);
+				outMFVP.push_back((long long)handTmp[4]);
 			      } else if (HC==4) {
 				outMFVP.push_back(\
-			            intPow(2,handTmp[4]+11)  \
-				    + intPow(2,handTmp[1]-2) \
-				    + intPow(2,handTmp[0]-2) );
+						  (long long)intPow(2,handTmp[4]+11)  \
+						  + (long long)intPow(2,handTmp[1]-2) \
+						  + (long long)intPow(2,handTmp[0]-2) );
 			      } else if (HC==3) {
 				outMFVP.push_back(\
-			            intPow(2,handTmp[4]+24)   \
-				    + intPow(2,handTmp[2]+11) \
-				    + intPow(2,handTmp[0]-2) );
+						  (long long)intPow(2,handTmp[4]+24)   \
+						  + (long long)intPow(2,handTmp[2]+11) \
+						  + (long long)intPow(2,handTmp[0]-2) );
 			      } else if (HC==2) {
 				outMFVP.push_back(\
-			            intPow(2,handTmp[4]+11)  \
-				    + intPow(2,handTmp[2]-2) \
-				    + intPow(2,handTmp[1]-2) \
-				    + intPow(2,handTmp[0]-2) );
+						  (long long)intPow(2,handTmp[4]+11)  \
+						  + (long long)intPow(2,handTmp[2]-2) \
+						  + (long long)intPow(2,handTmp[1]-2) \
+						  + (long long)intPow(2,handTmp[0]-2) );
 			      } else if (HC==1) {
 				outMFVP.push_back(	     \
-			            intPow(2,handTmp[4]-2)  \
-				    + intPow(2,handTmp[3]-2) \
-				    + intPow(2,handTmp[2]-2) \
-				    + intPow(2,handTmp[1]-2)	\
-				    + intPow(2,handTmp[0]-2) );
+						  (long long)intPow(2,handTmp[4]-2)  \
+						  + (long long)intPow(2,handTmp[3]-2) \
+						  + (long long)intPow(2,handTmp[2]-2) \
+						  + (long long)intPow(2,handTmp[1]-2)	\
+						  + (long long)intPow(2,handTmp[0]-2) );
 			      }				
 			      
 			      if (HC == 1 || HC==2 || HC==3 || HC==4 || HC==5 || HC==7 || HC==8) {

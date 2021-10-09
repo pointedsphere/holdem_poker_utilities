@@ -18,7 +18,8 @@ OBJ_DIR   := obj
 # $(wildcard *.cpp)
 SRC_FILES := $(wildcard *.cpp) \
              $(wildcard ../../$(SRC_DIR)/tools/*.cpp) \
-             $(wildcard ../../$(SRC_DIR)/holdem/*.cpp)
+             $(wildcard ../../$(SRC_DIR)/holdem/*.cpp) \
+             $(wildcard ../../machine_gen_code/*.cpp)
 OBJ = $(SRC_FILES:.cpp=.o)
 
 opt: $(OBJ)

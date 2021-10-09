@@ -6,18 +6,18 @@
 #include "../../src/holdem/hand.h"
 
 // Simple integer power function
-int intPow(int x, int power)
+long int intPow(int x, int power)
 {
-    int result;
-    switch (power) {
-    case 0 : return 1;
-    default :
-      result =1;
-      for (int i=1; i<power+1; i++) {
-	  result = result*x;
-	}
-      return(result);
+  long long int result;
+  switch (power) {
+  case 0 : return 1;
+  default :
+    result = (long)1;
+    for (long int i=1; i<(long)power+1; i++) {
+      result = result*(long)x;
     }
+    return(result);
+  }
 }
     
 int main() {
@@ -60,7 +60,7 @@ int main() {
   int numCards = 52;
 
   // Temporary integer for calcualtion of prime product
-  long long int tmp;
+  long int tmp;
 
   // Temporary values for checking if a flush exists
   std::vector<int> tmpArr;
@@ -121,8 +121,9 @@ int main() {
 			  if (g<f) {
 
 			    // Calcualte the product of the prime suit values
-			    tmp = primeSuit[a] * primeSuit[b] * primeSuit[c] * primeSuit[d] \
-			      * primeSuit[e] * primeSuit[f] * primeSuit[g];
+			    tmp = (long)primeSuit[a] * (long)primeSuit[b] * (long)primeSuit[c] \
+			      * (long)primeSuit[d] * (long)primeSuit[e] * (long)primeSuit[f] \
+			      * (long)primeSuit[g];
 
 			    // Only consider further if we have not considred this prome product
 			    if (std::find(primeProd.begin(), primeProd.end(), tmp) == primeProd.end()) {
@@ -201,7 +202,7 @@ int main() {
   
   // new temp arrays and such
   std::vector<int> faceTmp;
-  std::vector<int> outHandMFVP;
+  std::vector<long int> outHandMFVP;
   int sCtr;
   bool gotS;
   int sDiff;
@@ -259,8 +260,9 @@ int main() {
 			    if (count2>4 || count3>4 || count5>4 || count7>4) {
 
 			      // Calculate the prime product of the face values of the cards
-			      tmp = primeFace[a] * primeFace[b] * primeFace[c] * primeFace[d] \
-				* primeFace[e] * primeFace[f] * primeFace[g];
+			      tmp = (long)primeFace[a] * (long)primeFace[b] * (long)primeFace[c] \
+				* (long)primeFace[d] * (long)primeFace[e] * (long)primeFace[f] \
+				* (long)primeFace[g];
 			      
 			      // Only consider further if we have not considred this prime product
 			      if (std::find(primeProd.begin(), primeProd.end(), tmp) == primeProd.end()) {
@@ -303,13 +305,13 @@ int main() {
 				if (gotS==false) {
 
 				  outHandMFVP.push_back(\
-							intPow(2,a-2)\
-							+ intPow(2,b-2)\
-							+ intPow(2,c-2)\
-							+ intPow(2,d-2)\
-							+ intPow(2,e-2)\
-							+ intPow(2,f-2)\
-							+ intPow(2,g-2) );
+							(long)intPow(2,a-2)\
+							+ (long)intPow(2,b-2)\
+							+ (long)intPow(2,c-2)\
+							+ (long)intPow(2,d-2)\
+							+ (long)intPow(2,e-2)\
+							+ (long)intPow(2,f-2)\
+							+ (long)intPow(2,g-2) );
 				  outHandCode.push_back(6);       // Hand code 6 for flush
 				  outPrimeProduct.push_back(tmp); // Prime product that gives flush
 				  arrSize++;                      // And keep track of size of arrays
