@@ -1152,8 +1152,8 @@ int table::findWinnerP()
   int fWStat;
   int fWInt;
   std::vector<int> tmpPlayer;
-  std::vector<int> tmpRank;
-  std::vector<int>::iterator Iter;
+  std::vector<long long int> tmpRank;
+  std::vector<long long int>::iterator Iter;
   
   // Can only run if hands have been dealt
   if (handsDealt_==false) return -1;

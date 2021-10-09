@@ -963,8 +963,8 @@ int hand::findBestHandP()
 {
   
   // Find the vector containing hand code and prime product/sum rank from the lookup table
-  std::vector<int> tmpHC;
-  tmpHC = switchBestHandPrimes(\
+  std::vector<long long int> tmpHC;
+  tmpHC = lookupBestHandPrimes(\
       cardsFullP_[0],cardsFullP_[1],cardsFullP_[2],cardsFullP_[3],cardsFullP_[4],cardsFullP_[5],cardsFullP_[6],
       cardsFaceP_[0],cardsFaceP_[1],cardsFaceP_[2],cardsFaceP_[3],cardsFaceP_[4],cardsFaceP_[5],cardsFaceP_[6],
       cardsSuitP_[0],cardsSuitP_[1],cardsSuitP_[2],cardsSuitP_[3],cardsSuitP_[4],cardsSuitP_[5],cardsSuitP_[6]);
