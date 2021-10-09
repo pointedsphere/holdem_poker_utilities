@@ -28,12 +28,12 @@ SRC_FILES_PY := wrapper.cpp \
 
 OBJ = $(SRC_FILES:.cpp=.o)
 
-opt: $(OBJ)
+default: $(OBJ)
 	$(CC) -o holdem_tools.out $(CFLAGS) $^
 
 # Note for the bash variables we use the double $$ to escape the makefile std $
 python:
-	g++ -O3 -Wall -shared -std=c++11 -undefined dynamic_lookup $$(python3 -m pybind11 --includes) -fPIC $(python3 -m pybind11 --includes) $(SRC_FILES_PY) -o holdEm$$(python3-config --extension-suffix)
+	g++ $(CFLAGS) -shared -undefined dynamic_lookup $$(python3 -m pybind11 --includes) -fPIC $(python3 -m pybind11 --includes) $(SRC_FILES_PY) -o holdEm$$(python3-config --extension-suffix)
 
 # Setup and/or clean
 dir:
@@ -43,5 +43,6 @@ clean:
 	rm *.o 2> /dev/null || true
 	rm $(SRC_DIR)/tools/*.o 2> /dev/null || true
 	rm $(SRC_DIR)/holdem/*.o 2> /dev/null || true
+	rm machine_gen_code/*.o 2> /dev/null || true
 
 
