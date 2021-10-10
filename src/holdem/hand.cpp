@@ -1330,3 +1330,23 @@ int hand::findBestHandP()
   
 }
 
+int hand::findBestHandII(int c1, int c2, int c3, int c4, int c5, int c6, int c7)
+{
+  
+  // Find the vector containing hand code and prime product/sum rank from the lookup table
+  std::vector<long long int> tmpHC;
+  tmpHC = lookupBestHandPrimes(\
+       	   primes[c1],   primes[c2],   primes[c3],   primes[c4],   primes[c5],   primes[c6],   primes[c7],\
+	   primeFace[c1],primeFace[c2],primeFace[c3],primeFace[c4],primeFace[c5],primeFace[c6],primeFace[c7],\
+	   primeSuit[c1],primeSuit[c2],primeSuit[c3],primeSuit[c4],primeSuit[c5],primeSuit[c6],primeSuit[c7]);
+
+
+  // Set hand code and prime rank
+  handCode = tmpHC[0];
+  handPrimeRank = tmpHC[1];
+
+  return 0;
+  
+}
+
+

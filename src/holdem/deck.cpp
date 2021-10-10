@@ -541,7 +541,6 @@ int deck::dealCardsP(int numToDeal)
     std::cout << "ERROR : Number of cards to deal using dealCards more than the cards left in the deck.";
     exit (EXIT_FAILURE);
   }
-
   
   // Now deal the cards, starting from the end of the shuffled index array
   for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {
@@ -557,6 +556,35 @@ int deck::dealCardsP(int numToDeal)
   return 0; // Success!!
   
 }
+
+
+
+
+
+int deck::dealCardI()
+{
+
+  /*
+    Deal a card by returning only the last card index. The dealFace_ and dealSuit_ arrays are
+    not touched.
+
+    This also reduces the number of cards left in the deck by 1.
+  */
+
+  // If the number of cards asked to deal is more than that left in deck return with an error
+  if (numCards_<1) {
+    std::cout << "ERROR : Deck is empty, so cannot deal cards with dealCardI.";
+    exit (EXIT_FAILURE);
+  }
+
+  // Note that we have now taken a card from the deck
+  numCards_ = numCards_ - 1;
+
+  // Return that index
+  return deckIndex_[numCards_];
+  
+}
+
 
 
 
@@ -578,9 +606,18 @@ void deck::remDealtCards()
   
 }
 
+
+
+
+
+
+
 // Standard face values
-int cardFace[52] = {2,3,4,5,6,7,8,9,10,11,12,13,14,2,3,4,5,6,7,8,9,10,11,12,13,14,\
-  2,3,4,5,6,7,8,9,10,11,12,13,14,2,3,4,5,6,7,8,9,10,11,12,13,14};
+int cardFace[52] = {\
+  2,3,4,5,6,7,8,9,10,11,12,13,14,\
+  2,3,4,5,6,7,8,9,10,11,12,13,14,\
+  2,3,4,5,6,7,8,9,10,11,12,13,14,\
+  2,3,4,5,6,7,8,9,10,11,12,13,14};
 
 // Standard suit values
 int cardSuit[52] = {\
