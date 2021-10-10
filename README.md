@@ -12,6 +12,162 @@ The naive implementation, though slow, is easy to read and modify. Furthermore, 
 
 
 
+
+
+
+
+
+## New Method for Finding and Comparing Hands
+
+The `brute force' method, though useful, is far from optimal. Though other methods have been proposed in the past like 
+
+This works on the basis of assigning 3 prime numbers to a card. One in reference to the face value of the card, another to the suit value and a third to the absolute card value. We do this by ordering the cards in ascending order, based on suit values [1,4] and then face values [2,14] (where ace == 14). We then assign a prime number in {2,3,5,7} to each suit value (``PS``), assign a prime number in {2,3,5,7,11,13,17,19,23,29,31,37,41} to each face value (``PF``) and a unique prime number in the set of the lowest 52 prime numbers to each card (``PA``). I.e. the ith card given by 
+
+```
+F = {
+    2,3,4,5,6,7,8,9,10,11,12,13,14,
+    2,3,4,5,6,7,8,9,10,11,12,13,14,
+    2,3,4,5,6,7,8,9,10,11,12,13,14,
+    2,3,4,5,6,7,8,9,10,11,12,13,14};
+
+S = {
+    1,1,1,1,1,1,1,1,1,1,1,1,1,
+    2,2,2,2,2,2,2,2,2,2,2,2,2,
+    3,3,3,3,3,3,3,3,3,3,3,3,3,
+    4,4,4,4,4,4,4,4,4,4,4,4,4};
+
+PS= { 
+    2,2,2,2,2,2,2,2,2,2,2,2,2, 
+    3,3,3,3,3,3,3,3,3,3,3,3,3, 
+    5,5,5,5,5,5,5,5,5,5,5,5,5, 
+    7,7,7,7,7,7,7,7,7,7,7,7,7 };
+
+PF = { 
+    2,3,5,7,11,13,17,19,23,29,31,37,41,    
+    2,3,5,7,11,13,17,19,23,29,31,37,41,    
+    2,3,5,7,11,13,17,19,23,29,31,37,41,    
+    2,3,5,7,11,13,17,19,23,29,31,37,41 };
+
+PA = { 
+    2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,
+    53,59,61,67,71,73,79,83,89,97,101,103,107,    
+    109,113,127,131,137,139,149,151,157,163,167,
+    173,179,181,191,193,197,199,211,223,227,
+    229,233,239 };
+```
+
+
+
+### Comparing Hands With The Same Hand Code
+
+Consider two players, *P1* and *P2*, and assume they both have the same hand code (HC). As our algorithm points only to a HC this is a bit of a problem, but as we know the HC we can solve this by looking at a modified face value product (MFVP).
+
+The function returns both the HC and the MFVP of a hand, where MFVP is calculated differently for each type of hand. However, it is calculated in such a way that *P1* and *P2* can compare MFVP values, the largest of which wins (and equality signifies a draw). This will work for any *N>1* players, as long as their HC is identical. The method for MFVP calculation is given below for each hand.
+
+Throughout this section let *fP*, *sP* and *aP* be the prime face, suit and card values (taken from ``PS``, ``PF`` and ``PA`` respectively). Also let *f* and *s* be the non prime face and suit values from ``F`` and ``S``.
+
+Also, let us assume we have access not just to the full 7 cards (hold, flop, turn and river), but to the 5 card combination that makes the best hand from those 7 cards, and consequently know the HC.
+
+### Any Straight (royal flush, straight flush and straight)
+
+In the case of any straight hand the MFVP is the highest card in the straight. highest high card in a straight always wins when comparing hands including a straight.
+
+### Four of a kind
+
+In this case we first modify the face values of the hand whilst treating the 4 cards with identical face values as ``f4`` in [2,14]. We then consider ``f4`` along with the face value of the kicker ``fk`` (also in [2,14]).
+
+Then we define new prime product variables:
+
+```
+f4P = 2^(f4+11)
+fkP = 2^(fk-2)
+```
+
+such that ``f4P`` is one of 13 values in [2^13 , 2^25] and ``fkP`` is one of 13 values in [2^0 , 2^12]. This is a 26 bit binary value where the first 13 bits correspond to the kicker face value and the last 13 correspond to the 4 of kind face value.
+
+We then take the sum of these two values, i.e. 
+
+```
+MFVP = f4P + fkP
+```
+
+Where the highest of these values for players with 4 of a kind wins (and equality means a draw).
+
+### Full House
+
+Calculation of MFVP for the full house is much that same as for Four of a kind, where we treat the face value for the three of a kind in the same way as with the four of a kind face value. We then treat the pair value like the kicker value in four of a kind.
+
+### Flush
+
+MFVP for the flush is a 13 bit binary value, the sum of the binary values of each face value card, i.e. if the face values of the 5 cards in the flush are ``f1``, ``f2``, ``f3``, ``f4`` and ``f5`` (each in [2,14] with ace=14) then
+
+```
+MFVP = 2^(f1-2) + 2^(f2-2) + 2^(f3-2) + 2^(f4-2) + 2^(f5-2)
+```
+
+If multiple players have a flush, then the highest MFVP wins (with equality being a tie).
+
+### Three of a kind
+
+We approach three of a kind in a similar way to 4 of a kind, except there are two kickers here. We treat the three of a kind like the 4 of a kind value, then add this to the two 13 bit kicker values.
+
+I.e. let ``f3`` be the face value of the three of a kind and let ``k1`` and ``k2`` be the face values of the kickers (all in [2,14]), then we calculate
+
+```
+MFVP = 2^(f3+11) + 2^(k1-2) + 2^(k2-2)
+```
+
+such that MFVP is a 26 bit integer. The first 13 bits of MFVP correspond to the two kickers and the last 13 bits correspond to the three of a kind (note; the kickers cannot have the same face value, otherwise we would have a full house).
+
+Again the highest MFVP wins when comparing players with three of a kind, and equality signifies a draw.
+
+### Two Pair
+
+Two pair has 3 rankings of cards within it, the higher pair, the lower pair and then the kicker, as such we require a 39 bit integer. Here the lowest 13 bits correspond to the kicker, the next 13 bits to the low pair and the highest 13 bits to the high pair.
+
+Let ``p1``, ``p2`` and ``k1`` be the face value of the highest pair, lowest pair and kicker respectively (all in [2,14]). Then
+
+```
+MFVP = 2^(p1+24) + 2^(p2+11) + 2^(k1-2)
+```
+
+Again highest MFVP wins between hands with two pair.
+
+### One Pair
+
+A single pair requires a 26 bit integer, the first 13 bits are the sum of the 3 kicker values in binary representation and the last 13 represent the pair (note, all kicker face values must be distinct, or we would have a better hand than one pair).
+
+Let ``p1`` be the face value of the pair (in [2,14]) and let ``k1``, ``k2`` and ``k3`` be the face values of the kickers (again in [2,14]). Then
+
+```
+MFVP = 2^(p1+11) + 2^(k1-2) + 2^(k2-2) + 2^(k3-2)
+```
+
+Again highest MFVP wins for multiple hands with one pair.
+
+### High Card
+
+As the only ranking we care about here is the highest card, and we are guaranteed that the suit does not matter and no repeated face values we just take the sum of the 5 cards in the hand (in binary representation) to give a 13 bit MFVP.
+
+Let ``k1``, ``k2``, ``k3``, ``k4`` and ``k5`` be the 5 face values of the cards in the hand (all in [2,14]). Then
+
+```
+MFVP = 2^(k1-2) + 2^(k2-2) + 2^(k3-2) + 2^(k4-2) + 2^(k5-2)
+```
+
+Where highest MFVP wins.
+
+
+
+
+
+
+
+
+
+
+
+
 ## General use and compilation
 
 This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis and to be compiled for use as a Python module.
@@ -916,6 +1072,7 @@ print("\n\n\nHand 2:\n")
 for i in range(len(hand2Face)):
     print("Card ", i+1, " : ", hand2Face[i], "     ", hand2Suit[i])
 ```
+
 
 
 

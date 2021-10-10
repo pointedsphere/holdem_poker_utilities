@@ -3,8 +3,10 @@
 #include <vector>
 #include <algorithm>
 
+#include "deck.h"
 #include "hand.h"
-
+#include "../../machine_gen_code/lookupBestHandPrimes.h"
+// #include "../../machine_gen_code/switchBestHandPrimes.h"
 
 
 
@@ -95,6 +97,9 @@ int hand::SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
         -1 ::: Invalid card face value outside range of [1,14] given as an input.
         -2 ::: Invalid card suit value outside range of [1,4] given as an input.
   */
+
+  // Temporary vector for setting the prime values
+  std::vector<int> setTmp;
   
   // Check each card for errors in face or suit value
   for ( int i=0 ; i<7 ; i++ ) {
@@ -129,7 +134,7 @@ int hand::SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
     }
     
   }
-
+  
   // We have now read the cards in
   isCards_ = true;
   
@@ -138,6 +143,150 @@ int hand::SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in)
   
 }
 
+
+
+int hand::SetCardsFullP(std::vector<int> face_in, std::vector<int> suit_in, std::vector<int> full_in)
+{
+
+  /*
+    Set the hand cards using two input VECTORS, this routine takes in one vector of the
+    face values and one of the respective suit values.
+
+    This routine sets only the prime card values in the hand based on the prime inputs.
+
+    Though some error checks are carried out the length of input vectors is not checked, 
+    this is as we wish to reduce cost as much as possible. Therefore, care must be taken 
+    when calling this function as giving arrays of less than 7 may cause unexpected results.
+
+    Error Codes
+    ===========
+      Error codes returned from function, 0 means everything ran smoothly.
+        -1 ::: Invalid card face value outside range of [1,14] given as an input.
+        -2 ::: Invalid card suit value outside range of [1,4] given as an input.
+  */
+
+  // Temporary vector for setting the prime values
+  std::vector<int> setTmp;
+  
+  // Check each card for errors in face or suit value
+  for ( int i=0 ; i<7 ; i++ ) {
+    
+    // If card value is 1, i.e. ace, then switch this to a 14
+    // Also check for invalid card face value
+    // Using switch as it's a bit more verbose but slightly more efficient
+    // than a few if statements
+    switch(face_in[i]) {
+    case 2 : cardsFaceP_[i] = 2 ; break;
+    case 3 : cardsFaceP_[i] = 3 ; break;
+    case 5 : cardsFaceP_[i] = 5 ; break;
+    case 7 : cardsFaceP_[i] = 7 ; break;
+    case 11: cardsFaceP_[i] = 11; break;
+    case 13: cardsFaceP_[i] = 13; break;
+    case 17: cardsFaceP_[i] = 17; break;
+    case 19: cardsFaceP_[i] = 19; break;
+    case 23: cardsFaceP_[i] = 23; break;
+    case 29: cardsFaceP_[i] = 29; break;
+    case 31: cardsFaceP_[i] = 31; break;
+    case 37: cardsFaceP_[i] = 37; break;
+    case 41: cardsFaceP_[i] = 41; break;
+    default: return -1; // Error code -1
+    }
+
+    // Check the suit values are valid, i.e. in [1,4]
+    if (suit_in[i]!=2 && suit_in[i]!=3 && suit_in[i]!=5 && suit_in[i]!=7) {
+      return -2; // Error code -2
+    } else {
+      cardsSuit_[i] = suit_in[i];
+    }
+
+    // And set the full prime value
+    cardsFullP_[i] = full_in[i];
+    
+  }
+  
+  // We have now read the cards in
+  isCards_ = true;
+  
+  // Completed, return success
+  return 0;
+  
+}
+
+
+
+
+
+int hand::SetCardsFullA(std::vector<int> face_in, std::vector<int> suit_in)
+{
+
+  /*
+    Set the hand cards using two input VECTORS, this routine takes in one vector of the
+    face values and one of the respective suit values.
+
+    This takes in standard face and hand vlaues but also calcualtes the prime values and
+    also sets them.
+
+    Though some error checks are carried out the length of input vectors is not checked, 
+    this is as we wish to reduce cost as much as possible. Therefore, care must be taken 
+    when calling this function as giving arrays of less than 7 may cause unexpected results.
+
+    Error Codes
+    ===========
+      Error codes returned from function, 0 means everything ran smoothly.
+        -1 ::: Invalid card face value outside range of [1,14] given as an input.
+        -2 ::: Invalid card suit value outside range of [1,4] given as an input.
+  */
+
+  // Temporary vector for setting the prime values
+  std::vector<int> setTmp;
+  
+  // Check each card for errors in face or suit value
+  for ( int i=0 ; i<7 ; i++ ) {
+    
+    // If card value is 1, i.e. ace, then switch this to a 14
+    // Also check for invalid card face value
+    // Using switch as it's a bit more verbose but slightly more efficient
+    // than a few if statements
+    switch(face_in[i]) {
+    case 1 : cardsFace_[i] = 14; break;
+    case 2 : cardsFace_[i] =  2; break;
+    case 3 : cardsFace_[i] =  3; break;
+    case 4 : cardsFace_[i] =  4; break;
+    case 5 : cardsFace_[i] =  5; break;
+    case 6 : cardsFace_[i] =  6; break;
+    case 7 : cardsFace_[i] =  7; break;
+    case 8 : cardsFace_[i] =  8; break;
+    case 9 : cardsFace_[i] =  9; break;
+    case 10: cardsFace_[i] = 10; break;
+    case 11: cardsFace_[i] = 11; break;
+    case 12: cardsFace_[i] = 12; break;
+    case 13: cardsFace_[i] = 13; break;
+    case 14: cardsFace_[i] = 14; break;
+    default: return -1; // Error code -1
+    }
+
+    // Check the suit values are valid, i.e. in [1,4]
+    if (suit_in[i]!=1 && suit_in[i]!=2 && suit_in[i]!=3 && suit_in[i]!=4) {
+      return -2; // Error code -2
+    } else {
+      cardsSuit_[i] = suit_in[i];
+    }
+
+    // Get the prime values of the current card
+    setTmp = card2prime(cardsFace_[i],cardsSuit_[i]);
+    cardsFaceP_[i] = setTmp[0];
+    cardsSuitP_[i] = setTmp[1];
+    cardsFullP_[i] = setTmp[2];
+    
+  }
+  
+  // We have now read the cards in
+  isCards_ = true;
+  
+  // Completed, return success
+  return 0;
+  
+}
 
 
 int hand::ASetCards(int hole[2][2], int flop[2][3], int turn[2][1], int river[2][1])
@@ -240,6 +389,8 @@ int hand::SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector
         -2 ::: Invalid card suit value outside range of [1,4] given as an input.
   */
 
+  // Temporary vector for setting the prime values
+  std::vector<int> setTmp;
   int tmp_face;
   int tmp_suit;
   
@@ -314,6 +465,227 @@ int hand::SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector
 
 
 
+int hand::SetCardsP(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> hole_A, \
+		    std::vector<int> flop_F, std::vector<int> flop_S, std::vector<int> flop_A, \
+		    int turn_F,  int turn_S,  int turn_A, \
+		    int river_F, int river_S, int river_A )
+{
+
+  /*
+    Assign the hand from VECTORS containing the hole and flop cards (one for the face _F and
+    the other for the suit _S values, with each ith element of each vector referencing the
+    same card. The turn and river are set with an integer, with one for the face value and the
+    other for the suit.
+  
+    Only set the prime card values in the hand, based on all the inputs, which must be of the
+    prime values only
+
+    This routine also carries out some basic input error checks, but not thourogh ones as it
+    will likely be called multiple times so we need to minimise cost. Note the sizes of input 
+    vectors is not checked (for cost reasons) so we must ensure that the correct sizes arrays
+    are given as inputs otherwise unusual behaviour may result.
+
+    Error Codes
+    ===========
+      Error codes returned from function, 0 means everything ran smoothly.
+        -1 ::: Invalid card face value outside range of [1,14] given as an input.
+        -2 ::: Invalid card suit value outside range of [1,4] given as an input.
+  */
+
+  // Temporary vector for setting the prime values
+  std::vector<int> setTmp;
+  int tmp_face;
+  int tmp_suit;
+  int tmp_full;
+  
+  // Error check for the size ofo the input vectors
+  if (hole_F.size()!=2) {
+    std::cout << "ERROR : Vector input hole_F to SetCardsP of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (hole_S.size()!=2) {
+    std::cout << "ERROR : Vector input hole_S to SetCardsP of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (hole_A.size()!=2) {
+    std::cout << "ERROR : Vector input hole_A to SetCardsP of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_F.size()!=3) {
+    std::cout << "ERROR : Vector input flop_F to SetCardsP of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_S.size()!=3) {
+    std::cout << "ERROR : Vector input flop_S to SetCardsP of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_A.size()!=3) {
+    std::cout << "ERROR : Vector input flop_A to SetCardsP of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  
+  // Check each card for errors in face or suit value
+  for ( int i=0 ; i<7 ; i++ ) {
+
+    // Set temp values by iterating through the hole, flop, turn and river
+    switch(i) {
+    case 0: tmp_face= hole_F[0]; tmp_suit= hole_S[0]; tmp_full= hole_A[0]; break;
+    case 1: tmp_face= hole_F[1]; tmp_suit= hole_S[1]; tmp_full= hole_A[1]; break;
+    case 2: tmp_face= flop_F[0]; tmp_suit= flop_S[0]; tmp_full= flop_A[0]; break;
+    case 3: tmp_face= flop_F[1]; tmp_suit= flop_S[1]; tmp_full= flop_A[1]; break;
+    case 4: tmp_face= flop_F[2]; tmp_suit= flop_S[2]; tmp_full= flop_A[2]; break;
+    case 5: tmp_face= turn_F;    tmp_suit= turn_S;    tmp_full= turn_A;    break;
+    case 6: tmp_face=river_F;    tmp_suit=river_S;    tmp_full=river_A;    break;
+    }
+    
+    // If card value is 1, i.e. ace, then switch this to a 14
+    // Also check for invalid card face value
+    // Using switch as it's a bit more verbose but slightly more efficient
+    // than a few if statements
+    switch(tmp_face) {
+    case 2 : cardsFaceP_[i] = 2 ; break;
+    case 3 : cardsFaceP_[i] = 3 ; break;
+    case 5 : cardsFaceP_[i] = 5 ; break;
+    case 7 : cardsFaceP_[i] = 7 ; break;
+    case 11: cardsFaceP_[i] = 11; break;
+    case 13: cardsFaceP_[i] = 13; break;
+    case 17: cardsFaceP_[i] = 17; break;
+    case 19: cardsFaceP_[i] = 19; break;
+    case 23: cardsFaceP_[i] = 23; break;
+    case 29: cardsFaceP_[i] = 29; break;
+    case 31: cardsFaceP_[i] = 31; break;
+    case 37: cardsFaceP_[i] = 37; break;
+    case 41: cardsFaceP_[i] = 41; break;
+    default: return -1; // Error code -1
+    }
+
+    // Check the suit values are valid, i.e. in [1,4]
+    if (tmp_suit!=2 && tmp_suit!=3 && tmp_suit!=5 && tmp_suit!=7) {
+      return -2; // Error code -2
+    } else {
+      cardsSuitP_[i] = tmp_suit;
+    }
+
+    // And set the full prime card value
+    cardsFullP_[i] = tmp_full;
+    
+  }
+
+  // We have now read the cards in
+  isCards_ = true;
+  
+  // Completed, return success
+  return 0;
+  
+}
+
+
+
+
+
+
+int hand::SetCardsA(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
+		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S)
+{
+
+  /*
+    Assign the hand from VECTORS containing the hole and flop cards (one for the face _F and
+    the other for the suit _S values, with each ith element of each vector referencing the
+    same card. The turn and river are set with an integer, with one for the face value and the
+    other for the suit.
+  
+    This sets both the standard and prime values, calcualting the prime values from the non-
+    prime face and suit input values.
+
+    This routine also carries out some basic input error checks, but not thourogh ones as it
+    will likely be called multiple times so we need to minimise cost. Note the sizes of input 
+    vectors is not checked (for cost reasons) so we must ensure that the correct sizes arrays
+    are given as inputs otherwise unusual behaviour may result.
+
+    Error Codes
+    ===========
+      Error codes returned from function, 0 means everything ran smoothly.
+        -1 ::: Invalid card face value outside range of [1,14] given as an input.
+        -2 ::: Invalid card suit value outside range of [1,4] given as an input.
+  */
+
+  // Temporary vector for setting the prime values
+  std::vector<int> setTmp;
+  int tmp_face;
+  int tmp_suit;
+  
+  // Error check for the size ofo the input vectors
+  if (hole_F.size()!=2) {
+    std::cout << "ERROR : Vector input hole_F to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (hole_S.size()!=2) {
+    std::cout << "ERROR : Vector input hole_S to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_F.size()!=3) {
+    std::cout << "ERROR : Vector input flop_F to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  } else if (flop_S.size()!=3) {
+    std::cout << "ERROR : Vector input flop_S to SetCards of incorrect size" << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  
+  // Check each card for errors in face or suit value
+  for ( int i=0 ; i<7 ; i++ ) {
+
+    // Set temp values by iterating through the hole, flop, turn and river
+    switch(i) {
+    case 0: tmp_face= hole_F[0]; tmp_suit= hole_S[0]; break;
+    case 1: tmp_face= hole_F[1]; tmp_suit= hole_S[1]; break;
+    case 2: tmp_face= flop_F[0]; tmp_suit= flop_S[0]; break;
+    case 3: tmp_face= flop_F[1]; tmp_suit= flop_S[1]; break;
+    case 4: tmp_face= flop_F[2]; tmp_suit= flop_S[2]; break;
+    case 5: tmp_face= turn_F;    tmp_suit= turn_S;    break;
+    case 6: tmp_face=river_F;    tmp_suit=river_S;    break;
+    }
+    
+    // If card value is 1, i.e. ace, then switch this to a 14
+    // Also check for invalid card face value
+    // Using switch as it's a bit more verbose but slightly more efficient
+    // than a few if statements
+    switch(tmp_face) {
+    case 1 : cardsFace_[i] = 14; break;
+    case 2 : cardsFace_[i] =  2; break;
+    case 3 : cardsFace_[i] =  3; break;
+    case 4 : cardsFace_[i] =  4; break;
+    case 5 : cardsFace_[i] =  5; break;
+    case 6 : cardsFace_[i] =  6; break;
+    case 7 : cardsFace_[i] =  7; break;
+    case 8 : cardsFace_[i] =  8; break;
+    case 9 : cardsFace_[i] =  9; break;
+    case 10: cardsFace_[i] = 10; break;
+    case 11: cardsFace_[i] = 11; break;
+    case 12: cardsFace_[i] = 12; break;
+    case 13: cardsFace_[i] = 13; break;
+    case 14: cardsFace_[i] = 14; break;
+    default: return -1; // Error code -1
+    }
+
+    // Check the suit values are valid, i.e. in [1,4]
+    if (tmp_suit!=1 && tmp_suit!=2 && tmp_suit!=3 && tmp_suit!=4) {
+      return -2; // Error code -2
+    } else {
+      cardsSuit_[i] = tmp_suit;
+    }
+
+    // Get the prime values of the current card
+    setTmp = card2prime(cardsFace_[i],cardsSuit_[i]);
+    cardsFaceP_[i] = setTmp[0];
+    cardsSuitP_[i] = setTmp[1];
+    cardsFullP_[i] = setTmp[2];
+    
+  }
+
+  // We have now read the cards in
+  isCards_ = true;
+  
+  // Completed, return success
+  return 0;
+  
+}
+
+
+
+
 
 
 
@@ -337,6 +709,30 @@ std::vector<int> hand::getCardsSuit()
   }
   return getCS; 
 }
+std::vector<int> hand::getCardsFaceP()
+{
+  std::vector<int> getCF(7);
+  for (int i=0; i<7; i++) {
+    getCF[i] = cardsFaceP_[i];
+  }
+  return getCF; 
+}
+std::vector<int> hand::getCardsSuitP()
+{
+  std::vector<int> getCS(7);
+  for (int i=0; i<7; i++) {
+    getCS[i] = cardsSuitP_[i];
+  }
+  return getCS; 
+}
+std::vector<int> hand::getCardsFullP()
+{
+  std::vector<int> getCS(7);
+  for (int i=0; i<7; i++) {
+    getCS[i] = cardsFullP_[i];
+  }
+  return getCS; 
+}
 std::vector<int> hand::getBestFace()
 {
   std::vector<int> getBF(5);
@@ -357,6 +753,10 @@ int hand::getHandCode()
 {
   return handCode;
 }
+int hand::getHandPrimeRank()
+{
+  return handPrimeRank;
+}
 
 
 
@@ -372,7 +772,7 @@ int hand::getHandCode()
 // ith element of cardsSuit_ is the suit of the ith card in cardsFace_
 void hand::sortCards()
 {
-
+  
   std::pair<int, int> cardsFace_suit[7];
   for (int i = 0; i < 7; i++) {
     cardsFace_suit[i].first  = cardsFace_[i];
@@ -410,7 +810,7 @@ int hand::getStraight(int S_cards[], int hand_size)
   // containing Ace then 2, so we have one subsiquent pair before looping if this is the case
   if ( S_cards[0]==2 && S_cards[hand_size-1]==14 ) {
     straight_tmp=1;
-    Si=1;
+    Si=0;
   } else {
     straight_tmp=0;
     Si=0;
@@ -422,6 +822,7 @@ int hand::getStraight(int S_cards[], int hand_size)
     
     // Check difference between adjacent cards sorted by face value
     straight_dif = S_cards[i+1] - S_cards[i];
+
     // If straight_diff==0 then face values are the same, so ignore
     // If straight_diff==1 then we have two subsiquent face values so iterate
     // If straight_diff>1 then non subsiquent face values so reset
@@ -430,7 +831,7 @@ int hand::getStraight(int S_cards[], int hand_size)
     } else if (straight_dif>1) {
       straight_tmp=0;
     }
-
+    
     // If straight_tmp>=4 we have a stright!
     if (straight_tmp>3) {
       gotStraight = true;
@@ -526,8 +927,6 @@ int hand::findBestHand()
       aceInStraight = true;
     }
   }
-
-
 
   /*
     Check for a flush, we return to more calcualtions when we have checked higher hands
@@ -906,4 +1305,28 @@ int hand::findBestHand()
 }
 
 
+
+
+
+/*
+  Find the hand code with the prime method
+*/
+
+int hand::findBestHandP()
+{
+  
+  // Find the vector containing hand code and prime product/sum rank from the lookup table
+  std::vector<long long int> tmpHC;
+  tmpHC = lookupBestHandPrimes(\
+      cardsFullP_[0],cardsFullP_[1],cardsFullP_[2],cardsFullP_[3],cardsFullP_[4],cardsFullP_[5],cardsFullP_[6],
+      cardsFaceP_[0],cardsFaceP_[1],cardsFaceP_[2],cardsFaceP_[3],cardsFaceP_[4],cardsFaceP_[5],cardsFaceP_[6],
+      cardsSuitP_[0],cardsSuitP_[1],cardsSuitP_[2],cardsSuitP_[3],cardsSuitP_[4],cardsSuitP_[5],cardsSuitP_[6]);
+
+  // Set hand code and prime rank
+  handCode = tmpHC[0];
+  handPrimeRank = tmpHC[1];
+
+  return 0;
+  
+}
 

@@ -58,6 +58,14 @@ public:
   std::vector<int> holdFaceKnown;
   std::vector<int> holdSuitKnown;
 
+  // Vectors containing the prime values of face and suit, both known and dealt+known
+  std::vector<int> holdFaceP;
+  std::vector<int> holdSuitP;
+  std::vector<int> holdFullP;
+  std::vector<int> holdFaceKnownP;
+  std::vector<int> holdSuitKnownP;
+  std::vector<int> holdFullKnownP;
+  
   // Total number of wins and drawsfor this player
   int numWins;
   int numDraw;
@@ -95,14 +103,23 @@ private:
   std::vector<hand>   H_; // A vector of HANDS
   std::vector<player> P_; // A vector of PLAYERS
 
-
   // Shared table cards
   std::vector<int> flopF_;
   std::vector<int> flopS_;
+  std::vector<int> flopFP_; // Face prime
+  std::vector<int> flopSP_; // Suit prime
+  std::vector<int> flopAP_; // Full prime
+
   int turnF_;
   int turnS_;
+  int turnFP_;
+  int turnSP_;
+  int turnAP_;
   int riverF_;
   int riverS_;
+  int riverFP_;
+  int riverSP_;
+  int riverAP_;
 
   // Check if shared table cards set
   bool flopSet_;
@@ -170,15 +187,19 @@ public:
   
   // Deal random cards to the flop turn and river (if not currently set)
   int dealFlopTurnRiver();
+  int dealFlopTurnRiverP();
 
   // Deal the hold cards
   int dealHold(int player);
+  int dealHoldP(int player);
   
   // Set the hands arrays by dealing random cards to `fill up' hold cards
   int dealAll();
+  int dealAllP();
 
   // Find who won and with what
   int findWinner();
+  int findWinnerP();
 
   // Find the highest card at a given index over all the best hands in the H_ hands with
   // a given hand code. Also count the number of times this card occurs with the given
@@ -196,6 +217,7 @@ public:
 
   // Run Monte Carlo
   void MC(int numMC);
+  void MCP(int numMC);
   
   // Get functions
   std::vector<int>    getPlayerHoldFace(int PlayerPP);

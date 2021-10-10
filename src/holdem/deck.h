@@ -70,6 +70,8 @@ public:
   // Deal cards to dealFace_ and dealSuit_. Note: This destroys the vectors if they
   // have previously been set
   int dealCards(int numToDeal);
+  int dealCardsP(int numToDeal);
+  int dealCardsA(int numToDeal);
   void remDealtCards();
 
   // Iterate the number of cards in the deck (used for resets)
@@ -95,5 +97,8 @@ public:
   std::vector<int> getDealSuit();
   
 };
+
+// Convert the input card to it's requisite prime values
+std::vector<int> card2prime(int inFace,int inSuit);
 
 #endif
