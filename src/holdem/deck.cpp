@@ -376,7 +376,8 @@ void deck::shuffleI()
 
 
 
-int deck::dealCards(int numToDeal)
+
+int deck::dealCardsA(int numToDeal)
 {
 
   /*
@@ -384,6 +385,8 @@ int deck::dealCards(int numToDeal)
     Deal N cards from the deck, this is done by just pulling the last N cards from the deck
     based on the indexes in deckIndex_. So if deckIndex_ has not been shuffled the cards will
     not be randomised.
+
+    This deals both prime and stadard values
 
     NOTE: If numCards_ is incorrectly set, or the shuffle was done when numCards_ is larger 
           than it currently is this routine may deal cards that are no longer in the deck.
@@ -434,6 +437,129 @@ int deck::dealCards(int numToDeal)
   return 0; // Success!!
   
 }
+
+
+
+
+
+int deck::dealCards(int numToDeal)
+{
+
+  /*
+
+    Deal N cards from the deck, this is done by just pulling the last N cards from the deck
+    based on the indexes in deckIndex_. So if deckIndex_ has not been shuffled the cards will
+    not be randomised.
+
+    This does not deal prime values.
+
+    NOTE: If numCards_ is incorrectly set, or the shuffle was done when numCards_ is larger 
+          than it currently is this routine may deal cards that are no longer in the deck.
+	  This could be avoided with an error check, however this would increace the cost
+	  of this routine.
+
+    NOTE: As we wish to return two sets of values (as vectors) a vector of face values and
+          a vector of relevant suit values we actually set the class based variables dealFace_
+	  and dealSuit_, which are private and in their raw state must be accessed with the
+	  get functions getDealFace and getDealSuit
+
+    RETURNS:
+    --------
+        0  :: Success
+	-1 :: Number of cards requested from deal greater than number of cards left in deck
+
+   */
+  
+  // If we have previously dealt then destroy the deal vectors
+  if (dealDone_==true) {
+    dealFace_.clear();
+    dealSuit_.clear();
+  }
+
+  // If the number of cards asked to deal is more than that left in deck return with an error
+  if (numCards_<numToDeal) {
+    std::cout << "ERROR : Number of cards to deal using dealCards more than the cards left in the deck.";
+    exit (EXIT_FAILURE);
+  }
+
+  
+  // Now deal the cards, starting from the end of the shuffled index array
+  for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {
+    dealFace_.push_back(deckFace_[deckIndex_[i]]);
+    dealSuit_.push_back(deckSuit_[deckIndex_[i]]);
+  }
+
+  // Update general and return success
+  numDealt_ = numToDeal;
+  numCards_ = numCards_ - numToDeal;
+  dealDone_ = true;
+  return 0; // Success!!
+  
+}
+
+
+
+
+
+int deck::dealCardsP(int numToDeal)
+{
+
+  /*
+
+    Deal N cards from the deck, this is done by just pulling the last N cards from the deck
+    based on the indexes in deckIndex_. So if deckIndex_ has not been shuffled the cards will
+    not be randomised.
+
+    This deals just prime and not standard values
+
+    NOTE: If numCards_ is incorrectly set, or the shuffle was done when numCards_ is larger 
+          than it currently is this routine may deal cards that are no longer in the deck.
+	  This could be avoided with an error check, however this would increace the cost
+	  of this routine.
+
+    NOTE: As we wish to return two sets of values (as vectors) a vector of face values and
+          a vector of relevant suit values we actually set the class based variables dealFace_
+	  and dealSuit_, which are private and in their raw state must be accessed with the
+	  get functions getDealFace and getDealSuit
+
+    RETURNS:
+    --------
+        0  :: Success
+	-1 :: Number of cards requested from deal greater than number of cards left in deck
+
+   */
+  
+  // If we have previously dealt then destroy the deal vectors
+  if (dealDone_==true) {
+    dealFaceP_.clear();
+    dealSuitP_.clear();
+    dealFullP_.clear();
+  }
+
+  // If the number of cards asked to deal is more than that left in deck return with an error
+  if (numCards_<numToDeal) {
+    std::cout << "ERROR : Number of cards to deal using dealCards more than the cards left in the deck.";
+    exit (EXIT_FAILURE);
+  }
+
+  
+  // Now deal the cards, starting from the end of the shuffled index array
+  for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {
+    dealFaceP_.push_back(deckFaceP_[deckIndex_[i]]);
+    dealSuitP_.push_back(deckSuitP_[deckIndex_[i]]);
+    dealFullP_.push_back(deckFullP_[deckIndex_[i]]);
+  }
+
+  // Update general and return success
+  numDealt_ = numToDeal;
+  numCards_ = numCards_ - numToDeal;
+  dealDone_ = true;
+  return 0; // Success!!
+  
+}
+
+
+
 
  
 

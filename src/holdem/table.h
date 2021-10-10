@@ -112,8 +112,14 @@ private:
 
   int turnF_;
   int turnS_;
+  int turnFP_;
+  int turnSP_;
+  int turnAP_;
   int riverF_;
   int riverS_;
+  int riverFP_;
+  int riverSP_;
+  int riverAP_;
 
   // Check if shared table cards set
   bool flopSet_;
@@ -181,12 +187,15 @@ public:
   
   // Deal random cards to the flop turn and river (if not currently set)
   int dealFlopTurnRiver();
+  int dealFlopTurnRiverP();
 
   // Deal the hold cards
   int dealHold(int player);
+  int dealHoldP(int player);
   
   // Set the hands arrays by dealing random cards to `fill up' hold cards
   int dealAll();
+  int dealAllP();
 
   // Find who won and with what
   int findWinner();

@@ -411,6 +411,8 @@ int table::dealFlopTurnRiver()
 
     Deal the flop, turn and river arrays for the table if they aren't currently setflop
 
+    NON-PRIMES ONLY
+
     RETURNS
     =======
         0 :: Success!
@@ -441,9 +443,6 @@ int table::dealFlopTurnRiver()
     for (int FTRi=0; FTRi<3; FTRi++) {      
       flopF_.push_back(D_.dealFace_[FTRiter]);
       flopS_.push_back(D_.dealSuit_[FTRiter]);
-      flopFP_.push_back(D_.dealFaceP_[FTRiter]);
-      flopSP_.push_back(D_.dealSuitP_[FTRiter]);
-      flopAP_.push_back(D_.dealFullP_[FTRiter]);
       FTRiter++;
     }
     flopDealt_=true;
@@ -452,9 +451,6 @@ int table::dealFlopTurnRiver()
   if (turnDealt_==false) {
     turnF_   = D_.dealFace_[FTRiter];
     turnS_   = D_.dealSuit_[FTRiter];
-    flopFP_.push_back(D_.dealFaceP_[FTRiter]);
-    flopSP_.push_back(D_.dealSuitP_[FTRiter]);
-    flopAP_.push_back(D_.dealFullP_[FTRiter]);
     turnDealt_ = true;
     FTRiter++;
   }
@@ -462,9 +458,6 @@ int table::dealFlopTurnRiver()
   if (riverDealt_==false) {
     riverF_   = D_.dealFace_[FTRiter];
     riverS_   = D_.dealSuit_[FTRiter];
-    flopFP_.push_back(D_.dealFaceP_[FTRiter]);
-    flopSP_.push_back(D_.dealSuitP_[FTRiter]);
-    flopAP_.push_back(D_.dealFullP_[FTRiter]);
     riverDealt_ = true;
   }
   
@@ -481,6 +474,8 @@ int table::dealHold(int player)
   /*
 
     Deal the hold cards to the current player, that is if any cards are needed to be dealt
+
+    NON-PRIMES ONLY
 
     RETURNS
     =======
@@ -512,9 +507,6 @@ int table::dealHold(int player)
   for (int np=P_[player].numHoldDealt; np<2; np++) {
     P_[player].holdFace.push_back(D_.dealFace_[dealIter]);
     P_[player].holdSuit.push_back(D_.dealSuit_[dealIter]);
-    P_[player].holdFaceP.push_back(D_.dealFaceP_[dealIter]);
-    P_[player].holdSuitP.push_back(D_.dealSuitP_[dealIter]);
-    P_[player].holdFullP.push_back(D_.dealFullP_[dealIter]);
     P_[player].numHoldDealt++;
     dealIter++;
   }
@@ -532,6 +524,8 @@ int table::dealAll()
   /*
  
     Deal cards to all hands.
+
+    NON-PRIMES ONLY
 
     This routine starts by dealing the flop, turn and river (if they are not already dealt).
     It then assigns each hand using the flop turn and river, taking any known hold cards and 
@@ -1133,7 +1127,162 @@ int table::findWinner()
 
 
 
+int table::dealFlopTurnRiverP()
+{
 
+  /*
+
+    Deal the flop, turn and river arrays for the table if they aren't currently setflop
+
+    ONLY DEAL PRIME CARD VALUES.
+
+    RETURNS
+    =======
+        0 :: Success!
+	1 :: Nothing to do, the turn, flop and river are set. So sort of success...
+
+  */
+  
+  // If the flop, turn and river are set, then there is nothing left to do, so stop here
+  if (flopDealt_==true && turnDealt_==true && riverDealt_==true) return 1;
+
+  // If cards not shuffled, then shuffle
+  if (D_.getDeckShuffled()==false) D_.shuffleI();
+  
+  // Then find the number of cards we need to add, and deal these out to the deck class arrays
+  // dealFace_ and dealSuit_
+  int numToDeal=0;
+  if (flopDealt_==false)  numToDeal+=3;
+  if (turnDealt_==false)  numToDeal++;
+  if (riverDealt_==false) numToDeal++;
+
+  // Now deal out the number of required cards to the dealFace_ and dealSuit_ and respective prime arrays
+  D_.dealCardsP(numToDeal);
+  
+  // Set the cards from the single dealt array of numToDeal cards
+  int FTRiter=0;
+  // Start with the flop
+  if (flopDealt_==false) {
+    for (int FTRi=0; FTRi<3; FTRi++) {      
+      flopFP_.push_back(D_.dealFaceP_[FTRiter]);
+      flopSP_.push_back(D_.dealSuitP_[FTRiter]);
+      flopAP_.push_back(D_.dealFullP_[FTRiter]);
+      FTRiter++;
+    }
+    flopDealt_=true;
+  }
+  // Then the turn
+  if (turnDealt_==false) {
+    turnFP_ = D_.dealFaceP_[FTRiter];
+    turnSP_ = D_.dealSuitP_[FTRiter];
+    turnAP_ = D_.dealFullP_[FTRiter];
+    turnDealt_ = true;
+    FTRiter++;
+  }
+  // Finally the river
+  if (riverDealt_==false) {
+    riverFP_ = D_.dealFaceP_[FTRiter];
+    riverSP_ = D_.dealSuitP_[FTRiter];
+    riverAP_ = D_.dealFullP_[FTRiter];
+    riverDealt_ = true;
+  }
+  
+  return 0;
+  
+}
+
+int table::dealHoldP(int player)
+{
+
+  /*
+
+    Deal the hold cards to the current player, that is if any cards are needed to be dealt
+
+    ONLY DEAL PRIME CARD VALUES.
+
+    RETURNS
+    =======
+        0  :: Success!
+	1  :: Nothing to do, the turn, flop and river are set. So sort of success...
+	-1 :: Player to deal hold to not at table
+
+  */
+
+  // If we have 2 cards in the hold then exit, we can't deal any more
+  if (P_[player].numHoldDealt==2) return 1;
+
+  // Check desired player is at the table
+  if (player>=noPlayers_) return -1;
+  
+  // If cards not shuffled, then shuffle
+  if (D_.getDeckShuffled()==false) D_.shuffleI();
+  
+  // Then find the number of cards we need to add, and deal these out to the deck class arrays
+  // dealFace_ and dealSuit_
+  int numToDeal;
+  numToDeal = 2-P_[player].numHoldDealt;
+
+  if (numToDeal>0) {
+  
+    // Now deal out the number of required cards to the dealFace_ and dealSuit_ arrays
+    D_.dealCardsP(numToDeal);
+  
+    // Now set the hold cards for the given player
+    int dealIter = 0;
+    for (int np=P_[player].numHoldDealt; np<2; np++) {
+      P_[player].holdFaceP.push_back(D_.dealFaceP_[dealIter]);
+      P_[player].holdSuitP.push_back(D_.dealSuitP_[dealIter]);
+      P_[player].holdFullP.push_back(D_.dealFullP_[dealIter]);
+      P_[player].numHoldDealt++;
+      dealIter++;
+    }
+
+  }
+  
+  return 0;
+  
+}
+
+int table::dealAllP()
+{
+
+  /*
+ 
+    Deal cards to all hands.
+
+    ONLY DEAL PRIME CARD VALUES.
+
+    This routine starts by dealing the flop, turn and river (if they are not already dealt).
+    It then assigns each hand using the flop turn and river, taking any known hold cards and 
+    combining with some randomly dealt cards to fill all unknown holds.
+
+  */
+
+  int dStat; // deal status
+
+  // Set the deck index before dealing
+  D_.setDeckIndex(D_.getNumCards());
+
+  // Shuffle cards before dealing things out
+  D_.shuffleI();
+  
+  // Initially check if the flop turn and river are set, if not this routine sets them
+  dStat = dealFlopTurnRiverP();
+  
+  // Now deal up all the players hold cards, and after this set the players full hand (including the
+  // flop, turn and river
+  for (int p=0; p<noPlayers_; p++) {
+    dealHoldP(p);
+    H_[p].SetCardsP(P_[p].holdFaceP, P_[p].holdSuitP, P_[p].holdFullP,	\
+		    flopFP_,  flopSP_,  flopAP_, \
+		    turnFP_,  turnSP_,  turnAP_, \
+		    riverFP_, riverSP_, riverAP_);
+  }
+  
+  handsDealt_=true;
+  return 0; // Success
+  
+}
 
 int table::findWinnerP()
 {
@@ -1377,6 +1526,9 @@ int table::resetTableToKnown()
       flopDealt_=false;
       flopF_.clear();
       flopS_.clear();
+      flopFP_.clear();
+      flopSP_.clear();
+      flopAP_.clear();
       D_.itNumCardsInDeck(3);
     }
   }
@@ -1385,6 +1537,9 @@ int table::resetTableToKnown()
       turnDealt_=false;
       turnF_=-1;
       turnS_=-1;
+      turnSP_=-1;
+      turnFP_=-1;
+      turnAP_=-1;
       D_.itNumCardsInDeck(1);
     }
   }
@@ -1393,6 +1548,9 @@ int table::resetTableToKnown()
       riverDealt_=false;
       riverF_=-1;
       riverS_=-1;
+      riverFP_=-1;
+      riverSP_=-1;
+      riverAP_=-1;
       D_.itNumCardsInDeck(1);
     }
   }
@@ -1530,7 +1688,7 @@ void table::MCP(int numMC)
   int MCstat;
   
   for (int Nmc=0; Nmc<numMC; Nmc++) {
-    MCstat = dealAll();
+    MCstat = dealAllP();
     MCstat = findWinnerP();
     MCstat = resetTableToKnown();
   }

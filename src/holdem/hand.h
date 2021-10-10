@@ -78,7 +78,7 @@ public:
      8 - Four of a Kind:
          Last 4 elements of array are the 4 of a kind cards and first is the odd one
 	 e.g. face values in order { 3, 6, 6, 6, 6 }
-p
+
      7 - Full House:
          The three of a kind elemnts are the last in the array
 	 e.g. face values in order { 3, 3, 6, 6, 6 }
@@ -143,8 +143,16 @@ p
 
   // Set the cards using VECTORS
   int SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in);
+  int SetCardsFullA(std::vector<int> face_in, std::vector<int> suit_in);
+  int SetCardsFullP(std::vector<int> face_in, std::vector<int> suit_in, std::vector<int> full_in);
   int SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
 		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
+  int SetCardsA(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
+		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
+  int SetCardsP(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> hole_A, \
+		std::vector<int> flop_F, std::vector<int> flop_S, std::vector<int> flop_A, \
+		int turn_F,  int turn_S,  int turn_A, \
+		int river_F, int river_S, int river_A );
   
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
   int findBestHand();  // Find and populate the best hand and populate bestFace_ and bestSuit_
