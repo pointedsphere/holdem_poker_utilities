@@ -1392,12 +1392,12 @@ int table::dealAllI()
   D_.shuffleI();
   
   // Initially check if the flop turn and river are set, if not this routine sets them
-  dStat = dealFlopTurnRiverP();
+  dStat = dealFlopTurnRiverI();
   
   // Now deal up all the players hold cards, and after this set the players full hand (including the
   // flop, turn and river
   for (int p=0; p<noPlayers_; p++) {
-    dealHoldP(p);
+    dealHoldI(p);
   }
   
   handsDealt_=true;
