@@ -368,8 +368,16 @@ void deck::shuffleI()
           here.
   */
   
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  shuffle(deckIndex_.begin(), deckIndex_.end(), std::default_random_engine(seed));
+  // unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  // shuffle(deckIndex_.begin(), deckIndex_.end(), std::default_random_engine(seed));
+
+  // create a C++ random engine, seeded with the system clock
+  std::default_random_engine \
+    rng(static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count()));
+   
+  // shuffle the deck
+  std::shuffle(deckIndex_.begin(), deckIndex_.end(), rng);
+
   deckShuffled_ = true;
   
 }
