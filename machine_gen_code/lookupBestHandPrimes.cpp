@@ -317,7 +317,7 @@ const std::unordered_map< long long int, const handDat > RSF =
 
 // An unordered map containing the four of a kind and full house data
 // (this uses only the face values)
-const std::unordered_map< long int, const handDat > FKFH =
+const std::unordered_map< long long int, const handDat > FKFH =
 {
   { 1800 , { 7 , 8196 } },
   { 2520 , { 7 , 8194 } },
@@ -14496,7 +14496,7 @@ const std::unordered_map< long int, const handDat > FKFH =
 
 // An unordered map containing just the flush data
 // (this uses only the face values)
-const std::unordered_map< long int, const handDat > Fl =
+const std::unordered_map< long long int, const handDat > Fl =
 {
   { 2310 , { 6 , 9 } },
   { 2730 , { 6 , 13 } },
@@ -19224,7 +19224,7 @@ const std::unordered_map< long int, const handDat > Fl =
 
 // An unordered map containing just the flush data
 // (this uses only the face values)
-const std::unordered_map< long int, const handDat > RemHands =
+const std::unordered_map< long long int, const handDat > RemHands =
 {
   { 92820 , { 2 , 8296 } },
   { 103740 , { 2 , 8360 } },
@@ -54266,7 +54266,7 @@ const std::unordered_map< long int, const handDat > RemHands =
 
 
 
-std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int AP4, int AP5, int AP6, int AP7,\
+std::vector<long long int> lookupBestHandPrimes(\
                                                 int FP1, int FP2, int FP3, int FP4, int FP5, int FP6, int FP7,\
                                                 int SP1, int SP2, int SP3, int SP4, int SP5, int SP6, int SP7) 
 {
@@ -54318,9 +54318,7 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
 
   std::unordered_map<long long int, const handDat >::const_iterator itll;
 
-  std::unordered_map<long int, const handDat >::const_iterator itl;
-
-    long int FaceProd = 0;
+  long long int FaceProd = 0;
 
   /*
     We first check for a flush as thsi requires a trivial amount of switch cases and will allow
@@ -54333,8 +54331,7 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
 
   // Calculate the product value required for the flush hands from suit primes,
   // I.e. product of card values from the ``suit prime'' deck.
-  int SuitProd = SP1 * SP2 * SP3  \
-    * SP4 * SP5 * SP6 * SP7;
+  int SuitProd = SP1 * SP2 * SP3 * SP4 * SP5 * SP6 * SP7;
 
   // Then use a swich statement over all the possible full houses and 4 of a kinds.
   // Note: If we find one the function exits in this switch.
@@ -54397,17 +54394,17 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
     NOTE: we only check if there is some form of flush.
   */
 
-  long int FlushProd = (long)1;
+  long long int FlushProd = (long long)1;
   // Only check for a striaght/royal flush if we have a flush of some sort.
   if (gotFlush==true) {
 
-    if (SP1==flushSuit) FlushProd = FlushProd * FP1;
-    if (SP2==flushSuit) FlushProd = FlushProd * FP2;
-    if (SP3==flushSuit) FlushProd = FlushProd * FP3;
-    if (SP4==flushSuit) FlushProd = FlushProd * FP4;
-    if (SP5==flushSuit) FlushProd = FlushProd * FP5;
-    if (SP6==flushSuit) FlushProd = FlushProd * FP6;
-    if (SP7==flushSuit) FlushProd = FlushProd * FP7;
+    if (SP1==flushSuit) FlushProd = FlushProd * (long long)FP1;
+    if (SP2==flushSuit) FlushProd = FlushProd * (long long)FP2;
+    if (SP3==flushSuit) FlushProd = FlushProd * (long long)FP3;
+    if (SP4==flushSuit) FlushProd = FlushProd * (long long)FP4;
+    if (SP5==flushSuit) FlushProd = FlushProd * (long long)FP5;
+    if (SP6==flushSuit) FlushProd = FlushProd * (long long)FP6;
+    if (SP7==flushSuit) FlushProd = FlushProd * (long long)FP7;
 
     // Note: If we find one the function exits after searching for the straight royal flush.
 
@@ -54429,25 +54426,25 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
 
 
 
-    /*
+  /*
     We now check for four of a kind and full house, this requires the prime product from the
     prime face values of the cards only.
   */
 
   // Calculate the product value required for the four of a kind and full house hands,
   // I.e. product of card values from the ``face prime'' deck.
-  FaceProd = (long)FP1 * (long)FP2 * (long)FP3\
-    * (long)FP4 * (long)FP5 * (long)FP6 * (long)FP7;
+  FaceProd = (long long)FP1 * (long long)FP2 * (long long)FP3\
+    * (long long)FP4 * (long long)FP5 * (long long)FP6 * (long long)FP7;
 
   // Then search the unordered list FKFH for any four of a kind or full houses.
   // Note: If we find one the function exits here.
   // Serch the four of kind and full house unordered_map
-  itl = FKFH.find(FaceProd);
+  itll = FKFH.find(FaceProd);
 
   // Then record and return the two values if we find them, if not keep checking
-  if (itl != FKFH.end()) {
-    HCvec.push_back(itl->second.HC);
-    HCvec.push_back(itl->second.MFVP);
+  if (itll != FKFH.end()) {
+    HCvec.push_back(itll->second.HC);
+    HCvec.push_back(itll->second.MFVP);
     return HCvec;
   }
 
@@ -54459,7 +54456,7 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
 
 
 
-    /*
+  /*
     We now check for a flush, using boolean from previous check.
     I.e. only run this check if we have a flush.
   */
@@ -54468,12 +54465,12 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
   if (gotFlush==true) {
 
     // Serch the flush unordered_map
-    itl = Fl.find(FlushProd);
+    itll = Fl.find(FlushProd);
 
     // Then record and return the two values if we find them, if not keep checking
-    if (itl != Fl.end()) {
-      HCvec.push_back(itl->second.HC);
-      HCvec.push_back(itl->second.MFVP);
+    if (itll != Fl.end()) {
+      HCvec.push_back(itll->second.HC);
+      HCvec.push_back(itll->second.MFVP);
       return HCvec;
     } else {
       std::cout << std::endl 
@@ -54492,7 +54489,7 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
 
 
 
-    /*
+  /*
     We now check for a straight, 3 of a kind, 2 pair and pair. If we can't find these hands
     then the only option left is a high card.
   */
@@ -54501,12 +54498,12 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
   // Then search all the possible straight, 2 of a kind, two pair, pair and high card hands.
   // Note: If we find one the function exits here.
   // Serch the remaining hands unordered_map
-  itl = RemHands.find(FaceProd);
+  itll = RemHands.find(FaceProd);
 
   // Then record and return the two values if we find them, if not keep checking
-  if (itl != RemHands.end()) {
-    HCvec.push_back(itl->second.HC);
-    HCvec.push_back(itl->second.MFVP);
+  if (itll != RemHands.end()) {
+    HCvec.push_back(itll->second.HC);
+    HCvec.push_back(itll->second.MFVP);
     return HCvec;
   }
 
@@ -54522,23 +54519,18 @@ std::vector<long long int> lookupBestHandPrimes(int AP1, int AP2, int AP3, int A
     If we have made it this far the only option left is that we have failed.
   */
 
-  long long int AllProdErr = (long long)AP1 * (long long)AP2 * (long long)AP3\
-    * (long long)AP4 * (long long)AP5 * (long long)AP6 * (long long)AP7;
-
   std::cout << "ERROR : Unable to find a hand from given cards" << std::endl;
   std::cout << "        Current product values are:" << std::endl;
   std::cout << "          Face product : " << FaceProd    << std::endl;
   std::cout << "          Suit product : " << SuitProd    << std::endl;
-  std::cout << "          Full product : " <<  AllProdErr << std::endl;
-
   std::cout << "        Current card prime values are:" << std::endl;
-    std::cout << "        Face prime: " << FP1              << "        Suit prime: " << SP1              << "        Full prime: " << AP1              << std::endl;
-    std::cout << "        Face prime: " << FP2              << "        Suit prime: " << SP2              << "        Full prime: " << AP2              << std::endl;
-    std::cout << "        Face prime: " << FP3              << "        Suit prime: " << SP3              << "        Full prime: " << AP3              << std::endl;
-    std::cout << "        Face prime: " << FP4              << "        Suit prime: " << SP4              << "        Full prime: " << AP4              << std::endl;
-    std::cout << "        Face prime: " << FP5              << "        Suit prime: " << SP5              << "        Full prime: " << AP5              << std::endl;
-    std::cout << "        Face prime: " << FP6              << "        Suit prime: " << SP6              << "        Full prime: " << AP6              << std::endl;
-    std::cout << "        Face prime: " << FP7              << "        Suit prime: " << SP7              << "        Full prime: " << AP7              << std::endl;
+    std::cout << "        Face prime: " << FP1              << "        Suit prime: " << SP1              << std::endl;
+    std::cout << "        Face prime: " << FP2              << "        Suit prime: " << SP2              << std::endl;
+    std::cout << "        Face prime: " << FP3              << "        Suit prime: " << SP3              << std::endl;
+    std::cout << "        Face prime: " << FP4              << "        Suit prime: " << SP4              << std::endl;
+    std::cout << "        Face prime: " << FP5              << "        Suit prime: " << SP5              << std::endl;
+    std::cout << "        Face prime: " << FP6              << "        Suit prime: " << SP6              << std::endl;
+    std::cout << "        Face prime: " << FP7              << "        Suit prime: " << SP7              << std::endl;
   exit (EXIT_FAILURE);
 
   return HCvec;
