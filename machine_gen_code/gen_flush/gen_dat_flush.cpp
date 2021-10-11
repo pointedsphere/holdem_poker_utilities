@@ -78,6 +78,7 @@ int main() {
   // The output arrays
   std::vector<int>           outHandCode;
   std::vector<long long int> outPrimeProduct;
+  std::vector<int>           outFlushSuit;
 
   // Keep track of array size
   int arrSize = 0;
@@ -145,7 +146,23 @@ int main() {
 			      count5 = std::count(tmpArr.begin(), tmpArr.end(), 5);
 			      count7 = std::count(tmpArr.begin(), tmpArr.end(), 7);
 			      
-			      if (count2>4 || count3>4 || count5>4 || count7>4) {
+			      if (count2>4) {
+				outFlushSuit.push_back(2);      // Flush suit out
+				outHandCode.push_back(6);       // Hand code 6 for flush
+				outPrimeProduct.push_back(tmp); // Prime product that gives flush
+				arrSize++;                      // And keep track of size of arrays
+			      } else if (count3>4) {
+				outFlushSuit.push_back(3);      // Flush suit out
+				outHandCode.push_back(6);       // Hand code 6 for flush
+				outPrimeProduct.push_back(tmp); // Prime product that gives flush
+				arrSize++;                      // And keep track of size of arrays
+			      } else if (count5>4) {
+				outFlushSuit.push_back(5);      // Flush suit out
+				outHandCode.push_back(6);       // Hand code 6 for flush
+				outPrimeProduct.push_back(tmp); // Prime product that gives flush
+				arrSize++;                      // And keep track of size of arrays
+			      } else if (count7>4) {
+				outFlushSuit.push_back(7);      // Flush suit out
 				outHandCode.push_back(6);       // Hand code 6 for flush
 				outPrimeProduct.push_back(tmp); // Prime product that gives flush
 				arrSize++;                      // And keep track of size of arrays
@@ -172,11 +189,12 @@ int main() {
     // Write the output hand codes and prime products
     
     for (int o=0; o<arrSize; o++) {
-      outfile << outPrimeProduct[o] << " , " << outHandCode[o] << "\n";
+      outfile << outPrimeProduct[o] << " , " << outHandCode[o] << " , " << outFlushSuit[o] << "\n";
     }
     // Written this data so clear arrays before next `a' loop
     outHandCode.clear();
     outPrimeProduct.clear();
+    outFlushSuit.clear();
     arrSize=0;
   }
 
@@ -206,6 +224,8 @@ int main() {
   int sCtr;
   bool gotS;
   int sDiff;
+  int flushSuit;
+  int tmpSum;
   
   // Allow for opening of output file
   outfile.open ("flush_face.dat");
@@ -259,10 +279,21 @@ int main() {
 			    // Only bother checking anything if we have a flush
 			    if (count2>4 || count3>4 || count5>4 || count7>4) {
 
+			      if (count2>4) flushSuit = 2;
+			      if (count3>4) flushSuit = 3;
+			      if (count5>4) flushSuit = 5;
+			      if (count7>4) flushSuit = 7;
+			      
 			      // Calculate the prime product of the face values of the cards
-			      tmp = (long)primeFace[a] * (long)primeFace[b] * (long)primeFace[c] \
-				* (long)primeFace[d] * (long)primeFace[e] * (long)primeFace[f] \
-				* (long)primeFace[g];
+			      // Only considering the face values of the cards in the flush
+			      tmp = 1;
+			      if (primeSuit[a]==flushSuit) tmp = tmp * (long)primeFace[a];
+			      if (primeSuit[b]==flushSuit) tmp = tmp * (long)primeFace[b];
+			      if (primeSuit[c]==flushSuit) tmp = tmp * (long)primeFace[c];
+			      if (primeSuit[d]==flushSuit) tmp = tmp * (long)primeFace[d];
+			      if (primeSuit[e]==flushSuit) tmp = tmp * (long)primeFace[e];
+			      if (primeSuit[f]==flushSuit) tmp = tmp * (long)primeFace[f];
+			      if (primeSuit[g]==flushSuit) tmp = tmp * (long)primeFace[g];
 			      
 			      // Only consider further if we have not considred this prime product
 			      if (std::find(primeProd.begin(), primeProd.end(), tmp) == primeProd.end()) {
@@ -270,58 +301,69 @@ int main() {
 				// Append current prime product to the array of considered prime product
 				primeProd.push_back(tmp);
 
-				// Check to see if there's a straight (as we will have already considered
-				// straight flushes)
+				// // Check to see if there's a straight (as we will have already considered
+				// // straight flushes)
 
-				// First copy out the face values
-				faceTmp.push_back(cardFace[a]);
-				faceTmp.push_back(cardFace[b]);
-				faceTmp.push_back(cardFace[c]);
-				faceTmp.push_back(cardFace[d]);
-				faceTmp.push_back(cardFace[e]);
-				faceTmp.push_back(cardFace[f]);
-				faceTmp.push_back(cardFace[g]);
+				// // First copy out the face values
+				// faceTmp.push_back(cardFace[a]);
+				// faceTmp.push_back(cardFace[b]);
+				// faceTmp.push_back(cardFace[c]);
+				// faceTmp.push_back(cardFace[d]);
+				// faceTmp.push_back(cardFace[e]);
+				// faceTmp.push_back(cardFace[f]);
+				// faceTmp.push_back(cardFace[g]);
 				
-				// Then order the face temp array
-				std::sort(faceTmp.begin(),faceTmp.end());
+				// // Then order the face temp array
+				// std::sort(faceTmp.begin(),faceTmp.end());
 				
-				// Check for straight
-				sCtr = 0;
-				gotS = false;
-				for (int i=0; i<6; i++) {
-				  // Next check if two cards are sequential and add to straight counter
-				  sDiff = faceTmp[i+1]-faceTmp[i];
-				  if (sDiff==1) {
-				    sCtr++;
-				  } else {
-				    sCtr=0;
-				  }
-				  // Then if we have 5 or more sequential cards (note sCtr is a counter
-				  // of gaps between sequential cards) then note we have straight
-				  if (sCtr>3) gotS=true;
-				}
+				// // Check for straight
+				// sCtr = 0;
+				// gotS = false;
+				// for (int i=0; i<6; i++) {
+				//   // Next check if two cards are sequential and add to straight counter
+				//   sDiff = faceTmp[i+1]-faceTmp[i];
+				//   if (sDiff==1) {
+				//     sCtr++;
+				//   } else {
+				//     sCtr=0;
+				//   }
+				//   // Then if we have 5 or more sequential cards (note sCtr is a counter
+				//   // of gaps between sequential cards) then note we have straight
+				//   if (sCtr>3) gotS=true;
+				// }
 				
-				// Only record the flush if we dont also have a straight
-				if (gotS==false) {
+				// // Only record the flush if we dont also have a straight
+				// if (gotS==false) {
 
-				  outHandMFVP.push_back(\
-							(long)intPow(2,a-2)\
-							+ (long)intPow(2,b-2)\
-							+ (long)intPow(2,c-2)\
-							+ (long)intPow(2,d-2)\
-							+ (long)intPow(2,e-2)\
-							+ (long)intPow(2,f-2)\
-							+ (long)intPow(2,g-2) );
-				  outHandCode.push_back(6);       // Hand code 6 for flush
-				  outPrimeProduct.push_back(tmp); // Prime product that gives flush
-				  arrSize++;                      // And keep track of size of arrays
+				tmpSum = 0;
+				if (primeSuit[a]==flushSuit) tmpSum += (long)intPow(2,a-2);
+				if (primeSuit[b]==flushSuit) tmpSum += (long)intPow(2,b-2);
+				if (primeSuit[c]==flushSuit) tmpSum += (long)intPow(2,c-2);
+				if (primeSuit[d]==flushSuit) tmpSum += (long)intPow(2,d-2);
+				if (primeSuit[e]==flushSuit) tmpSum += (long)intPow(2,e-2);
+				if (primeSuit[f]==flushSuit) tmpSum += (long)intPow(2,f-2);
+				if (primeSuit[g]==flushSuit) tmpSum += (long)intPow(2,g-2);
+				
+				// outHandMFVP.push_back(\
+				// 		      (long)intPow(2,a-2)\
+				// 		      + (long)intPow(2,b-2)\
+				// 		      + (long)intPow(2,c-2)\
+				// 		      + (long)intPow(2,d-2)\
+				// 		      + (long)intPow(2,e-2)\
+				// 		      + (long)intPow(2,f-2)\
+				// 		      + (long)intPow(2,g-2) );
+
+				outHandMFVP.push_back(tmpSum);
+				outHandCode.push_back(6);       // Hand code 6 for flush
+				outPrimeProduct.push_back(tmp); // Prime product that gives flush
+				arrSize++;                      // And keep track of size of arrays
 				  
-				}
+				// }
 				
-				// If not straight then write to file
+				// // If not straight then write to file
 				
-				// And empty data for next loop
-				faceTmp.clear();
+				// // And empty data for next loop
+				// faceTmp.clear();
 				
 			      }			      
 
