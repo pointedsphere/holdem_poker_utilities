@@ -54476,6 +54476,18 @@ std::vector<long long int> lookupBestHandPrimes(\
       std::cout << std::endl 
                 << "ERROR : Cannot find correct flush hand (and a flush is present)"
                 << std::endl << std::endl;
+      std::cout << "ERROR : Unable to find a hand from given cards" << std::endl;
+      std::cout << "        Current product values are:" << std::endl;
+      std::cout << "          Face product : " << FaceProd    << std::endl;
+      std::cout << "          Suit product : " << SuitProd    << std::endl;
+      std::cout << "        Current card prime values are:" << std::endl;
+      std::cout << "          Face prime: " << FP1      << " Suit prime: " << SP1      << std::endl;
+      std::cout << "          Face prime: " << FP2      << " Suit prime: " << SP2      << std::endl;
+      std::cout << "          Face prime: " << FP3      << " Suit prime: " << SP3      << std::endl;
+      std::cout << "          Face prime: " << FP4      << " Suit prime: " << SP4      << std::endl;
+      std::cout << "          Face prime: " << FP5      << " Suit prime: " << SP5      << std::endl;
+      std::cout << "          Face prime: " << FP6      << " Suit prime: " << SP6      << std::endl;
+      std::cout << "          Face prime: " << FP7      << " Suit prime: " << SP7      << std::endl;
       exit (EXIT_FAILURE);
 
     }
@@ -54524,15 +54536,17 @@ std::vector<long long int> lookupBestHandPrimes(\
   std::cout << "          Face product : " << FaceProd    << std::endl;
   std::cout << "          Suit product : " << SuitProd    << std::endl;
   std::cout << "        Current card prime values are:" << std::endl;
-    std::cout << "        Face prime: " << FP1              << "        Suit prime: " << SP1              << std::endl;
-    std::cout << "        Face prime: " << FP2              << "        Suit prime: " << SP2              << std::endl;
-    std::cout << "        Face prime: " << FP3              << "        Suit prime: " << SP3              << std::endl;
-    std::cout << "        Face prime: " << FP4              << "        Suit prime: " << SP4              << std::endl;
-    std::cout << "        Face prime: " << FP5              << "        Suit prime: " << SP5              << std::endl;
-    std::cout << "        Face prime: " << FP6              << "        Suit prime: " << SP6              << std::endl;
-    std::cout << "        Face prime: " << FP7              << "        Suit prime: " << SP7              << std::endl;
+  std::cout << "          Face prime: " << FP1  << " Suit prime: " << SP1  << std::endl;
+  std::cout << "          Face prime: " << FP2  << " Suit prime: " << SP2  << std::endl;
+  std::cout << "          Face prime: " << FP3  << " Suit prime: " << SP3  << std::endl;
+  std::cout << "          Face prime: " << FP4  << " Suit prime: " << SP4  << std::endl;
+  std::cout << "          Face prime: " << FP5  << " Suit prime: " << SP5  << std::endl;
+  std::cout << "          Face prime: " << FP6  << " Suit prime: " << SP6  << std::endl;
+  std::cout << "          Face prime: " << FP7  << " Suit prime: " << SP7  << std::endl;
   exit (EXIT_FAILURE);
 
+  HCvec.push_back(-1);
+  HCvec.push_back(-1);
   return HCvec;
 
 }
