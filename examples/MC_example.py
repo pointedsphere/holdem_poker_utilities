@@ -16,7 +16,7 @@ stat = T.setHoldCards(1,(12,12),(3,4))
 stat = T.setFlop((5,6,10),(3,1,4))
 
 # Run a Monte Carlo simulation
-T.MC(Nmc)
+T.MCP(Nmc)
 
 # Get data from the Monte Carlo simulator
 wins  = T.getWins()

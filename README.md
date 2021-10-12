@@ -32,6 +32,80 @@ The lookup tables cause compilation to be non-trivial with ``-O3`` optimisation,
 
 
 
+### General Notes
+
+- As the exact suit doesn't matter in HoldEm suits are referred to by integers [1,4], which suit is which is of no consequence as long as each suit is consistently referred to by the same integer throughout.
+- Each face value card is referred to by an integer, with [2,10] being self explanatory. 11, 12 and 13 refer to Jack, Queen and King respectively. An Ace is given the value 14.
+- For brevity throughout we let S=Spades, D=Diamonds, H=Hearts and C=Clubs and refer to cards by number and letter, e.g. 5H is the 5 of hearts and AS is the ace of spades.
+
+### General use
+
+Consider the state of the table with 3 players after the flop, where our hand (as player 0) is KS KD, (for some reason) we know another players (player 1) hold is QH QD and the flop is 5H, 6S, 10D. We then wish to run a Monte Carlo sim over 10^6 iterations to see what happens here. We're also running a fair few calculations, so we reduce cost run the prime algorithm Monte Carlo using ``MCP`` (rather than the brute force method with ``MC``). This can be done in Python (after compiling the module with ``make python``) with:
+
+```
+import holdEm
+
+Np  = 3       # Number of players
+Nmc = 1000000 # Numer of monte carlo loops
+
+# Initialise table class, with N players
+T = holdEm.table(Np)
+
+# Set player one hold to As Kc
+stat = T.setHoldCards(0,(13,13),(1,2))
+
+# Set player two hold to Ah Qd
+stat = T.setHoldCards(1,(12,12),(3,4))
+
+# Set the flop to 5h, 6s, 10d
+stat = T.setFlop((5,6,10),(3,1,4))
+
+# Run a Monte Carlo simulation
+T.MC(Nmc)
+
+# Get data from the Monte Carlo simulator
+wins  = T.getWins()
+winsP = T.getWinsP()
+draw  = T.getDraws()
+drawP = T.getDrawsP()
+
+# Print the array of the win probabilities
+print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+for p in range(Np):
+    print("player ", p, " | Win count : ", "{:9}".format(wins[p]), " | Win prob : ", "{:2.4f}".format(winsP[p]), \
+        " | Draw count : ", "{:9}".format(draw[p]), " | Draw prob : ", "{:2.4f}".format(drawP[p]))
+    
+# Print the hands for each player
+for p in range(Np):
+    print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+    winsPP  = T.getWinsPP(p)
+    winsPPp = T.getWinsPPp(p)
+    drawPP  = T.getDrawsPP(p)
+    drawPPp = T.getDrawsPPp(p)
+    handPP  = T.getHandsPP(p)
+    handPPp = T.getHandsPPp(p)
+    for h in range(10):
+        print("player ", p, " | hand code : ", "{:2}".format(h+1), \
+              " | win count : ",   "{:9}".format(winsPP[h]), " | win prob : ",   "{:2.4f}".format(winsPPp[h]), \
+              " | draw count : ",  "{:9}".format(drawPP[h]), " | draw prob : ",  "{:2.4f}".format(drawPPp[h]), \
+              " | occur count : ", "{:9}".format(handPP[h]), " | occur prob : ", "{:2.4f}".format(handPPp[h]))
+print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+```
+
+Where this script can be found in ``examples/MC_example.py``.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -203,67 +277,8 @@ Where highest *MFVP* wins.
 
 
 
-### General Notes
 
-- As the exact suit doesn't matter in HoldEm suits are referred to by integers [1,4], which suit is which is of no consequence as long as each suit is consistently referred to by the same integer throughout.
-- Each face value card is referred to by an integer, with [2,10] being self explanatory. 11, 12 and 13 refer to Jack, Queen and King respectively. An Ace is given the value 14.
-- For brevity throughout we let S=Spades, D=Diamonds, H=Hearts and C=Clubs and refer to cards by number and letter, e.g. 5H is the 5 of hearts and AS is the ace of spades.
 
-### General use
-
-Consider the state of the table with 3 players after the flop, where our hand is KS KD, (for some reason) we know another players hold is QH QD and the flop is 5H, 6S, 10D. We then wish to fun a Monte Carlo sim over 10^6 iterations to see what happens here, this can be done in Python (after compiling the module with ``make python``) with:
-
-```
-import holdEm
-
-Np  = 3       # Number of players
-Nmc = 1000000 # Numer of monte carlo loops
-
-# Initialise table class, with N players
-T = holdEm.table(Np)
-
-# Set player one hold to As Kc
-stat = T.setHoldCards(0,(13,13),(1,2))
-
-# Set player two hold to Ah Qd
-stat = T.setHoldCards(1,(12,12),(3,4))
-
-# Set the flop to 5h, 6s, 10d
-stat = T.setFlop((5,6,10),(3,1,4))
-
-# Run a Monte Carlo simulation
-T.MC(Nmc)
-
-# Get data from the Monte Carlo simulator
-wins  = T.getWins()
-winsP = T.getWinsP()
-draw  = T.getDraws()
-drawP = T.getDrawsP()
-
-# Print the array of the win probabilities
-print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
-for p in range(Np):
-    print("player ", p, " | Win count : ", "{:9}".format(wins[p]), " | Win prob : ", "{:2.4f}".format(winsP[p]), \
-        " | Draw count : ", "{:9}".format(draw[p]), " | Draw prob : ", "{:2.4f}".format(drawP[p]))
-    
-# Print the hands for each player
-for p in range(Np):
-    print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
-    winsPP  = T.getWinsPP(p)
-    winsPPp = T.getWinsPPp(p)
-    drawPP  = T.getDrawsPP(p)
-    drawPPp = T.getDrawsPPp(p)
-    handPP  = T.getHandsPP(p)
-    handPPp = T.getHandsPPp(p)
-    for h in range(10):
-        print("player ", p, " | hand code : ", "{:2}".format(h+1), \
-              " | win count : ",   "{:9}".format(winsPP[h]), " | win prob : ",   "{:2.4f}".format(winsPPp[h]), \
-              " | draw count : ",  "{:9}".format(drawPP[h]), " | draw prob : ",  "{:2.4f}".format(drawPPp[h]), \
-              " | occur count : ", "{:9}".format(handPP[h]), " | occur prob : ", "{:2.4f}".format(handPPp[h]))
-print("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
-```
-
-Where this script can be found in ``examples/MC_example.py``.
 
 
 
