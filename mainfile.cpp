@@ -1,4 +1,6 @@
 #include<iostream>
+#include  <vector>
+#include <iomanip>
 
 #include "src/tools/constants.h"
 #include "src/holdem/hand.h"
