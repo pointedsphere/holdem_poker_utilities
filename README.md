@@ -6,7 +6,21 @@ A C++ library of utilities for calculations involving Texas HoldEm poker.
 
 Currently a naive implementation has been written to `brute force' hand calculation. We will use this to build a hand analysis routine that uses a lookup table (or tables) to drastically increase efficiency.
 
-The naive implementation, though slow, is easy to read and modify. Furthermore, it runs at O(10^5) Monte Carlo calculations per second for 6 players and though slow is usable.
+The naive `brute-force' implementation, though slow, is easy to read and modify. Furthermore, it is easy to run step by step and pull out information ad-hoc. This method is only really useful if this very in depth analysis is desirable. If not, the prime method of Monte Carlo simulation is preferable (``MCP``), which gives win/loose/draw statistics for each player and each hand type the player can have.
+
+## General use and compilation
+
+This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis and to be compiled for use as a Python module.
+
+In order to compile for C++ one should run ``make``.
+
+To compile as the python library ``holdEm`` the pybind11 module is required. This can be installed following [the installation instructions here](https://pybind11.readthedocs.io/en/stable/installing.html) (concisely running ``pip install pybind11`` or ``pip3 install pybind11`` with pip  or ``brew install pybind11`` for a global brew install). One pybind11 is installed simply run ``make python`` and the module file will be compiled, which can then be imported to any python script.
+
+**Note:** as this library is under active development compilation has not been tested in many different environments (yet).
+
+### Compile times
+
+The large hash tables cause compilation to be non-trivial with ``-O3`` optimisation, approximately 45 mins. This is what is included in the makefile as is, though if one wishes to just have a quick play with the scripts just change ``-O3`` to ``-O0`` in the makefile and compile (though this will drastically effect cost).
 
 
 
@@ -17,11 +31,17 @@ The naive implementation, though slow, is easy to read and modify. Furthermore, 
 
 
 
-## New Method for Finding and Comparing Hands
 
-The `brute force' method, though useful, is far from optimal. Though other methods have been proposed in the past like ....
 
-This works on the basis of assigning 2 prime numbers to a card. One in reference to the face value of the card and another to the suit value. We do this by ordering the cards in ascending order, based on suit values [1,4] and then face values [2,14] (where ace == 14). We then assign a prime number in {2,3,5,7} to each suit value (``PS``), assign a prime number in {2,3,5,7,11,13,17,19,23,29,31,37,41} to each face value (``PF``), i.e. the ith card given by 
+
+
+## New (Prime) Method for Finding and Comparing Hands
+
+The `brute force' method, though useful, is far from optimal. Though other methods have been proposed in the past like .... they often require rather large lookup tables (~200MB), which is not ideal.
+
+So, here we use our own method, created for brevity.
+
+This works on the basis of assigning 2 prime numbers to a card. One in reference to the face value of the card and another to the suit value. We do this by ordering the cards in ascending order, based on suit values [1,4] and then face values [2,14] (where ace == 14). We then assign a prime number in {2,3,5,7} to each suit value (``PS``), assign a prime number in {2,3,5,7,11,13,17,19,23,29,31,37,41} to each face value (``PF``), i.e. the ith card given by the ith element of the following arrays
 
 ```
 F = {
@@ -51,11 +71,11 @@ PF = {
 
 We then utilise the `brute-force' method to generate code containing hash tables used to lookup our hand from the prime face and suit values in the 7 card hand. Note we refer to a hand rank used for comparing two hands of the same hand code. This is explained in more detail in the next section.
 
-First we use the prime suit values to check for a flush. If there is a flush we then check for a straight or royal flush by checking the product of the face values of the cards in the hand in the suit that constitutes the flush. We can return the hand code and rank using this product as the hash table key.
+First we use the product of the prime suit values, checking this product against a switch function to check for a flush (and the suit of the flush). If there is a flush we then check for a straight or royal flush by checking the product of the face values of the cards in the hand of the suit that constitutes the flush. We then return the hand code and rank using this product as the hash table key.
 
-We then use the product of all face values as the key to check for a full house or 4 of a kind. 
+We then use the product of all face values as the key to check for a full house or 4 of a kind (with tables generated using `brute-force' methods).
 
-Then, iff we have a flush, we return to the product of all face values of the suit constituting the flush. This product is used as the key for the hash table lookup.
+Then, iff we have a flush, we return to the product of all face values of the suit constituting the flush. This product is used as the key for the hash table lookup and this step is ignored if we don't have a flush.
 
 For all lower hands we consider the product of all prime face values as the key for the lookup table.
 
@@ -63,9 +83,9 @@ In this way, using a switch statement for the flush check of suit values and 4 h
 
 ### Comparing Hands With The Same Hand Code
 
-Consider two players, *P1* and *P2*, and assume they both have the same hand code (HC). As our algorithm points only to a HC this is a bit of a problem, but as we know the HC we can solve this by looking at a modified face value product (MFVP).
+Consider two players, *P1* and *P2*, and assume they both have the same hand code (HC). As we know the HC we can find the best hand of the same HC by looking at a modified face value product (MFVP).
 
-The function returns both the HC and the MFVP of a hand, where MFVP is calculated differently for each type of hand. However, it is calculated in such a way that *P1* and *P2* can compare MFVP values, the largest of which wins (and equality signifies a draw). This will work for any *N>1* players, as long as their HC is identical. The method for MFVP calculation is given below for each hand.
+The function returns both the HC and the MFVP of a hand (from the hash table), where MFVP is calculated differently for each type of hand. However, it is calculated in such a way that *P1* and *P2* can compare MFVP values, the largest of which wins (and equality signifies a draw). This will work for any *N>1* players, as long as their HC is identical. The method for MFVP calculation is given below for each hand.
 
 Throughout this section let *fP*, *sP* and *aP* be the prime face, suit and card values (taken from ``PS``, ``PF`` and ``PA`` respectively). Also let *f* and *s* be the non prime face and suit values from ``F`` and ``S``.
 
@@ -169,15 +189,7 @@ Where highest MFVP wins.
 
 
 
-## General use and compilation
 
-This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis and to be compiled for use as a Python module.
-
-In order to compile for C++ one should run ``make``.
-
-To compile as the python library ``holdEm`` the pybind11 module is required. This can be installed following [the installation instructions here](https://pybind11.readthedocs.io/en/stable/installing.html) (concicely running ``pip install pybind11`` or ``pip3 install pybind11`` with pip  or ``brew install pybind11`` for a global brew install). One pybind11 is installed simply run ``make python`` and the module file will be compiled, which can then be imported to any python script.
-
-**Note:** as this library is under active development compilation has not been tested in many different environments (yet).
 
 ### General Notes
 
