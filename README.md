@@ -4,23 +4,23 @@ A C++ library of utilities for calculations involving Texas HoldEm poker.
 
 **NOTE: This library is under very active development, as such this documentation is very rough.**
 
-Currently a naive implementation has been written to `brute force' hand calculation. We will use this to build a hand analysis routine that uses a lookup table (or tables) to drastically increase efficiency.
+This program (and the python module that can be compiled with ``make python``) contain two methods of finding a 5 card holdem hand from 7 cards, the winner from multiple hands and from this a Monte Carlo simulation. One is a 'brute-force' implementation that compares each hand and a second that utilizes prime card values and a series of lookup tables.
 
-The naive `brute-force' implementation, though slow, is easy to read and modify. Furthermore, it is easy to run step by step and pull out information ad-hoc. This method is only really useful if this very in depth analysis is desirable. If not, the prime method of Monte Carlo simulation is preferable (``MCP``), which gives win/loose/draw statistics for each player and each hand type the player can have.
+The naive 'brute-force' implementation, though slow, is easy to read and modify. Furthermore, it is easy to run step by step and pull out information ad-hoc. This method is only really useful if this very in depth analysis is desirable. If not, the prime method of Monte Carlo simulation is preferable (``MCP``), which gives win/loose/draw statistics for each player and each hand type the player can have.
 
 ## General use and compilation
 
-This C++ library is being written to be used as a general purpose C++ library for use with Texas HoldEm poker game analysis and to be compiled for use as a Python module.
+This C++ library is a general purpose C++ library for use with Texas HoldEm poker game analysis which can also be compiled for use as a Python module.
 
 In order to compile for C++ one should run ``make``.
 
-To compile as the python library ``holdEm`` the pybind11 module is required. This can be installed following [the installation instructions here](https://pybind11.readthedocs.io/en/stable/installing.html) (concisely running ``pip install pybind11`` or ``pip3 install pybind11`` with pip  or ``brew install pybind11`` for a global brew install). One pybind11 is installed simply run ``make python`` and the module file will be compiled, which can then be imported to any python script.
+To compile as the python library ``holdEm`` the pybind11 module is required. This can be installed following [the installation instructions here](https://pybind11.readthedocs.io/en/stable/installing.html) (concisely running ``pip install pybind11`` with pip  or ``brew install pybind11`` for a global homebrew install). Once pybind11 is installed simply run ``make python`` and the module file will be compiled, which can then be imported to any python script.
 
 **Note:** as this library is under active development compilation has not been tested in many different environments (yet).
 
 ### Compile times
 
-The large hash tables cause compilation to be non-trivial with ``-O3`` optimisation, approximately 45 mins. This is what is included in the makefile as is, though if one wishes to just have a quick play with the scripts just change ``-O3`` to ``-O0`` in the makefile and compile (though this will drastically effect cost).
+The lookup tables cause compilation to be non-trivial with ``-O3`` optimisation, approximately 45 mins. If one wishes to have a quick play with the scripts just change ``-O3`` to ``-O0`` in the makefile and compile (though this will drastically and negatively effect cost).
 
 
 
@@ -35,11 +35,11 @@ The large hash tables cause compilation to be non-trivial with ``-O3`` optimisat
 
 
 
-## New (Prime) Method for Finding and Comparing Hands
+## (Prime) Method for Finding and Comparing Hands
 
-The `brute force' method, though useful, is far from optimal. Though other methods have been proposed in the past like .... they often require rather large lookup tables (~200MB), which is not ideal.
+The 'brute force' method, though useful, is far from optimal. Though other methods have been proposed in the past (for example [The Two Plus Two Evaluator](https://www.codingthewheel.com/archives/poker-hand-evaluator-roundup/#2p2)) they often require rather large lookup tables (~200MB), which is not ideal.
 
-So, here we use our own method, created for brevity.
+So, here we use our own method, created for brevity, a truncated prime method.
 
 This works on the basis of assigning 2 prime numbers to a card. One in reference to the face value of the card and another to the suit value. We do this by ordering the cards in ascending order, based on suit values [1,4] and then face values [2,14] (where ace == 14). We then assign a prime number in {2,3,5,7} to each suit value (``PS``), assign a prime number in {2,3,5,7,11,13,17,19,23,29,31,37,41} to each face value (``PF``), i.e. the ith card given by the ith element of the following arrays
 
@@ -69,64 +69,76 @@ PF = {
     2,3,5,7,11,13,17,19,23,29,31,37,41 };
 ```
 
-We then utilise the `brute-force' method to generate code containing hash tables used to lookup our hand from the prime face and suit values in the 7 card hand. Note we refer to a hand rank used for comparing two hands of the same hand code. This is explained in more detail in the next section.
+where ``F`` is the face value of a card, ``S`` is the suit and ``PS`` and ``PF`` are the prime face and suit values. For example the king of clubs can be given by
 
-First we use the product of the prime suit values, checking this product against a switch function to check for a flush (and the suit of the flush). If there is a flush we then check for a straight or royal flush by checking the product of the face values of the cards in the hand of the suit that constitutes the flush. We then return the hand code and rank using this product as the hash table key.
+```
+F[11] = 13 , S[11]=1 , PS[11]=2 , PF[11]=37
+```
 
-We then use the product of all face values as the key to check for a full house or 4 of a kind (with tables generated using `brute-force' methods).
+We then utilise the `brute-force' method to generate code containing lookup tables from which we can find the hand type (or hand code, or *HC*) where
+-  ``HC=1 `` :: High card
+-  ``HC=2 `` :: Pair
+-  ``HC=3 `` :: Two pair
+-  ``HC=4 `` :: Three of a kind
+-  ``HC=5 `` :: Straight
+-  ``HC=6 `` :: Flush
+-  ``HC=7 `` :: Full house
+-  ``HC=8 `` :: 4 of a kind
+-  ``HC=9 `` :: Straight flush
+-  ``HC=10`` :: Royal Flush
 
-Then, iff we have a flush, we return to the product of all face values of the suit constituting the flush. This product is used as the key for the hash table lookup and this step is ignored if we don't have a flush.
+We also find a value we refer to as a hand rank (or *HR*) where if two hands have the same *HC* then the hand with the largest *HR* wins. This is explained in more detail in a later section.
+
+To carry out the prime method we first  use the product of the prime suit values for all 7 cards in a hand, checking this product against a switch function to check for a flush (and find the suit of the flush). If there is a flush we then check for a straight or royal flush by checking the product of the face values of the cards in the hand that are of the suit that constitutes the flush. We then return the hand code and rank using this product as the hash table key (if we have a straight or royal flush).
+
+We then use the product of all prime face values as the key to check for a full house or 4 of a kind against another lookup table.
+
+Then, iff we have a flush, we compare the product of all prime face values of cards in the hand that are of the suit that constitutes the flush. This product is used as the key for the hash table lookup and this step is ignored if we don't have a flush.
 
 For all lower hands we consider the product of all prime face values as the key for the lookup table.
 
-In this way, using a switch statement for the flush check of suit values and 4 hash tables we can check for a hand in 7 cards using ~50000 lines of code (given in ....). The data for this was generated using code in .... parsed with the python script ....
+In this way, using a switch statement for the flush check of suit values and 4 hash tables we can check for a hand in 7 cards using ~50000 lines of code (given in ``machine_gen_code/lookupBestHandPrimes.cpp``). This routine is machine generated first by generating 4 data files (using ``.cpp`` scripts in ``machine_gen_code/gen_face_hands``, ``machine_gen_code/gen_flush`` and ``machine_gen_code/gen_straight_royal_flush``). We then parse this data into the requisite ``.cpp`` and ``.h`` files using ``machine_gen_code/parseDataToFunctionLookup.py``
 
 ### Comparing Hands With The Same Hand Code
 
-Consider two players, *P1* and *P2*, and assume they both have the same hand code (HC). As we know the HC we can find the best hand of the same HC by looking at a modified face value product (MFVP).
+Consider two players, *P1* and *P2*, and assume they both have the same hand code (*HC*). As we know the *HC* we can find the best hand of the same *HC* by looking at a modified face value product (*MFVP*) that is also returned by the table lookup.
 
-The function returns both the HC and the MFVP of a hand (from the hash table), where MFVP is calculated differently for each type of hand. However, it is calculated in such a way that *P1* and *P2* can compare MFVP values, the largest of which wins (and equality signifies a draw). This will work for any *N>1* players, as long as their HC is identical. The method for MFVP calculation is given below for each hand.
+The function ``lookupBestHandPrimes`` in ``machine_gen_code/lookupBestHandPrimes.cpp`` returns both the *HC* and the *MFVP* of a hand (from the lookup table), where *MFVP* is calculated differently for each type of hand. It is calculated in such a way that if *P1* and *P2* have the same *HC* they can compare *MFVP* values, the largest of which wins (and equality signifies a draw). This will work for any *N>1* players, as long as their *HC* is identical. The method for *MFVP* calculation is given below for each *HC*.
 
-Throughout this section let *fP*, *sP* and *aP* be the prime face, suit and card values (taken from ``PS``, ``PF`` and ``PA`` respectively). Also let *f* and *s* be the non prime face and suit values from ``F`` and ``S``.
+Throughout this section we refer to prime face and suit values as the requisite card values for each card from ``PS`` and ``PF``. Also let us assume that from the 'brute-force' method we know the 5 cards within a 7 card hand that constitute the best hand.
 
-Also, let us assume we have access not just to the full 7 cards (hold, flop, turn and river), but to the 5 card combination that makes the best hand from those 7 cards, and consequently know the HC.
-
-### Checking for a flush (any flush)
+#### Step 1 : Checking for a flush (any flush)
 
 We can first check to see if the 7 card hand contains a 5,6 or 7 card flush. We do this by looking at the product of only the prime suit values. If we do not have a flush of any sort there is no need to check for a straight flush, royal flush or flush hand.
 
-### Royal flush, straight flush and flush
+#### Royal flush, straight flush and flush
 
-For any of the flush hands we calculate the MFVP a the product of the prime face values for the face values of the cards of the suit that constitutes the flush.
+For any of the flush hands we calculate the *MFVP* as the product of the prime face values which have the suit that constitutes the flush.
 
-### Four of a kind
+#### Four of a kind
 
-In this case we first modify the face values of the hand whilst treating the 4 cards with identical face values as ``f4`` in [2,14]. We then consider ``f4`` along with the face value of the kicker ``fk`` (also in [2,14]).
-
-Then we define new prime product variables:
+Let us consider the non-prime face values of the card in the hand when we know we have a four of a kind. Let ``f4`` be the non-prime face value of the 4 cards in the four of a kind and ``fk`` be the face value of the kicker. Then let
 
 ```
 f4P = 2^(f4+11)
 fkP = 2^(fk-2)
 ```
 
-such that ``f4P`` is one of 13 values in [2^13 , 2^25] and ``fkP`` is one of 13 values in [2^0 , 2^12]. This is a 26 bit binary value where the first 13 bits correspond to the kicker face value and the last 13 correspond to the 4 of kind face value.
-
-We then take the sum of these two values, i.e. 
+such that ``f4P`` is one of 13 values in [2^13 , 2^25] and ``fkP`` is one of 13 values in [2^0 , 2^12]. Such that ``f4P+fkP`` is a 26 bit binary value where the lowest 13 bits correspond to the kicker face value and the largest 13 correspond to the 4 of kind face value. We then take
 
 ```
 MFVP = f4P + fkP
 ```
 
-Where the highest of these values for players with 4 of a kind wins (and equality means a draw).
+where the highest of these values for players with 4 of a kind wins (and equality means a draw).
 
 ### Full House
 
-Calculation of MFVP for the full house is much that same as for Four of a kind, where we treat the face value for the three of a kind in the same way as with the four of a kind face value. We then treat the pair value like the kicker value in four of a kind.
+Calculation of *MFVP* for the full house is much that same as for Four of a kind, where we treat the face value for the three of a kind in the same way as with the four of a kind face value. We then treat the pair face value like the kicker value in four of a kind.
 
 ### Straight
 
-In the case of any straight hand the MFVP is the highest card in the straight. Highest high card in a straight always wins when comparing hands including a straight.
+In the case of any straight hand the *MFVP* is simply the face value of the highest card in the straight.
 
 ### Three of a kind
 
@@ -138,13 +150,13 @@ I.e. let ``f3`` be the face value of the three of a kind and let ``k1`` and ``k2
 MFVP = 2^(f3+11) + 2^(k1-2) + 2^(k2-2)
 ```
 
-such that MFVP is a 26 bit integer. The first 13 bits of MFVP correspond to the two kickers and the last 13 bits correspond to the three of a kind (note; the kickers cannot have the same face value, otherwise we would have a full house).
+such that *MFVP* is a 26 bit integer. The lowest 13 bits of *MFVP* correspond to the two kickers and the last 13 bits correspond to the three of a kind (note; the kickers cannot have the same face value, otherwise we would have a full house).
 
-Again the highest MFVP wins when comparing players with three of a kind, and equality signifies a draw.
+Again the highest *MFVP* wins when comparing players with three of a kind, and equality signifies a draw.
 
 ### Two Pair
 
-Two pair has 3 rankings of cards within it, the higher pair, the lower pair and then the kicker, as such we require a 39 bit integer. Here the lowest 13 bits correspond to the kicker, the next 13 bits to the low pair and the highest 13 bits to the high pair.
+Two pair has 3 'rankings' of cards within it, the higher pair, the lower pair and then the kicker, as such we utilise a 39 bit integer. Here the lowest 13 bits correspond to the kicker, the next 13 bits to the low pair and the highest 13 bits to the high pair.
 
 Let ``p1``, ``p2`` and ``k1`` be the face value of the highest pair, lowest pair and kicker respectively (all in [2,14]). Then
 
@@ -152,11 +164,11 @@ Let ``p1``, ``p2`` and ``k1`` be the face value of the highest pair, lowest pair
 MFVP = 2^(p1+24) + 2^(p2+11) + 2^(k1-2)
 ```
 
-Again highest MFVP wins between hands with two pair.
+Again highest *MFVP* wins between hands with two pair.
 
 ### One Pair
 
-A single pair requires a 26 bit integer, the first 13 bits are the sum of the 3 kicker values in binary representation and the last 13 represent the pair (note, all kicker face values must be distinct, or we would have a better hand than one pair).
+A single pair requires a 26 bit integer, the lowest 13 bits are the sum of the 3 kicker values in binary representation and the last 13 represent the pair (note; all kicker face values must be distinct or we would have a better hand than one pair).
 
 Let ``p1`` be the face value of the pair (in [2,14]) and let ``k1``, ``k2`` and ``k3`` be the face values of the kickers (again in [2,14]). Then
 
@@ -164,7 +176,7 @@ Let ``p1`` be the face value of the pair (in [2,14]) and let ``k1``, ``k2`` and 
 MFVP = 2^(p1+11) + 2^(k1-2) + 2^(k2-2) + 2^(k3-2)
 ```
 
-Again highest MFVP wins for multiple hands with one pair.
+Again highest *MFVP* wins for multiple hands with one pair.
 
 ### High Card
 
@@ -176,7 +188,7 @@ Let ``k1``, ``k2``, ``k3``, ``k4`` and ``k5`` be the 5 face values of the cards 
 MFVP = 2^(k1-2) + 2^(k2-2) + 2^(k3-2) + 2^(k4-2) + 2^(k5-2)
 ```
 
-Where highest MFVP wins.
+Where highest *MFVP* wins.
 
 
 
@@ -1085,6 +1097,7 @@ print("\n\n\nHand 2:\n")
 for i in range(len(hand2Face)):
     print("Card ", i+1, " : ", hand2Face[i], "     ", hand2Suit[i])
 ```
+
 
 
 
