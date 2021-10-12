@@ -21,7 +21,7 @@ g++ -O3 -Wall -shared -std=c++11 -undefined dynamic_lookup $(python3 -m pybind11
 namespace py = pybind11;
 
 PYBIND11_MODULE(holdEm, m) {
-    m.doc() = "pybind11 example plugin"; // optional module docstring
+    m.doc() = "HoldEm Tools"; // optional module docstring
 
     py::class_<hand>(m, "hand")
       .def(py::init<>())

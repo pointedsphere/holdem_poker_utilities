@@ -756,6 +756,10 @@ Completely reset the table to its initial state, destroying all data.
 
 Run a Monte Carlo simulation, this can be done after setting any cards one wishes (which remain constant over all Monte Carlo sims). This is done for a number of loops specified with the input integer.
 
+#### Class fn : ``int->void`` : ``MCP``
+
+Run a Monte Carlo simulation using the prime method, this can be done after setting any cards one wishes (which remain constant over all Monte Carlo sims). This is done for a number of loops specified with the input integer. This should be more efficient than using ``MC``.
+
 #### Class fn : ``void->int`` : ``getNumRuns``
 
 Find the number of Monte Carlo runs that have been carried out. I.e. the number of times the routine ``findWinner`` has been successfully called.
