@@ -112,6 +112,17 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
     exit (EXIT_FAILURE);
   }
 
+  // Set the hold face to 14 if it's 1
+  if (holdInF==1) holdInF = 14;
+
+  // Assign the index of the known hold card
+  for (int Di=0; Di<52; Di++) {
+    if (cardFace[Di]==holdInF && cardSuit[Di]==holdInS) {
+      P_[playerAdd].holdIndex[totHoldsKnown_] = Di;
+      break;
+    }
+  }
+  
   // Assign the known hold cards
   P_[playerAdd].numHoldKnown++; // Note we now know one more hold card
   P_[playerAdd].numHoldDealt++; // This known card is dealt
@@ -184,6 +195,17 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
 		<< std::endl;
       exit (EXIT_FAILURE);
     }
+
+    // Set the hold face to 14 if it's 1
+    if (holdInF[i]==1) holdInF[i] = 14;
+    
+    // Assign the index of the known hold card
+    for (int Di=0; Di<52; Di++) {
+      if (cardFace[Di]==holdInF[i] && cardSuit[Di]==holdInS[i]) {
+	P_[playerAdd].holdIndex[i] = Di;
+	break;
+      }
+    }
     
     // Add the cards to the relevant hold and to save the hold cards
     P_[playerAdd].holdFace.push_back(holdInF[i]);
@@ -246,6 +268,18 @@ int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
 		<< std::endl;
       exit (EXIT_FAILURE);
     }
+
+    // Set the hold face to 14 if it's 1
+    if (flopInF[erri]==1) flopInF[erri] = 14;
+    
+    // Assign the index of the known hold card
+    for (int Di=0; Di<52; Di++) {
+      if (cardFace[Di]==flopInF[erri] && cardSuit[Di]==flopInS[erri]) {
+	flopI_[erri] = Di;
+	break;
+      }
+    }
+
   }
   
   // Set the class variables
@@ -300,7 +334,18 @@ int table::setTurn(int turnInF, int turnInS)
 	      << std::endl;
     exit (EXIT_FAILURE);
   }
+
+  // Set the hold face to 14 if it's 1
+  if (turnInF==1) turnInF = 14;
     
+  // Assign the index of the known hold card
+  for (int Di=0; Di<52; Di++) {
+    if (cardFace[Di]==turnInF && cardSuit[Di]==turnInS) {
+      turnI_ = Di;
+      break;
+    }
+  }
+  
   // Set the class variables
   turnF_ = turnInF;
   turnS_ = turnInS;
@@ -352,6 +397,17 @@ int table::setRiver(int riverInF, int riverInS)
     std::cout << "ERROR : In setRiver the suit value of the card is outside the valid range [1,4]"
 	      << std::endl;
     exit (EXIT_FAILURE);
+  }
+
+  // Set the hold face to 14 if it's 1
+  if (riverInF==1) riverInF = 14;
+    
+  // Assign the index of the known hold card
+  for (int Di=0; Di<52; Di++) {
+    if (cardFace[Di]==riverInF && cardSuit[Di]==riverInS) {
+      riverI_ = Di;
+      break;
+    }
   }
   
   // Set the class variables
@@ -1385,9 +1441,6 @@ int table::dealAllI()
 
   int dStat; // deal status
 
-  // Set the deck index before dealing
-  D_.setDeckIndex(D_.getNumCards());
-
   // Shuffle cards before dealing things out
   D_.shuffleI();
   
@@ -1530,9 +1583,11 @@ int table::findWinnerI()
 
   int fWStat;
   int fWInt;
+  int WCtr;
   std::vector<int> tmpPlayer;
   std::vector<long long int> tmpRank;
-  std::vector<long long int>::iterator Iter;
+  long long int maxRank;
+  int maxRankP;
   
   // Can only run if hands have been dealt
   if (handsDealt_==false) return -1;
@@ -1584,25 +1639,38 @@ int table::findWinnerI()
 	}
       }
 
-      // Find the largest element in the array
-      Iter        = std::max_element(tmpRank.begin(),tmpRank.end());
-      fWStat      = std::distance(tmpRank.begin(), Iter);
-      drawIntTmp_ = std::distance(tmpRank.begin(), std::find(tmpRank.begin(),tmpRank.end(),fWStat));
+      // Loop through and get the largest value, and the number of times it occurs
+      maxRank = -1;
+      WCtr = 0;
+      fWInt = tmpPlayer.size();
+      for (int drawI=0; drawI<fWInt; drawI++) {
+	if (tmpRank[drawI]>maxRank) {
+	  maxRank  = tmpRank[drawI];
+	  maxRankP = tmpPlayer[drawI];
+	  WCtr = 1;
+	} else if (tmpRank[drawI]==maxRank) {
+	  WCtr++;
+	}
+      }
 
+      // std::cout << maxRank << "  ,  " << WCtr << std::endl << std::endl;
+      
       // Count the number of the times this top Prime hand rank occurs
-      if (count(tmpRank.begin(), tmpRank.end(), fWStat)==1) {
+      if (WCtr==1) {
 	
 	// If there is only one of this prime hand rank then this one has won
-	P_[tmpPlayer[drawIntTmp_]].numWins++;           // Increment players win counter
-	P_[tmpPlayer[drawIntTmp_]].winCodesCtr[hc-1]++; // Increment iterator of win codes
-	handCodeArr_.clear();                           // Release un-needed memory
-	return tmpPlayer[drawIntTmp_];                  // We are now done, we've found a Winner
+	P_[maxRankP].numWins++;           // Increment players win counter
+	P_[maxRankP].winCodesCtr[hc-1]++; // Increment iterator of win codes
+	handCodeArr_.clear();             // Release un-needed memory
+	tmpPlayer.clear();
+	tmpRank.clear();
+	return maxRankP;                  // We are now done, we've found a Winner
  
       } else {
 
 	fWInt = tmpPlayer.size();
-	for (int drawJ=0; drawJ>fWInt; drawJ++) {
-	  if (tmpRank[drawJ]==fWStat) {
+	for (int drawJ=0; drawJ<fWInt; drawJ++) {
+	  if (tmpRank[drawJ]==maxRank) {
 	    // Otherwise loop thorugh and add all those with the same prime rank as a draw
 	    P_[tmpPlayer[drawJ]].numDraw++;            // Iterate number of draws
 	    P_[tmpPlayer[drawJ]].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
@@ -1610,11 +1678,12 @@ int table::findWinnerI()
 	}
 
 	handCodeArr_.clear(); // Release un-needed memory
+	tmpPlayer.clear();
+	tmpRank.clear();
 	return 0;             // We are now done, we've found a Draw!
 	    
       }
 
-     
     }
 
   }

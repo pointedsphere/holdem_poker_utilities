@@ -238,6 +238,8 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 	deckFaceP_.erase(deckFaceP_.begin()+j);	
 	deckSuitP_.erase(deckSuitP_.begin()+j);
 	deckFullP_.erase(deckFullP_.begin()+j);
+	// and from the deck index array
+	deckIndex_.erase(deckIndex_.begin()+j);
 	numCards_=numCards_-1;
 	break;
       }
@@ -246,7 +248,7 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 
   // If we have shuffled the cards we need new index values as we could have an index
   // outside the range of where the cards now exist
-  if (deckShuffled_==true) setDeckIndex(numCards_);
+  // if (deckShuffled_==true) setDeckIndex(numCards_);
   
   return 0; // Success!
   
@@ -281,6 +283,8 @@ int deck::remCard(int remFace, int remSuit)
       deckFaceP_.erase(deckFaceP_.begin()+j);	
       deckSuitP_.erase(deckSuitP_.begin()+j);
       deckFullP_.erase(deckFullP_.begin()+j);
+      // and from the deck index array
+      deckIndex_.erase(deckIndex_.begin()+j);
       numCards_=numCards_-1;
       break;
     }
@@ -288,7 +292,7 @@ int deck::remCard(int remFace, int remSuit)
 
   // If we have shuffled the cards we need new index values as we could have an index
   // outside the range of where the cards now exist
-  if (deckShuffled_==true) setDeckIndex(numCards_);
+  // if (deckShuffled_==true) setDeckIndex(numCards_);
   
   return 0; // Success!
   
