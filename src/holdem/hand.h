@@ -158,6 +158,9 @@ public:
   int findBestHand();  // Find and populate the best hand and populate bestFace_ and bestSuit_
   int findBestHandP(); // Find best hand code using the prime method
 
+  // Find best hands using the indexes of the cards given by inputs
+  int findBestHandII(int c1, int c2, int c3, int c4, int c5, int c6, int c7);
+  
   // Sort the cardsFace_ and cardsSuit_ arrays such cardsFace_ is in ascending order
   void sortCards();
 

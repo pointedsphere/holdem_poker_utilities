@@ -6,7 +6,6 @@
 #include "deck.h"
 #include "hand.h"
 #include "../../machine_gen_code/lookupBestHandPrimes.h"
-// #include "../../machine_gen_code/switchBestHandPrimes.h"
 
 
 
@@ -1318,7 +1317,6 @@ int hand::findBestHandP()
   // Find the vector containing hand code and prime product/sum rank from the lookup table
   std::vector<long long int> tmpHC;
   tmpHC = lookupBestHandPrimes(\
-      cardsFullP_[0],cardsFullP_[1],cardsFullP_[2],cardsFullP_[3],cardsFullP_[4],cardsFullP_[5],cardsFullP_[6],
       cardsFaceP_[0],cardsFaceP_[1],cardsFaceP_[2],cardsFaceP_[3],cardsFaceP_[4],cardsFaceP_[5],cardsFaceP_[6],
       cardsSuitP_[0],cardsSuitP_[1],cardsSuitP_[2],cardsSuitP_[3],cardsSuitP_[4],cardsSuitP_[5],cardsSuitP_[6]);
 
@@ -1329,4 +1327,23 @@ int hand::findBestHandP()
   return 0;
   
 }
+
+int hand::findBestHandII(int c1, int c2, int c3, int c4, int c5, int c6, int c7)
+{
+  
+  // Find the vector containing hand code and prime product/sum rank from the lookup table
+  std::vector<long long int> tmpHC;
+  tmpHC = lookupBestHandPrimes(\
+	   primeFace[c1],primeFace[c2],primeFace[c3],primeFace[c4],primeFace[c5],primeFace[c6],primeFace[c7],\
+	   primeSuit[c1],primeSuit[c2],primeSuit[c3],primeSuit[c4],primeSuit[c5],primeSuit[c6],primeSuit[c7]);
+
+
+  // Set hand code and prime rank
+  handCode = tmpHC[0];
+  handPrimeRank = tmpHC[1];
+
+  return 0;
+  
+}
+
 

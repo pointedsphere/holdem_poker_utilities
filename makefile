@@ -6,9 +6,9 @@ CC = $(CXX)
 #  -g         :: Debug info
 #  -wall      :: Run all error checks
 #  -Wpedantic :: Be pedantic with warnings
-CFLAGS = -Wall -Wextra -g -O3 -std=c++11
-CXXFLAGS        = $(CFLAGS)
-CCFLAGS         = $(CXXFLAGS)
+CFLAGS   = -Wall -Wextra -g -std=c++11 -O3
+CXXFLAGS = $(CFLAGS)
+CCFLAGS  = $(CXXFLAGS)
 
 CXXCFLAGS = -std=c++14
 

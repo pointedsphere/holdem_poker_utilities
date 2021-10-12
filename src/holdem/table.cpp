@@ -112,6 +112,17 @@ int table::setHoldCard(int playerAdd, int holdInF, int holdInS)
     exit (EXIT_FAILURE);
   }
 
+  // Set the hold face to 14 if it's 1
+  if (holdInF==1) holdInF = 14;
+
+  // Assign the index of the known hold card
+  for (int Di=0; Di<52; Di++) {
+    if (cardFace[Di]==holdInF && cardSuit[Di]==holdInS) {
+      P_[playerAdd].holdIndex[totHoldsKnown_] = Di;
+      break;
+    }
+  }
+  
   // Assign the known hold cards
   P_[playerAdd].numHoldKnown++; // Note we now know one more hold card
   P_[playerAdd].numHoldDealt++; // This known card is dealt
@@ -184,6 +195,17 @@ int table::setHoldCards(int playerAdd, std::vector<int> holdInF, std::vector<int
 		<< std::endl;
       exit (EXIT_FAILURE);
     }
+
+    // Set the hold face to 14 if it's 1
+    if (holdInF[i]==1) holdInF[i] = 14;
+    
+    // Assign the index of the known hold card
+    for (int Di=0; Di<52; Di++) {
+      if (cardFace[Di]==holdInF[i] && cardSuit[Di]==holdInS[i]) {
+	P_[playerAdd].holdIndex[i] = Di;
+	break;
+      }
+    }
     
     // Add the cards to the relevant hold and to save the hold cards
     P_[playerAdd].holdFace.push_back(holdInF[i]);
@@ -246,6 +268,18 @@ int table::setFlop(std::vector<int> flopInF, std::vector<int> flopInS)
 		<< std::endl;
       exit (EXIT_FAILURE);
     }
+
+    // Set the hold face to 14 if it's 1
+    if (flopInF[erri]==1) flopInF[erri] = 14;
+    
+    // Assign the index of the known hold card
+    for (int Di=0; Di<52; Di++) {
+      if (cardFace[Di]==flopInF[erri] && cardSuit[Di]==flopInS[erri]) {
+	flopI_[erri] = Di;
+	break;
+      }
+    }
+
   }
   
   // Set the class variables
@@ -300,7 +334,18 @@ int table::setTurn(int turnInF, int turnInS)
 	      << std::endl;
     exit (EXIT_FAILURE);
   }
+
+  // Set the hold face to 14 if it's 1
+  if (turnInF==1) turnInF = 14;
     
+  // Assign the index of the known hold card
+  for (int Di=0; Di<52; Di++) {
+    if (cardFace[Di]==turnInF && cardSuit[Di]==turnInS) {
+      turnI_ = Di;
+      break;
+    }
+  }
+  
   // Set the class variables
   turnF_ = turnInF;
   turnS_ = turnInS;
@@ -352,6 +397,17 @@ int table::setRiver(int riverInF, int riverInS)
     std::cout << "ERROR : In setRiver the suit value of the card is outside the valid range [1,4]"
 	      << std::endl;
     exit (EXIT_FAILURE);
+  }
+
+  // Set the hold face to 14 if it's 1
+  if (riverInF==1) riverInF = 14;
+    
+  // Assign the index of the known hold card
+  for (int Di=0; Di<52; Di++) {
+    if (cardFace[Di]==riverInF && cardSuit[Di]==riverInS) {
+      riverI_ = Di;
+      break;
+    }
   }
   
   // Set the class variables
@@ -1191,6 +1247,54 @@ int table::dealFlopTurnRiverP()
   
 }
 
+int table::dealFlopTurnRiverI()
+{
+
+  /*
+
+    Deal the flop, turn and river arrays for the table if they aren't currently setflop
+
+    This only deals the index pointing to the dealt cards in the array of all cards in the deck
+
+    RETURNS
+    =======
+        0 :: Success!
+	1 :: Nothing to do, the turn, flop and river are set. So sort of success...
+
+  */
+  
+  // If the flop, turn and river are set, then there is nothing left to do, so stop here
+  if (flopDealt_==true && turnDealt_==true && riverDealt_==true) return 1;
+
+  // If cards not shuffled, then shuffle
+  if (D_.getDeckShuffled()==false) D_.shuffleI();
+  
+  // Set the cards from the single dealt array of numToDeal cards
+  int FTRiter=0;
+  // Start with the flop
+  if (flopDealt_==false) {
+    for (int FTRi=0; FTRi<3; FTRi++) {      
+      flopI_[FTRi] = D_.dealCardI();
+      FTRiter++;
+    }
+    flopDealt_=true;
+  }
+  // Then the turn
+  if (turnDealt_==false) {
+    turnI_ = D_.dealCardI();
+    turnDealt_ = true;
+    FTRiter++;
+  }
+  // Finally the river
+  if (riverDealt_==false) {
+    riverI_ = D_.dealCardI();
+    riverDealt_ = true;
+  }
+  
+  return 0;
+  
+}
+
 int table::dealHoldP(int player)
 {
 
@@ -1243,6 +1347,42 @@ int table::dealHoldP(int player)
   
 }
 
+int table::dealHoldI(int player)
+{
+
+  /*
+
+    Deal the hold cards to the current player, that is if any cards are needed to be dealt
+
+    Deal only the index values.
+
+    RETURNS
+    =======
+        0  :: Success!
+	1  :: Nothing to do, the turn, flop and river are set. So sort of success...
+	-1 :: Player to deal hold to not at table
+
+  */
+
+  // If we have 2 cards in the hold then exit, we can't deal any more
+  if (P_[player].numHoldDealt==2) return 1;
+
+  // Check desired player is at the table
+  if (player>=noPlayers_) return -1;
+  
+  // If cards not shuffled, then shuffle
+  if (D_.getDeckShuffled()==false) D_.shuffleI();
+  
+  // Now set the hold cards for the given player
+  for (int np=P_[player].numHoldDealt; np<2; np++) {
+    P_[player].holdIndex[np] = D_.dealCardI();
+    P_[player].numHoldDealt++;
+  }
+  
+  return 0;
+  
+}
+
 int table::dealAllP()
 {
 
@@ -1277,6 +1417,40 @@ int table::dealAllP()
 		    flopFP_,  flopSP_,  flopAP_, \
 		    turnFP_,  turnSP_,  turnAP_, \
 		    riverFP_, riverSP_, riverAP_);
+  }
+  
+  handsDealt_=true;
+  return 0; // Success
+  
+}
+
+int table::dealAllI()
+{
+
+  /*
+ 
+    Deal cards to all hands.
+
+    ONLY DEAL INDEXES OF CARD VALUES.
+
+    This routine starts by dealing the flop, turn and river (if they are not already dealt).
+    It then assigns each hand using the flop turn and river, taking any known hold cards and 
+    combining with some randomly dealt cards to fill all unknown holds.
+
+  */
+
+  int dStat; // deal status
+
+  // Shuffle cards before dealing things out
+  D_.shuffleI();
+  
+  // Initially check if the flop turn and river are set, if not this routine sets them
+  dStat = dealFlopTurnRiverI();
+  
+  // Now deal up all the players hold cards, and after this set the players full hand (including the
+  // flop, turn and river
+  for (int p=0; p<noPlayers_; p++) {
+    dealHoldI(p);
   }
   
   handsDealt_=true;
@@ -1382,6 +1556,134 @@ int table::findWinnerP()
       }
 
      
+    }
+
+  }
+  
+  return -10; // We shouldn't get to here, so return -10 for major error
+  
+}
+
+int table::findWinnerI()
+{
+
+  /*
+    Find the winner at the table, add this to the player object win counter and win hand type
+    counter variables. Also return an integer of the winning player.
+
+    This is done using only thte indexes of where the cards occur in the deck (as a cost reduction
+    measure for use in a monte carlo sim.
+
+    RETURNS
+    =======
+        >0 :: Success, return the player that has won or 0 if more than one has drawn
+	-1 :: Hands have not been dealt, so no one can win (yet)
+
+  */
+
+  int fWStat;
+  int fWInt;
+  int WCtr;
+  std::vector<int> tmpPlayer;
+  std::vector<long long int> tmpRank;
+  long long int maxRank;
+  int maxRankP;
+  
+  // Can only run if hands have been dealt
+  if (handsDealt_==false) return -1;
+  
+  // Find the best hand in each 7 card hand
+  for (int fWi=0; fWi<noPlayers_; fWi++) {
+    fWStat = H_[fWi].findBestHandII(\
+				   P_[fWi].holdIndex[0],P_[fWi].holdIndex[1],\
+				   flopI_[0],flopI_[1],flopI_[2],\
+				   turnI_,riverI_);
+    handCodeArr_.push_back(H_[fWi].getHandCode());
+    P_[fWi].handFoundCtr[H_[fWi].getHandCode()-1]++;
+  }
+
+  // Iterare the number of runs
+  numRuns_++;
+  
+  // Check for the best hand at the table
+  for (int hc=10; hc>0; hc--) {
+
+    // First see how many times the current hand code occurs at the table
+    numOccurances_ = count(handCodeArr_.begin(), handCodeArr_.end(), hc);
+
+    if (numOccurances_==0) {
+      
+      // There are no occurences of this hand code, so check the next one down
+      continue;
+
+    } else if (numOccurances_==1) {
+
+      // We only have one card with this hand cose, so this hand has won
+      drawIntTmp_ = std::distance(handCodeArr_.begin(), std::find(handCodeArr_.begin(),handCodeArr_.end(),hc));
+      // Then note the in in the for the player
+      P_[drawIntTmp_].numWins++;           // Increment players win counter
+      P_[drawIntTmp_].winCodesCtr[hc-1]++; // Increment iterator of win codes
+
+      handCodeArr_.clear(); // Release un-needed memory
+      return drawIntTmp_;   // We are now done, we've found a winner!
+      
+    } else {
+
+      // If two or more players have the same hand code then compare the handPrimeRank
+
+      // First record each prime rank and the player index for those with the same hand code
+      for (int drawI=0; drawI<noPlayers_; drawI++) {
+	if (handCodeArr_[drawI]==hc) {
+	  tmpPlayer.push_back(drawI);
+	  tmpRank.push_back(H_[drawI].handPrimeRank);
+	}
+      }
+
+      // Loop through and get the largest value, and the number of times it occurs
+      maxRank = -1;
+      WCtr = 0;
+      fWInt = tmpPlayer.size();
+      for (int drawI=0; drawI<fWInt; drawI++) {
+	if (tmpRank[drawI]>maxRank) {
+	  maxRank  = tmpRank[drawI];
+	  maxRankP = tmpPlayer[drawI];
+	  WCtr = 1;
+	} else if (tmpRank[drawI]==maxRank) {
+	  WCtr++;
+	}
+      }
+
+      // std::cout << maxRank << "  ,  " << WCtr << std::endl << std::endl;
+      
+      // Count the number of the times this top Prime hand rank occurs
+      if (WCtr==1) {
+	
+	// If there is only one of this prime hand rank then this one has won
+	P_[maxRankP].numWins++;           // Increment players win counter
+	P_[maxRankP].winCodesCtr[hc-1]++; // Increment iterator of win codes
+	handCodeArr_.clear();             // Release un-needed memory
+	tmpPlayer.clear();
+	tmpRank.clear();
+	return maxRankP;                  // We are now done, we've found a Winner
+ 
+      } else {
+
+	fWInt = tmpPlayer.size();
+	for (int drawJ=0; drawJ<fWInt; drawJ++) {
+	  if (tmpRank[drawJ]==maxRank) {
+	    // Otherwise loop thorugh and add all those with the same prime rank as a draw
+	    P_[tmpPlayer[drawJ]].numDraw++;            // Iterate number of draws
+	    P_[tmpPlayer[drawJ]].drawCodesCtr[hc-1]++; // Iterate hand type drawn with
+	  }
+	}
+
+	handCodeArr_.clear(); // Release un-needed memory
+	tmpPlayer.clear();
+	tmpRank.clear();
+	return 0;             // We are now done, we've found a Draw!
+	    
+      }
+
     }
 
   }
@@ -1582,7 +1884,54 @@ int table::resetTableToKnown()
   
 }
 
+int table::resetTableToKnownI()
+{
 
+  /*
+    
+    Reset the table to only have the known cards, this allows for re-dealing fresh random cards
+    whilst keeping the known cards.
+
+    This routine should only be used if we have only dealt card indexes
+
+  */
+   
+  // Look first at the cards on the table
+  if (flopSet_==false) {
+    if (flopDealt_==true) {
+      flopDealt_=false;
+      D_.itNumCardsInDeck(3);
+    }
+  }
+  if (turnSet_==false) {
+    if (turnDealt_==true) {
+      turnDealt_=false;
+      D_.itNumCardsInDeck(1);
+    }
+  }
+  if (riverSet_==false) {
+    if (riverDealt_==true) {
+      riverDealt_=false;
+      D_.itNumCardsInDeck(1);
+    }
+  }
+
+  for (int p=0; p<noPlayers_; p++) {
+    // Now loop through and discard all dealt cards (that are not known a priori) from the holds
+    if (P_[p].numHoldKnown==0) {
+      // If there are no known hold cards then clear all the hold arrays
+      P_[p].numHoldDealt=0;
+      D_.itNumCardsInDeck(2);
+    } else if (P_[p].numHoldKnown==1) {
+      // If one card is known then just remove the last dealt card from the hold
+      P_[p].numHoldDealt--;
+      D_.itNumCardsInDeck(1);
+    } // Don't need to take any action if both hold cards are known for a player
+  }
+  
+  return 0;
+  
+}
 
 int table::resetTable()
 {
@@ -1688,9 +2037,9 @@ void table::MCP(int numMC)
   int MCstat;
   
   for (int Nmc=0; Nmc<numMC; Nmc++) {
-    MCstat = dealAllP();
-    MCstat = findWinnerP();
-    MCstat = resetTableToKnown();
+    MCstat = dealAllI();
+    MCstat = findWinnerI();
+    MCstat = resetTableToKnownI();
   }
   
 }

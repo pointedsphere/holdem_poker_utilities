@@ -74,6 +74,10 @@ public:
   int dealCardsA(int numToDeal);
   void remDealtCards();
 
+  // Deal a card index from the end of the list of indexes. This is treated like dealing a
+  // card (i.e. numCards_ is reduced by 1) but the dealFace_ and dealSuit_ arrays are not appended
+  int dealCardI();
+  
   // Iterate the number of cards in the deck (used for resets)
   void itNumCardsInDeck(int deckIter);
   
@@ -97,6 +101,21 @@ public:
   std::vector<int> getDealSuit();
   
 };
+
+// Standard face values
+extern int cardFace[52];
+
+// Standard suit values
+extern int cardSuit[52];
+
+// Prime suit values
+extern int primeSuit[52];
+
+// Prime face values
+extern int primeFace[52];
+
+// Lowest 52 primes
+extern int primes[52];
 
 // Convert the input card to it's requisite prime values
 std::vector<int> card2prime(int inFace,int inSuit);
