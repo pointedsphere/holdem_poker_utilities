@@ -19,9 +19,9 @@ The naive implementation, though slow, is easy to read and modify. Furthermore, 
 
 ## New Method for Finding and Comparing Hands
 
-The `brute force' method, though useful, is far from optimal. Though other methods have been proposed in the past like 
+The `brute force' method, though useful, is far from optimal. Though other methods have been proposed in the past like ....
 
-This works on the basis of assigning 3 prime numbers to a card. One in reference to the face value of the card, another to the suit value and a third to the absolute card value. We do this by ordering the cards in ascending order, based on suit values [1,4] and then face values [2,14] (where ace == 14). We then assign a prime number in {2,3,5,7} to each suit value (``PS``), assign a prime number in {2,3,5,7,11,13,17,19,23,29,31,37,41} to each face value (``PF``) and a unique prime number in the set of the lowest 52 prime numbers to each card (``PA``). I.e. the ith card given by 
+This works on the basis of assigning 2 prime numbers to a card. One in reference to the face value of the card and another to the suit value. We do this by ordering the cards in ascending order, based on suit values [1,4] and then face values [2,14] (where ace == 14). We then assign a prime number in {2,3,5,7} to each suit value (``PS``), assign a prime number in {2,3,5,7,11,13,17,19,23,29,31,37,41} to each face value (``PF``), i.e. the ith card given by 
 
 ```
 F = {
@@ -47,16 +47,19 @@ PF = {
     2,3,5,7,11,13,17,19,23,29,31,37,41,    
     2,3,5,7,11,13,17,19,23,29,31,37,41,    
     2,3,5,7,11,13,17,19,23,29,31,37,41 };
-
-PA = { 
-    2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,
-    53,59,61,67,71,73,79,83,89,97,101,103,107,    
-    109,113,127,131,137,139,149,151,157,163,167,
-    173,179,181,191,193,197,199,211,223,227,
-    229,233,239 };
 ```
 
+We then utilise the `brute-force' method to generate code containing hash tables used to lookup our hand from the prime face and suit values in the 7 card hand. Note we refer to a hand rank used for comparing two hands of the same hand code. This is explained in more detail in the next section.
 
+First we use the prime suit values to check for a flush. If there is a flush we then check for a straight or royal flush by checking the product of the face values of the cards in the hand in the suit that constitutes the flush. We can return the hand code and rank using this product as the hash table key.
+
+We then use the product of all face values as the key to check for a full house or 4 of a kind. 
+
+Then, iff we have a flush, we return to the product of all face values of the suit constituting the flush. This product is used as the key for the hash table lookup.
+
+For all lower hands we consider the product of all prime face values as the key for the lookup table.
+
+In this way, using a switch statement for the flush check of suit values and 4 hash tables we can check for a hand in 7 cards using ~50000 lines of code (given in ....). The data for this was generated using code in .... parsed with the python script ....
 
 ### Comparing Hands With The Same Hand Code
 
@@ -68,9 +71,13 @@ Throughout this section let *fP*, *sP* and *aP* be the prime face, suit and card
 
 Also, let us assume we have access not just to the full 7 cards (hold, flop, turn and river), but to the 5 card combination that makes the best hand from those 7 cards, and consequently know the HC.
 
-### Any Straight (royal flush, straight flush and straight)
+### Checking for a flush (any flush)
 
-In the case of any straight hand the MFVP is the highest card in the straight. highest high card in a straight always wins when comparing hands including a straight.
+We can first check to see if the 7 card hand contains a 5,6 or 7 card flush. We do this by looking at the product of only the prime suit values. If we do not have a flush of any sort there is no need to check for a straight flush, royal flush or flush hand.
+
+### Royal flush, straight flush and flush
+
+For any of the flush hands we calculate the MFVP a the product of the prime face values for the face values of the cards of the suit that constitutes the flush.
 
 ### Four of a kind
 
@@ -97,15 +104,9 @@ Where the highest of these values for players with 4 of a kind wins (and equalit
 
 Calculation of MFVP for the full house is much that same as for Four of a kind, where we treat the face value for the three of a kind in the same way as with the four of a kind face value. We then treat the pair value like the kicker value in four of a kind.
 
-### Flush
+### Straight
 
-MFVP for the flush is a 13 bit binary value, the sum of the binary values of each face value card, i.e. if the face values of the 5 cards in the flush are ``f1``, ``f2``, ``f3``, ``f4`` and ``f5`` (each in [2,14] with ace=14) then
-
-```
-MFVP = 2^(f1-2) + 2^(f2-2) + 2^(f3-2) + 2^(f4-2) + 2^(f5-2)
-```
-
-If multiple players have a flush, then the highest MFVP wins (with equality being a tie).
+In the case of any straight hand the MFVP is the highest card in the straight. Highest high card in a straight always wins when comparing hands including a straight.
 
 ### Three of a kind
 
