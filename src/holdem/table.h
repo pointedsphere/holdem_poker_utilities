@@ -58,6 +58,17 @@ public:
   std::vector<int> holdFaceKnown;
   std::vector<int> holdSuitKnown;
 
+  // Vectors containing the prime values of face and suit, both known and dealt+known
+  std::vector<int> holdFaceP;
+  std::vector<int> holdSuitP;
+  std::vector<int> holdFullP;
+  std::vector<int> holdFaceKnownP;
+  std::vector<int> holdSuitKnownP;
+  std::vector<int> holdFullKnownP;
+
+  // Arrays for the indexes of the cards in the hold
+  int holdIndex[2];
+  
   // Total number of wins and drawsfor this player
   int numWins;
   int numDraw;
@@ -95,15 +106,27 @@ private:
   std::vector<hand>   H_; // A vector of HANDS
   std::vector<player> P_; // A vector of PLAYERS
 
-
   // Shared table cards
   std::vector<int> flopF_;
   std::vector<int> flopS_;
+  std::vector<int> flopFP_; // Face prime
+  std::vector<int> flopSP_; // Suit prime
+  std::vector<int> flopAP_; // Full prime
+  int flopI_[3];            // flop card index
+  
   int turnF_;
   int turnS_;
+  int turnFP_;
+  int turnSP_;
+  int turnAP_;
+  int turnI_;
   int riverF_;
   int riverS_;
-
+  int riverFP_;
+  int riverSP_;
+  int riverAP_;
+  int riverI_;
+  
   // Check if shared table cards set
   bool flopSet_;
   bool turnSet_;
@@ -137,6 +160,7 @@ public:
     setNoPlayers(numPlayers); // Set up all the vectors etc for the number of players
     totHoldsKnown_=0;         // Total hold cards known is initially zero
     numRuns_=0;               // Not carried out any runs initially
+
     // No table cards set initially
     flopSet_    = false;
     flopDealt_  = false;
@@ -146,8 +170,16 @@ public:
     riverDealt_ = false;
     turnF_=-1;
     turnS_=-1;
+    turnFP_=-1;
+    turnSP_=-1;
+    turnAP_=-1;
+    turnI_=-1;
     riverF_=-1;
     riverS_=-1;
+    riverFP_=-1;
+    riverSP_=-1;
+    riverAP_=-1;
+    riverI_=-1;
 
     handsDealt_ = false; // Hands not initially set
     
@@ -170,15 +202,23 @@ public:
   
   // Deal random cards to the flop turn and river (if not currently set)
   int dealFlopTurnRiver();
+  int dealFlopTurnRiverP();
+  int dealFlopTurnRiverI();
 
   // Deal the hold cards
   int dealHold(int player);
+  int dealHoldP(int player);
+  int dealHoldI(int player);
   
   // Set the hands arrays by dealing random cards to `fill up' hold cards
   int dealAll();
+  int dealAllP();
+  int dealAllI();
 
   // Find who won and with what
   int findWinner();
+  int findWinnerP();
+  int findWinnerI();
 
   // Find the highest card at a given index over all the best hands in the H_ hands with
   // a given hand code. Also count the number of times this card occurs with the given
@@ -190,12 +230,14 @@ public:
 
   // Reset the table to just the known cards to allow for re-dealing
   int resetTableToKnown();
+  int resetTableToKnownI();
 
   // Reset the table completely
   int resetTable();
 
   // Run Monte Carlo
   void MC(int numMC);
+  void MCP(int numMC);
   
   // Get functions
   std::vector<int>    getPlayerHoldFace(int PlayerPP);

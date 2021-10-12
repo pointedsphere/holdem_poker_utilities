@@ -17,6 +17,11 @@ private:
   std::vector<int> deckFace_;
   std::vector<int> deckSuit_;
 
+  // Deck variables for the prime representation
+  std::vector<int> deckFaceP_;
+  std::vector<int> deckSuitP_;
+  std::vector<int> deckFullP_;
+  
   // The index array, used for dealing/shuffling cards
   bool indexSet_;
   std::vector<int> deckIndex_;
@@ -30,9 +35,8 @@ public:
   // Constructor
   deck() {
     
-    // We start with 52 cards
-    numCards_ = 52;
-    deckSet_ = false;
+    // We start with a full deck
+    setDeckFull();
     
     // Set the array of indexes of the deck, for use with shuffling
     indexSet_ = false;
@@ -66,8 +70,14 @@ public:
   // Deal cards to dealFace_ and dealSuit_. Note: This destroys the vectors if they
   // have previously been set
   int dealCards(int numToDeal);
+  int dealCardsP(int numToDeal);
+  int dealCardsA(int numToDeal);
   void remDealtCards();
 
+  // Deal a card index from the end of the list of indexes. This is treated like dealing a
+  // card (i.e. numCards_ is reduced by 1) but the dealFace_ and dealSuit_ arrays are not appended
+  int dealCardI();
+  
   // Iterate the number of cards in the deck (used for resets)
   void itNumCardsInDeck(int deckIter);
   
@@ -76,6 +86,9 @@ public:
   int  numDealt_;
   std::vector<int> dealFace_;
   std::vector<int> dealSuit_;
+  std::vector<int> dealFaceP_;
+  std::vector<int> dealSuitP_;
+  std::vector<int> dealFullP_;
   
   // C++ get functions
   bool getDeckSet();
@@ -88,5 +101,23 @@ public:
   std::vector<int> getDealSuit();
   
 };
+
+// Standard face values
+extern int cardFace[52];
+
+// Standard suit values
+extern int cardSuit[52];
+
+// Prime suit values
+extern int primeSuit[52];
+
+// Prime face values
+extern int primeFace[52];
+
+// Lowest 52 primes
+extern int primes[52];
+
+// Convert the input card to it's requisite prime values
+std::vector<int> card2prime(int inFace,int inSuit);
 
 #endif

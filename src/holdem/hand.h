@@ -38,6 +38,9 @@ private:
   // The cards to use in the hand
   int cardsFace_[7];
   int cardsSuit_[7];
+  int cardsFaceP_[7];
+  int cardsSuitP_[7];
+  int cardsFullP_[7];
   
   // Have the cards been read or not
   bool isCards_;
@@ -110,7 +113,8 @@ public:
 
   */
   int bestFace[5];
-  int bestSuit[5];  
+  int bestSuit[5];
+  long long int handPrimeRank; // Prime product of 5 card hand
   
   // Constructor for initial variables
   // NOTE: Initial values for all face values set to -1 which signifies no hand.
@@ -119,6 +123,7 @@ public:
 
     // Also, on initialisation we do not have a hand
     handCode = -1;
+    handPrimeRank = -1;
 
     for (int i=0; i<5; i++) {
       bestFace[i] = -1;
@@ -138,12 +143,24 @@ public:
 
   // Set the cards using VECTORS
   int SetCardsFull(std::vector<int> face_in, std::vector<int> suit_in);
+  int SetCardsFullA(std::vector<int> face_in, std::vector<int> suit_in);
+  int SetCardsFullP(std::vector<int> face_in, std::vector<int> suit_in, std::vector<int> full_in);
   int SetCards(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
 		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
+  int SetCardsA(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> flop_F,
+		std::vector<int> flop_S, int turn_F, int turn_S, int river_F, int river_S);
+  int SetCardsP(std::vector<int> hole_F, std::vector<int> hole_S, std::vector<int> hole_A, \
+		std::vector<int> flop_F, std::vector<int> flop_S, std::vector<int> flop_A, \
+		int turn_F,  int turn_S,  int turn_A, \
+		int river_F, int river_S, int river_A );
   
   // Get the best hand that can be made from the current cards in cards_face_ and cards_suit_
-  int findBestHand();
+  int findBestHand();  // Find and populate the best hand and populate bestFace_ and bestSuit_
+  int findBestHandP(); // Find best hand code using the prime method
 
+  // Find best hands using the indexes of the cards given by inputs
+  int findBestHandII(int c1, int c2, int c3, int c4, int c5, int c6, int c7);
+  
   // Sort the cardsFace_ and cardsSuit_ arrays such cardsFace_ is in ascending order
   void sortCards();
 
@@ -153,9 +170,13 @@ public:
   // Get variables from the class
   std::vector<int> getCardsFace();
   std::vector<int> getCardsSuit();
+  std::vector<int> getCardsFaceP();
+  std::vector<int> getCardsSuitP();
+  std::vector<int> getCardsFullP();
   std::vector<int> getBestFace();
   std::vector<int> getBestSuit();
   int getHandCode();
+  int getHandPrimeRank();
   
 };
 

@@ -27,6 +27,11 @@ void deck::setDeckFull()
 
   // Check if the deck has been set, if it has discard the old deck before populating
   if (deckSet_==true) deckIndex_.clear();
+  if (deckSet_==true) deckFace_.clear();
+  if (deckSet_==true) deckSuit_.clear();
+  if (deckSet_==true) deckFaceP_.clear();
+  if (deckSet_==true) deckSuitP_.clear();
+  if (deckSet_==true) deckFullP_.clear();
   
   // Do for the 4 suits
   for (int s=1; s<5; s++) {
@@ -38,6 +43,68 @@ void deck::setDeckFull()
     }
   }
 
+  // Now explicitly set the prime versions of the deck
+  deckFullP_.push_back(2);
+  deckFullP_.push_back(3);
+  deckFullP_.push_back(5);
+  deckFullP_.push_back(7);
+  deckFullP_.push_back(11);
+  deckFullP_.push_back(13);
+  deckFullP_.push_back(17);
+  deckFullP_.push_back(19);
+  deckFullP_.push_back(23);
+  deckFullP_.push_back(29);
+  deckFullP_.push_back(31);
+  deckFullP_.push_back(37);
+  deckFullP_.push_back(41);
+  deckFullP_.push_back(43);
+  deckFullP_.push_back(47);
+  deckFullP_.push_back(53);
+  deckFullP_.push_back(59);
+  deckFullP_.push_back(61);
+  deckFullP_.push_back(67);
+  deckFullP_.push_back(71);
+  deckFullP_.push_back(73);
+  deckFullP_.push_back(79);
+  deckFullP_.push_back(83);
+  deckFullP_.push_back(89);
+  deckFullP_.push_back(97);
+  deckFullP_.push_back(101);
+  deckFullP_.push_back(103);
+  deckFullP_.push_back(107);
+  deckFullP_.push_back(109);
+  deckFullP_.push_back(113);
+  deckFullP_.push_back(127);
+  deckFullP_.push_back(131);
+  deckFullP_.push_back(137);
+  deckFullP_.push_back(139);
+  deckFullP_.push_back(149);
+  deckFullP_.push_back(151);
+  deckFullP_.push_back(157);
+  deckFullP_.push_back(163);
+  deckFullP_.push_back(167);
+  deckFullP_.push_back(173);
+  deckFullP_.push_back(179);
+  deckFullP_.push_back(181);
+  deckFullP_.push_back(191);
+  deckFullP_.push_back(193);
+  deckFullP_.push_back(197);
+  deckFullP_.push_back(199);
+  deckFullP_.push_back(211);
+  deckFullP_.push_back(223);
+  deckFullP_.push_back(227);
+  deckFullP_.push_back(229);
+  deckFullP_.push_back(233);
+  deckFullP_.push_back(239);
+  
+  // Now set the prime deck face and suit values based on the first 13 and 4 prime numbers respectivley
+  for (int i=0; i<4; i++) {
+    for (int j=0; j<13; j++) {
+      deckFaceP_.push_back(deckFullP_[j]);
+      deckSuitP_.push_back(deckFullP_[i]);
+    }
+  }
+  
   // Set number of cards to 52 for the full deck
   numCards_     = 52;
   indexSet_     = false;
@@ -45,7 +112,8 @@ void deck::setDeckFull()
   deckShuffled_ = false;
   dealDone_     = false;
   numDealt_     = 0;
-  
+
+  // And now the deck is set
   deckSet_ = true;
   
 }
@@ -74,9 +142,6 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
 
   int deckPartialSize;
   
-  // Check if the deck has been set, if it has discard the old deck before populating
-  if (deckSet_==true) deckIndex_.clear();
-  
   // Check that the input arrays are the same size
   if (igFace.size()!=igSuit.size()) {
     return -1; // Return error
@@ -92,28 +157,12 @@ int deck::setDeckPartial(std::vector<int> igFace, std::vector<int> igSuit)
   for (int i=0; i<deckPartialSize; i++) {
     if (igFace[i]==1) igFace[i]=14;
   }
-  
-  // Do for the 4 suits
-  for (int s=1; s<5; s++) {
-    // Do for each card in the current suit
-    for (int f=2; f<15; f++) {
-      // Check each of the ignore vector elements to see if the current card to be added should
-      // be ignored or not
-      deckPartialSize=igFace.size();
-      for (int i=0; i<deckPartialSize; i++) {
-	if (igFace[i]==f && igSuit[i]==s) {
-	  numCards_--;
-	  break;
-	} else if (i==deckPartialSize-1) {
-	  deckFace_.push_back(f);
-	  deckSuit_.push_back(s);
-	  break;
-	}
-      }
-    }
-  }
 
-  deckSet_ = true;
+  // Create a full deck
+  setDeckFull();
+  
+  remCards(igFace, igSuit);
+
   return 0; // Success
   
 }
@@ -185,6 +234,12 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 	// then delete and break to the next card to remove
 	deckFace_.erase(deckFace_.begin()+j);
 	deckSuit_.erase(deckSuit_.begin()+j);
+	// Also delete from the prime representations
+	deckFaceP_.erase(deckFaceP_.begin()+j);	
+	deckSuitP_.erase(deckSuitP_.begin()+j);
+	deckFullP_.erase(deckFullP_.begin()+j);
+	// and from the deck index array
+	deckIndex_.erase(deckIndex_.begin()+j);
 	numCards_=numCards_-1;
 	break;
       }
@@ -193,7 +248,7 @@ int deck::remCards(std::vector<int> remFace, std::vector<int> remSuit)
 
   // If we have shuffled the cards we need new index values as we could have an index
   // outside the range of where the cards now exist
-  if (deckShuffled_==true) setDeckIndex(numCards_);
+  // if (deckShuffled_==true) setDeckIndex(numCards_);
   
   return 0; // Success!
   
@@ -224,6 +279,12 @@ int deck::remCard(int remFace, int remSuit)
       // then delete and break to the next card to remove
       deckFace_.erase(deckFace_.begin()+j);
       deckSuit_.erase(deckSuit_.begin()+j);
+      // Also delete from the prime representations
+      deckFaceP_.erase(deckFaceP_.begin()+j);	
+      deckSuitP_.erase(deckSuitP_.begin()+j);
+      deckFullP_.erase(deckFullP_.begin()+j);
+      // and from the deck index array
+      deckIndex_.erase(deckIndex_.begin()+j);
       numCards_=numCards_-1;
       break;
     }
@@ -231,7 +292,7 @@ int deck::remCard(int remFace, int remSuit)
 
   // If we have shuffled the cards we need new index values as we could have an index
   // outside the range of where the cards now exist
-  if (deckShuffled_==true) setDeckIndex(numCards_);
+  // if (deckShuffled_==true) setDeckIndex(numCards_);
   
   return 0; // Success!
   
@@ -311,11 +372,85 @@ void deck::shuffleI()
           here.
   */
   
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  shuffle(deckIndex_.begin(), deckIndex_.end(), std::default_random_engine(seed));
+  // unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  // shuffle(deckIndex_.begin(), deckIndex_.end(), std::default_random_engine(seed));
+
+  // create a C++ random engine, seeded with the system clock
+  std::default_random_engine \
+    rng(static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count()));
+   
+  // shuffle the deck
+  std::shuffle(deckIndex_.begin(), deckIndex_.end(), rng);
+
   deckShuffled_ = true;
   
 }
+
+
+
+
+int deck::dealCardsA(int numToDeal)
+{
+
+  /*
+
+    Deal N cards from the deck, this is done by just pulling the last N cards from the deck
+    based on the indexes in deckIndex_. So if deckIndex_ has not been shuffled the cards will
+    not be randomised.
+
+    This deals both prime and stadard values
+
+    NOTE: If numCards_ is incorrectly set, or the shuffle was done when numCards_ is larger 
+          than it currently is this routine may deal cards that are no longer in the deck.
+	  This could be avoided with an error check, however this would increace the cost
+	  of this routine.
+
+    NOTE: As we wish to return two sets of values (as vectors) a vector of face values and
+          a vector of relevant suit values we actually set the class based variables dealFace_
+	  and dealSuit_, which are private and in their raw state must be accessed with the
+	  get functions getDealFace and getDealSuit
+
+    RETURNS:
+    --------
+        0  :: Success
+	-1 :: Number of cards requested from deal greater than number of cards left in deck
+
+   */
+  
+  // If we have previously dealt then destroy the deal vectors
+  if (dealDone_==true) {
+    dealFace_.clear();
+    dealSuit_.clear();
+    dealFaceP_.clear();
+    dealSuitP_.clear();
+    dealFullP_.clear();
+  }
+
+  // If the number of cards asked to deal is more than that left in deck return with an error
+  if (numCards_<numToDeal) {
+    std::cout << "ERROR : Number of cards to deal using dealCards more than the cards left in the deck.";
+    exit (EXIT_FAILURE);
+  }
+
+  
+  // Now deal the cards, starting from the end of the shuffled index array
+  for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {
+    dealFace_.push_back(deckFace_[deckIndex_[i]]);
+    dealSuit_.push_back(deckSuit_[deckIndex_[i]]);
+    dealFaceP_.push_back(deckFaceP_[deckIndex_[i]]);
+    dealSuitP_.push_back(deckSuitP_[deckIndex_[i]]);
+    dealFullP_.push_back(deckFullP_[deckIndex_[i]]);
+  }
+
+  // Update general and return success
+  numDealt_ = numToDeal;
+  numCards_ = numCards_ - numToDeal;
+  dealDone_ = true;
+  return 0; // Success!!
+  
+}
+
+
 
 
 
@@ -327,6 +462,8 @@ int deck::dealCards(int numToDeal)
     Deal N cards from the deck, this is done by just pulling the last N cards from the deck
     based on the indexes in deckIndex_. So if deckIndex_ has not been shuffled the cards will
     not be randomised.
+
+    This does not deal prime values.
 
     NOTE: If numCards_ is incorrectly set, or the shuffle was done when numCards_ is larger 
           than it currently is this routine may deal cards that are no longer in the deck.
@@ -374,6 +511,98 @@ int deck::dealCards(int numToDeal)
 
 
 
+
+
+int deck::dealCardsP(int numToDeal)
+{
+
+  /*
+
+    Deal N cards from the deck, this is done by just pulling the last N cards from the deck
+    based on the indexes in deckIndex_. So if deckIndex_ has not been shuffled the cards will
+    not be randomised.
+
+    This deals just prime and not standard values
+
+    NOTE: If numCards_ is incorrectly set, or the shuffle was done when numCards_ is larger 
+          than it currently is this routine may deal cards that are no longer in the deck.
+	  This could be avoided with an error check, however this would increace the cost
+	  of this routine.
+
+    NOTE: As we wish to return two sets of values (as vectors) a vector of face values and
+          a vector of relevant suit values we actually set the class based variables dealFace_
+	  and dealSuit_, which are private and in their raw state must be accessed with the
+	  get functions getDealFace and getDealSuit
+
+    RETURNS:
+    --------
+        0  :: Success
+	-1 :: Number of cards requested from deal greater than number of cards left in deck
+
+   */
+  
+  // If we have previously dealt then destroy the deal vectors
+  if (dealDone_==true) {
+    dealFaceP_.clear();
+    dealSuitP_.clear();
+    dealFullP_.clear();
+  }
+
+  // If the number of cards asked to deal is more than that left in deck return with an error
+  if (numCards_<numToDeal) {
+    std::cout << "ERROR : Number of cards to deal using dealCards more than the cards left in the deck.";
+    exit (EXIT_FAILURE);
+  }
+  
+  // Now deal the cards, starting from the end of the shuffled index array
+  for (int i=numCards_-1; i>=numCards_-numToDeal; i--) {
+    dealFaceP_.push_back(deckFaceP_[deckIndex_[i]]);
+    dealSuitP_.push_back(deckSuitP_[deckIndex_[i]]);
+    dealFullP_.push_back(deckFullP_[deckIndex_[i]]);
+  }
+
+  // Update general and return success
+  numDealt_ = numToDeal;
+  numCards_ = numCards_ - numToDeal;
+  dealDone_ = true;
+  return 0; // Success!!
+  
+}
+
+
+
+
+
+int deck::dealCardI()
+{
+
+  /*
+    Deal a card by returning only the last card index. The dealFace_ and dealSuit_ arrays are
+    not touched.
+
+    This also reduces the number of cards left in the deck by 1.
+  */
+
+  // If the number of cards asked to deal is more than that left in deck return with an error
+  if (numCards_<1) {
+    std::cout << "ERROR : Deck is empty, so cannot deal cards with dealCardI.";
+    exit (EXIT_FAILURE);
+  }
+
+  // Note that we have now taken a card from the deck
+  numCards_ = numCards_ - 1;
+
+  // Return that index
+  return deckIndex_[numCards_];
+  
+}
+
+
+
+
+
+ 
+
 void deck::remDealtCards()
 {
 
@@ -385,12 +614,86 @@ void deck::remDealtCards()
    */
   
   remCards(dealFace_,dealSuit_);
-  numCards_=numCards_+dealSuit_.size();
+  numCards_=numCards_-dealSuit_.size();
   
 }
 
 
 
+
+
+
+
+// Standard face values
+int cardFace[52] = {\
+  2,3,4,5,6,7,8,9,10,11,12,13,14,\
+  2,3,4,5,6,7,8,9,10,11,12,13,14,\
+  2,3,4,5,6,7,8,9,10,11,12,13,14,\
+  2,3,4,5,6,7,8,9,10,11,12,13,14};
+
+// Standard suit values
+int cardSuit[52] = {\
+  1,1,1,1,1,1,1,1,1,1,1,1,1,\
+  2,2,2,2,2,2,2,2,2,2,2,2,2,\
+  3,3,3,3,3,3,3,3,3,3,3,3,3,\
+  4,4,4,4,4,4,4,4,4,4,4,4,4};
+
+// Prime suit values
+int primeSuit[52] = { \
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
+  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, \
+  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, \
+  7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7 };
+
+// Prime face values
+int primeFace[52] = { \
+  2,3,5,7,11,13,17,19,23,29,31,37,41,	\
+  2,3,5,7,11,13,17,19,23,29,31,37,41,	\
+  2,3,5,7,11,13,17,19,23,29,31,37,41,	\
+  2,3,5,7,11,13,17,19,23,29,31,37,41 };
+
+// Lowest 52 primes
+int primes[52] = { \
+  2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,	\
+  109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227, \
+  229,233,239 };
+
+std::vector<int> card2prime(int inFace,int inSuit)
+{
+
+  /*
+    
+    Convert the input face and suit values of a card from the standard face and suit values to the
+    prime values for face, suit and card.
+
+    RETURNS
+    =======
+    Vector of length 3, where indexes correspond to:
+      0 :: The prime value of the face of the card.
+      1 :: The prime value of the suit of the card.
+      2 :: The full prime value of the card.
+
+   */
+  
+  std::vector<int> primed;
+  int primI=0;
+
+  // Find the index corresponding to the current card
+  for (int jk=0; jk<52; jk++) {
+    if (cardFace[jk]==inFace && cardSuit[jk]==inSuit) {
+      primI = jk;
+      break;
+    }
+  }
+
+  // Now set the prime based on this value from the full deck
+  primed.push_back(primeFace[primI]);
+  primed.push_back(primeSuit[primI]);
+  primed.push_back(primes[primI]);
+
+  return primed;
+  
+}
 
 
 

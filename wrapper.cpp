@@ -21,7 +21,7 @@ g++ -O3 -Wall -shared -std=c++11 -undefined dynamic_lookup $(python3 -m pybind11
 namespace py = pybind11;
 
 PYBIND11_MODULE(holdEm, m) {
-    m.doc() = "pybind11 example plugin"; // optional module docstring
+    m.doc() = "HoldEm Tools"; // optional module docstring
 
     py::class_<hand>(m, "hand")
       .def(py::init<>())
@@ -61,10 +61,15 @@ PYBIND11_MODULE(holdEm, m) {
       .def("dealFlopTurnRiver", &table::dealFlopTurnRiver)
       .def("dealHold",          &table::dealHold)
       .def("dealAll",           &table::dealAll)
+      .def("dealAllP",          &table::dealAllP)
+      .def("dealAllI",          &table::dealAllI)
       .def("findWinner",        &table::findWinner)
+      .def("findWinnerP",       &table::findWinnerP)
+      .def("findWinnerI",       &table::findWinnerI)
       .def("resetTableToKnown", &table::resetTableToKnown)
       .def("resetTable",        &table::resetTable)
       .def("MC",                &table::MC)
+      .def("MCP",               &table::MCP)
       .def("getPlayerHoldFace", &table::getPlayerHoldFace)
       .def("getPlayerHoldSuit", &table::getPlayerHoldSuit)
       .def("getNumRuns",        &table::getNumRuns)
